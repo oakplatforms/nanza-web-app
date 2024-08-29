@@ -10,10 +10,10 @@ export default function Home() {
     const [password, setPassword] = useState('');
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        alert(`Login attempt with Username: ${username} and Password: ${password}`);
-    };
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      alert(`Login attempt with Username: ${username} and Password: ${password}`);
+    };  
 
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
