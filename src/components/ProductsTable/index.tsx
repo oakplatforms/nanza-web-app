@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+
+interface Product {
+    title: string;
+    price: number;
+}
 
 const ProductsTable = () => {
-    const initialData = [
+    const initialData: Product[] = [
         { title: 'Product 1', price: 50 },
         { title: 'Product 2', price: 30 },
         { title: 'Product 3', price: 70 },
@@ -9,35 +14,39 @@ const ProductsTable = () => {
         { title: 'Product 5', price: 40 },
     ];
 
-    const [data, setData] = useState(initialData);
-    const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' | null }>({
+    const [data, setData] = useState<Product[]>(initialData);
+    const [sortConfig, setSortConfig] = useState<{ key: keyof Product; direction: 'asc' | 'desc' | null }>({
         key: 'title',
         direction: null,
     });
 
+    // Sort data function
+    const sortData = useCallback(
+        (key: keyof Product, direction: 'asc' | 'desc' = 'asc') => {
+            const sortedData = [...data].sort((a, b) => {
+                if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
+                if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            setSortConfig({ key, direction });
+            setData(sortedData);
+
+            // Save sorting config to localStorage
+            localStorage.setItem('sortKey', key);
+            localStorage.setItem('sortDirection', direction);
+        },
+        [data]
+    );
+
     // Load sorting config from localStorage on mount
     useEffect(() => {
-        const savedSortKey = localStorage.getItem('sortKey');
-        const savedSortDirection = localStorage.getItem('sortDirection');
+        const savedSortKey = localStorage.getItem('sortKey') as keyof Product | null;
+        const savedSortDirection = localStorage.getItem('sortDirection') as 'asc' | 'desc' | null;
         if (savedSortKey && savedSortDirection) {
-            sortData(savedSortKey, savedSortDirection as 'asc' | 'desc');
+            sortData(savedSortKey, savedSortDirection);
         }
-    }, []);
-
-    const sortData = (key: string, direction: 'asc' | 'desc' = 'asc') => {
-        const sortedData = [...data].sort((a, b) => {
-            if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
-            if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
-            return 0;
-        });
-
-        setSortConfig({ key, direction });
-        setData(sortedData);
-
-        // Save sorting config to localStorage
-        localStorage.setItem('sortKey', key);
-        localStorage.setItem('sortDirection', direction);
-    };
+    }, [sortData]);
 
     return (
         <div>
@@ -46,10 +55,16 @@ const ProductsTable = () => {
                 <thead>
                     <tr>
                         <th className="border px-4 py-2">#</th>
-                        <th className="border px-4 py-2 cursor-pointer" onClick={() => sortData('title', sortConfig.direction === 'asc' ? 'desc' : 'asc')}>
+                        <th
+                            className="border px-4 py-2 cursor-pointer"
+                            onClick={() => sortData('title', sortConfig.direction === 'asc' ? 'desc' : 'asc')}
+                        >
                             Title {sortConfig.key === 'title' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}
                         </th>
-                        <th className="border px-4 py-2 cursor-pointer" onClick={() => sortData('price', sortConfig.direction === 'asc' ? 'desc' : 'asc')}>
+                        <th
+                            className="border px-4 py-2 cursor-pointer"
+                            onClick={() => sortData('price', sortConfig.direction === 'asc' ? 'desc' : 'asc')}
+                        >
                             Price {sortConfig.key === 'price' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}
                         </th>
                     </tr>

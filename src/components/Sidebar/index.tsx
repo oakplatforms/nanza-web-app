@@ -6,17 +6,17 @@ const Sidebar = () => (
         <nav>
             <ul>
                 <li>
-                    <Link href="/products" className="block py-2">
+                    <Link href="/products">
                         Products
                     </Link>
                 </li>
                 <li>
-                    <Link href="/categories" className="block py-2">
+                    <Link href="/categories">
                         Categories
                     </Link>
                 </li>
                 <li>
-                    <Link href="/settings" className="block py-2">
+                    <Link href="/settings">
                         Settings
                     </Link>
                 </li>
