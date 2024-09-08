@@ -1,11 +1,7 @@
-// src/pages/index.tsx
 import React from 'react';
-import DashboardMain from '../components/Dashboard';
 
-const DashboardPage = () => {
-    return (
-        <DashboardMain />
-    );
+const Dashboard = () => {
+    return <div>Welcome to the homepage!</div>;
 };
 
-export default DashboardPage;
+export default Dashboard;

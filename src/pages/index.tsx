@@ -1,7 +1,8 @@
 import React from 'react';
+import Dashboard from '../components/Dashboard';
 
 const HomePage = () => {
-    return <div>Welcome to the homepage!</div>;
+    return <Dashboard />;
 };
 
 export default HomePage;
