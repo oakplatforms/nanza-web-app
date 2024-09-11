@@ -23,20 +23,23 @@ const ProductsTable = () => {
     // Sort data function
     const sortData = useCallback(
         (key: keyof Product, direction: 'asc' | 'desc' = 'asc') => {
-            const sortedData = [...data].sort((a, b) => {
-                if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
-                if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
-                return 0;
+            setData((prevData) => {
+                const sortedData = [...prevData].sort((a, b) => {
+                    if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
+                    if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+
+                return sortedData;
             });
 
             setSortConfig({ key, direction });
-            setData(sortedData);
 
             // Save sorting config to localStorage
             localStorage.setItem('sortKey', key);
             localStorage.setItem('sortDirection', direction);
         },
-        [data]
+        [setData, setSortConfig]
     );
 
     // Load sorting config from localStorage on mount
@@ -46,7 +49,7 @@ const ProductsTable = () => {
         if (savedSortKey && savedSortDirection) {
             sortData(savedSortKey, savedSortDirection);
         }
-    }, [sortData]);
+    }, [sortData]); // Include sortData in the dependency array
 
     return (
         <div>
@@ -54,7 +57,6 @@ const ProductsTable = () => {
             <table className="min-w-full table-auto border-collapse border border-gray-400">
                 <thead>
                     <tr>
-                        <th className="border px-4 py-2">#</th>
                         <th
                             className="border px-4 py-2 cursor-pointer"
                             onClick={() => sortData('title', sortConfig.direction === 'asc' ? 'desc' : 'asc')}
@@ -72,7 +74,6 @@ const ProductsTable = () => {
                 <tbody>
                     {data.map((item, index) => (
                         <tr key={index}>
-                            <td className="border px-4 py-2">{index + 1}</td>
                             <td className="border px-4 py-2">{item.title}</td>
                             <td className="border px-4 py-2">${item.price}</td>
                         </tr>
