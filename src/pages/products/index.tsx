@@ -1,9 +1,9 @@
 // src/pages/products/index.tsx
 import React from 'react';
-import ProductsTable from '../../components/ProductsTable';
+import ItemsTable from '../../components/ItemsTable';
 
 const ProductsPage = () => {
-    return <ProductsTable />;
+    return <ItemsTable />;
 };
 
 export default ProductsPage;
