@@ -52,7 +52,7 @@ const ItemCreate = ({ onCreate, onCancel }: ItemCreateProps) => {
           <input
             type="number"
             value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            onChange={(e) => setPrice(e.target.value === '' ? '' : Number(e.target.value))}
             className="w-full p-2 border rounded"
             placeholder="Enter item price"
           />
