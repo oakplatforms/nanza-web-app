@@ -1,5 +1,5 @@
 import { query } from '../db';
-import { ProductDto } from '../../types'; // Ensure you import the correct types
+import { ProductDto } from '../types'; // Ensure you import the correct types
 
 export const productService = {
   async get(productId: string, parameters = '') {
