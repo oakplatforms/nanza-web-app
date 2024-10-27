@@ -1,4 +1,5 @@
 import { query } from '../db';
+import { fetchData } from './api/index';
 import { ProductDto } from '../types'; // Ensure you import the correct types
 
 export const productService = {
@@ -7,8 +8,7 @@ export const productService = {
     return result.rows[0];
   },
   async list(parameters = '') {
-    const result = await query('SELECT * FROM products');
-    return result.rows;
+    return fetchData({ url: `/tcgx-marketplace/one-piece/products${parameters}` });
   },
   async create(productPayload: Omit<ProductDto, 'id' | 'createdAt' | 'updatedAt'>) {
     const { name, price, description } = productPayload;

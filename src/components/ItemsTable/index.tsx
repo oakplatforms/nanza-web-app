@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ItemEdit from '../ItemEdit';
 import ItemCreate from '../ItemCreate';
+import { productService } from '@/services/productService';
 
 interface Item {
   id: number;
@@ -35,21 +36,29 @@ const ItemsTable = () => {
   // Fetch items from the API on component mount
   useEffect(() => {
     const loadItems = async () => {
-      try {
-        const response = await fetch('/api/products'); // Fetch from your products API
-        const items = await response.json();
-        setData(items);
+      // try {
+      //   const response = await fetch('/api/products'); // Fetch from your products API
+      //   const items = await response.json();
+      //   setData(items);
 
-        // Apply saved sorting configuration
-        const savedSortKey = localStorage.getItem('sortKey') as keyof Item | null;
-        const savedSortDirection = localStorage.getItem('sortDirection') as 'asc' | 'desc' | null;
+      //   // Apply saved sorting configuration
+      //   const savedSortKey = localStorage.getItem('sortKey') as keyof Item | null;
+      //   const savedSortDirection = localStorage.getItem('sortDirection') as 'asc' | 'desc' | null;
 
-        if (savedSortKey && savedSortDirection) {
-          sortData(savedSortKey, savedSortDirection, items); // Apply saved sorting
-        }
-      } catch (error) {
-        console.error('Failed to load products:', error);
-      }
+      //   if (savedSortKey && savedSortDirection) {
+      //     sortData(savedSortKey, savedSortDirection, items); // Apply saved sorting
+      //   }
+      // } catch (error) {
+      //   console.error('Failed to load products:', error);
+      // }
+
+
+      // try {
+      //   const products = await productService.list();
+      //   setData(products);
+      // } catch (error) {
+      //   console.log('Error fetching products.', error);
+      // }
     };
     loadItems();
   }, []); // Empty dependency array ensures this runs only once on mount
