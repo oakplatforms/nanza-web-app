@@ -11,6 +11,9 @@ export async function fetchData({ url, method = 'GET', payload } : FetchProps) {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        'Access-Control-Expose-Headers': 'Access-Control-Allow-Origin',
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Origin': '*',
       },
       body: payload && JSON.stringify(payload),
     }
@@ -21,3 +24,4 @@ export async function fetchData({ url, method = 'GET', payload } : FetchProps) {
     console.error(error);
   }
 }
+
