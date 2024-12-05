@@ -9,7 +9,7 @@ export async function fetchData({ url, method = 'GET', payload } : FetchProps) {
     const options = {
       method,
       headers: {
-        Accept: 'application/json',
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
       body: payload && JSON.stringify(payload),
@@ -21,3 +21,4 @@ export async function fetchData({ url, method = 'GET', payload } : FetchProps) {
     console.error(error);
   }
 }
+
