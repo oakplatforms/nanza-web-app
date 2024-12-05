@@ -138,7 +138,7 @@ export function SimpleTable ({ headers, rows, onEdit, onDelete } : SimpleTablePr
     <Table>
       <TableHead>
         <TableRow>
-          {headers.map((header, index) => (
+          {headers?.map((header, index) => (
             <TableHeader key={index}>{header}</TableHeader>
           ))}
         </TableRow>
@@ -146,12 +146,12 @@ export function SimpleTable ({ headers, rows, onEdit, onDelete } : SimpleTablePr
       <TableBody>
         {rows.map((row, idx) => (
           <TableRow key={idx}>
-            {Object.values(row).map(rowItem => <TableCell style={{ width: rowItem.width, whiteSpace: 'pre-wrap', overflowWrap: 'break-word' }}>{rowItem.value as string}</TableCell>)}
+            {Object.values(row)?.map((rowItem, idx) => <TableCell key={idx} style={{ width: rowItem.width, whiteSpace: 'pre-wrap', overflowWrap: 'break-word', lineHeight: '40px' }}>{rowItem.value as string}</TableCell>)}
             {(onEdit || onDelete) && (
               <TableCell>
                 <div className="flex">
-                  {onEdit && <Button onClick={() => onEdit(idx)} plain><PencilIcon /></Button>}
-                  {onDelete && <Button onClick={() => onDelete(idx)} plain><TrashIcon /></Button>}
+                  {onEdit && <Button className="cursor-pointer" onClick={() => onEdit(idx)} plain><PencilIcon /></Button>}
+                  {onDelete && <Button className="cursor-pointer" onClick={() => onDelete(idx)} plain><TrashIcon /></Button>}
                 </div>
               </TableCell>
             )}

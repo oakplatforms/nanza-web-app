@@ -23,12 +23,13 @@ export function PanelDrawer ({ title, onSubmit, onCancel, children, submitButton
       >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold">{title}</h2>
-          <Button onClick={onCancel} plain><XMarkIcon /></Button>
+          <Button onClick={onCancel} className='cursor-pointer' plain><XMarkIcon /></Button>
         </div>
         {children}
-        <div className="flex justify-end space-x-4">
+        <div className="flex space-x-4">
           <Button
             color='green'
+            className='cursor-pointer'
             onClick={onSubmit}
             disabled={isSubmitDisabled}
           >
@@ -36,6 +37,7 @@ export function PanelDrawer ({ title, onSubmit, onCancel, children, submitButton
           </Button>
           <Button
             color='light'
+            className='cursor-pointer'
             onClick={onCancel}
           >
             Cancel

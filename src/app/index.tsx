@@ -10,7 +10,6 @@ function App() {
     <Router>
       <Layout sidebar={<SidebarNavigation></SidebarNavigation>}>
         <Routes>
-          <Route path="/categories" element={<ProductsDashboard />} />
           <Route path="/products" element={<ProductsDashboard />} />
           <Route path="/tags" element={<TagsDashboard />} />
         </Routes>

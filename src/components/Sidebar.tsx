@@ -88,6 +88,10 @@ export function SidebarHeading({ className, ...props }: React.ComponentPropsWith
   )
 }
 
+const classes = clsx(
+  'flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5',
+)
+
 export function SidebarNavigation() {
   return (
     <Sidebar>
@@ -96,23 +100,23 @@ export function SidebarNavigation() {
           TCGX Marketplace
         </SidebarHeading>
       </SidebarHeader>
-      <Select name="status" style={{
+      {/* <Select name="status" style={{
         borderRadius: 0,
         padding: '.5em 1em',
         border: 'none',
         borderBottom: '1px solid lightgray',
-        height: '50px;'
+        height: '50px'
       }}>
         <option value="one-piece">One Piece</option>
         <option value="pokemon">Pokemon</option>
         <option value="magic">Magic</option>
-      </Select>
+      </Select> */}
       <SidebarBody>
        <Link to="/tags">
-          <SidebarItem>Tags</SidebarItem>
+          <div className={clsx('cursor-default', classes)}>Tags</div>
         </Link>
         <Link to="/products">
-          <SidebarItem>Products</SidebarItem>
+          <div className={clsx('cursor-default', classes)}>Products</div>
         </Link>
       </SidebarBody>
     </Sidebar>

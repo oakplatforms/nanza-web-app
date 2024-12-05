@@ -13,19 +13,19 @@ export const productService = {
       url: '/tcgx-marketplace/one-piece/product',
       method: 'POST',
       payload: productPayload,
-    });
+    })
   },
   async update(productId: string, productPayload: Partial<ProductDto>) {
     return fetchData({
       url: `/tcgx-marketplace/one-piece/product/${productId}`,
       method: 'PUT',
       payload: productPayload,
-    });
+    })
   },
   async delete(productId: string) {
     return fetchData({
       url: `/tcgx-marketplace/one-piece/product/${productId}`,
       method: 'DELETE',
-    });
+    })
   }
-};
+}

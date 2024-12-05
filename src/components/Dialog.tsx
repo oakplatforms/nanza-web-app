@@ -1,8 +1,8 @@
 import * as Headless from '@headlessui/react'
 import clsx from 'clsx'
-import type React from 'react'
+import React, { ReactNode } from 'react'
 import { Text } from './Text'
-import { Button } from './Button'
+import { Button, ButtonProps } from './Button'
 
 const sizes = {
   xs: 'sm:max-w-xs',
@@ -114,3 +114,36 @@ export function ConfirmDialog({ isOpen, onClose, title, description, confirmBtnT
   </Dialog>
   ) : null
 }
+
+type SimpleDialogProps = {
+  isOpen: boolean
+  onClose: () => void
+  title: string
+  submitBtnTxt: string
+  onSubmit?: () => void
+  children: ReactNode
+  submitBtnColor?: ButtonProps['color']
+}
+
+export function SimpleDialog({ isOpen, onClose, title, submitBtnTxt, onSubmit, submitBtnColor, children } : SimpleDialogProps) {
+  return isOpen ? (
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+    >
+      <DialogTitle>{title}</DialogTitle>
+      <DialogBody>
+        {children}
+      </DialogBody>
+      <DialogActions>
+        <Button
+          plain 
+          onClick={onClose}>
+          Cancel
+        </Button>
+        <Button onClick={onSubmit} color={submitBtnColor || 'zinc'}>{submitBtnTxt}</Button>
+      </DialogActions>
+    </Dialog>
+  ) : null
+}
+
