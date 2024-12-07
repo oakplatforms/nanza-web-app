@@ -146,7 +146,7 @@ export function SimpleTable ({ headers, rows, onEdit, onDelete } : SimpleTablePr
       <TableBody>
         {rows.map((row, idx) => (
           <TableRow key={idx}>
-            {Object.values(row)?.map((rowItem, idx) => <TableCell key={idx} style={{ width: rowItem.width, whiteSpace: 'pre-wrap', overflowWrap: 'break-word', lineHeight: '40px' }}>{rowItem.value as string}</TableCell>)}
+            {Object.values(row)?.map((rowItem, idx) => <TableCell key={idx} style={{ width: rowItem.width, whiteSpace: 'pre-wrap', overflowWrap: 'break-word' }}>{rowItem.value as string}</TableCell>)}
             {(onEdit || onDelete) && (
               <TableCell>
                 <div className="flex">

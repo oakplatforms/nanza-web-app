@@ -56,12 +56,13 @@ export function ProductsDashboard () {
   const onUpdateProduct = async () => {
     try {
       if (selectedProduct) {
-        const { name, displayName, price, description, ...rest } = selectedProduct
+        const { name, displayName, price, description, image, ...rest } = selectedProduct
         await productService.update(selectedProduct.id!, {
           name,
           displayName,
           price,
-          description
+          description,
+          image
         } as ProductDto)
         await initProducts()
         setSelectedProduct(defaultSelectProduct)
@@ -168,7 +169,7 @@ export function ProductsDashboard () {
   const headers = ['Name',  'Price', 'Description', 'Tags', '']
   const tableRows = products?.map((product) => (
     {
-      displayName: { value: product.displayName || '', width: '150px' },
+      displayName: { value: product.displayName || '', width: '200px' },
       price: { value: `$${product.price}` || '', width: 'auto' },
       description: { value: product.description || '', width: '400px' },
       tags: { value: generateTagBadges(product), width: '400px' }
@@ -208,6 +209,15 @@ export function ProductsDashboard () {
             />
           </div>
           <div className="mb-4">
+            <label className="block text-sm font-bold mb-1">Image Url</label>
+            <Input
+              type="text"
+              value={selectedProduct?.image || ''}
+              onChange={(e) => setSelectedProduct({ ...selectedProduct, image: e.target.value })}
+              placeholder="Enter image url"
+            />
+          </div>
+          <div className="mb-4">
             <label className="block text-sm font-bold mb-1">Description</label>
             <Input
               type="text"
@@ -244,6 +254,15 @@ export function ProductsDashboard () {
               value={selectedProduct?.displayName || ''}
               onChange={(e) => setSelectedProduct({ ...selectedProduct, displayName: e.target.value, name: slugify(e.target.value) })}
               placeholder="Enter product name"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-bold mb-1">Image Url</label>
+            <Input
+              type="text"
+              value={selectedProduct?.image || ''}
+              onChange={(e) => setSelectedProduct({ ...selectedProduct, image: e.target.value })}
+              placeholder="Enter image url"
             />
           </div>
           <div className="mb-4">
