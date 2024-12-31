@@ -1,8 +1,8 @@
 // 'use client'
 import * as Headless from '@headlessui/react'
 import clsx from 'clsx'
-import React, { forwardRef } from 'react'
-import { Link } from 'react-router-dom'
+import React, { forwardRef, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { Select } from './Select'
 
 export function Sidebar({ className, ...props }: React.ComponentPropsWithoutRef<'nav'>) {
@@ -93,32 +93,66 @@ const classes = clsx(
 )
 
 export function SidebarNavigation() {
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+
+  const toggleMenu = (menuName: string) => {
+    setOpenMenu((prev) => (prev === menuName ? menuName : menuName));
+  };
+
+  const closeMenu = (menuName: string) => {
+    if (openMenu === menuName) return; // Prevent closing the currently open menu when clicking its child links
+    setOpenMenu(null);
+  };
+
   return (
     <Sidebar>
       <SidebarHeader>
-        <SidebarHeading>
-          TCGX Marketplace
-        </SidebarHeading>
+        <SidebarHeading>TCGX Marketplace</SidebarHeading>
       </SidebarHeader>
-      {/* <Select name="status" style={{
-        borderRadius: 0,
-        padding: '.5em 1em',
-        border: 'none',
-        borderBottom: '1px solid lightgray',
-        height: '50px'
-      }}>
-        <option value="one-piece">One Piece</option>
-        <option value="pokemon">Pokemon</option>
-        <option value="magic">Magic</option>
-      </Select> */}
       <SidebarBody>
-       <Link to="/tags">
-          <div className={clsx('cursor-default', classes)}>Tags</div>
+        {/* Dashboard */}
+        <Link to="/" onClick={() => closeMenu('')}>
+          <div className={clsx('cursor-default', classes)}>Dashboard</div>
         </Link>
-        <Link to="/products">
-          <div className={clsx('cursor-default', classes)}>Products</div>
-        </Link>
+
+        {/* Products */}
+        <div>
+          <div
+            className={clsx('cursor-pointer', classes)}
+            onClick={() => toggleMenu('products')}
+          >
+            <Link to="/products" className="flex-grow">
+              Products
+            </Link>
+          </div>
+          {openMenu === 'products' && (
+            <div className="ml-4">
+              <Link to="/tags">
+                <div className={clsx('cursor-default', classes)}>Tags</div>
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Settings */}
+        <div>
+          <div
+            className={clsx('cursor-pointer', classes)}
+            onClick={() => toggleMenu('settings')}
+          >
+            <Link to="/settings" className="flex-grow">
+              Settings
+            </Link>
+          </div>
+          {openMenu === 'settings' && (
+            <div className="ml-4">
+              <Link to="/language">
+                <div className={clsx('cursor-default', classes)}>Language</div>
+              </Link>
+            </div>
+          )}
+        </div>
       </SidebarBody>
     </Sidebar>
   );
-};
+}
