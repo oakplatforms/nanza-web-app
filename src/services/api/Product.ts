@@ -1,6 +1,5 @@
 import { fetchData } from './index';
-import { ProductDto } from '../../types';
-import { TempProductDto } from '../../app/forms/Product';
+import { ProductDto, ProductPayload } from '../../types';
 
 export const productService = {
   async get(productId: string, parameters = '') {
@@ -9,14 +8,14 @@ export const productService = {
   async list(parameters = '') {
     return fetchData({ url: `/tcgx-marketplace/one-piece/products${parameters}` });
   },
-  async create(productPayload: Partial<TempProductDto>) {
+  async create(productPayload: ProductPayload) {
     return fetchData({
       url: '/tcgx-marketplace/one-piece/product',
       method: 'POST',
       payload: productPayload,
     })
   },
-  async update(productId: string, productPayload: Partial<TempProductDto>) {
+  async update(productId: string, productPayload: ProductPayload) {
     return fetchData({
       url: `/tcgx-marketplace/one-piece/product/${productId}`,
       method: 'PUT',
