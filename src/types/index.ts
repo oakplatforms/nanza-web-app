@@ -14,26 +14,10 @@ export type BrandCategoryDto = components["schemas"]["BrandCategory"]
 export type ListDto = components["schemas"]["List"]
 export type CardDto = components["schemas"]["Card"]
 
-// THIS ARE TEMPORARY AND WILL BE REMOVE BY OUR MODELS
-export interface CardData {
-  imageUri: string;
-  title: string;
-  link: string;
-}
-
-export type SingleCardData = {
-  imageUri: string;
-  name: string;
-  number: string;
-  latestPrice: number;
-  rarity: string;
-  alternateArt: boolean;
-}
-
-export interface CTAData {
-  imageUri: string;
-  title: string;
-  link: string;
-  linkText: string;
-}
+export type ProductPayload = Omit<ProductDto, 'productTags'> & {
+  productTags?: {
+    create?: ProductTagDto[];
+    delete?: string[];
+  };
+};
   
