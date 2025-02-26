@@ -48,16 +48,16 @@ export function Layout({
   sidebar,
   children,
 }: React.PropsWithChildren<{ navbar?: React.ReactNode; sidebar: React.ReactNode }>) {
-  let [showSidebar, setShowSidebar] = useState(false)
+  const [showSidebar, setShowSidebar] = useState(false)
 
   return (
     <div className="relative isolate flex min-h-svh w-full bg-white max-lg:flex-col">
       <div className="fixed inset-y-0 left-0 w-64 border-r border-zinc-950/20">{sidebar}</div>
-      {/* Sidebar on mobile */}
+      {/*Sidebar on mobile */}
       <MobileSidebar open={showSidebar} close={() => setShowSidebar(false)}>
         {sidebar}
       </MobileSidebar>
-      {/* Navbar on mobile */}
+      {/*Navbar on mobile */}
       <header className="flex items-center px-4 lg:hidden">
         <div className="min-w-0 flex-1">{navbar}</div>
       </header>

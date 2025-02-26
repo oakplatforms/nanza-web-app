@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react'
-import { SupportedTagValuesDto, TagDto } from '../../types'
-import { tagService } from '../../services/api/Tag'
-import { SimpleTable } from '../../components/Table'
-import { Header } from '../../components/Header'
-import { Badge } from '../../components/Badge'
-import { PanelDrawer } from '../../components/PanelDrawer'
-import { Button } from '../../components/Button'
-import { ConfirmDialog, SimpleDialog } from '../../components/Dialog'
-import { Input } from '../../components/Input'
-import { slugify } from '../../helpers'
-import { supportedTagValueService } from '../../services/api/SupportedTagValue'
+import { SupportedTagValuesDto, TagDto } from '../../../types'
+import { tagService } from '../../../services/api/Tag'
+import { SimpleTable } from '../../../components/Table'
+import { Header } from '../../../components/Header'
+import { Badge } from '../../../components/Badge'
+import { PanelDrawer } from '../../../components/PanelDrawer'
+import { Button } from '../../../components/Button'
+import { ConfirmDialog, SimpleDialog } from '../../../components/Dialog'
+import { Input } from '../../../components/Input'
+import { slugify } from '../../../helpers'
+import { supportedTagValueService } from '../../../services/api/SupportedTagValue'
 import { PlusIcon, XCircleIcon } from '@heroicons/react/16/solid'
 
 export function TagsDashboard() {
-  const [tags, setTags] = useState<TagDto[]>([]);
+  const [tags, setTags] = useState<TagDto[]>([])
   const [isCreateTagDrawerOpen, setIsCreateTagDrawerOpen] = useState(false)
   const [isEditTagDrawerOpen, setIsEditTagDrawerOpen] = useState(false)
   const [selectedTag, setSelectedTag] = useState<TagDto | null>(null)
@@ -50,11 +50,11 @@ export function TagsDashboard() {
   const onUpdateTag = async () => {
     try {
       if (selectedTag && selectedTag.id) {
-        const { name, displayName, ...rest } = selectedTag
+        const { name, displayName } = selectedTag
         await tagService.update(selectedTag.id, {
           name,
           displayName,
-        });
+        })
         await initTags()
         setIsEditTagDrawerOpen(false)
         setSelectedTag(null)
@@ -68,7 +68,7 @@ export function TagsDashboard() {
     try {
       if (selectedTag && selectedTag.id) {
         await tagService.delete(selectedTag.id)
-        await initTags();
+        await initTags()
         setIsDeleteTagDialogOpen(false)
         setSelectedTag(null)
       }
@@ -152,10 +152,9 @@ export function TagsDashboard() {
       </>
     )
   }
-  
 
   const headers = ['Name', 'Supported Tag Values', '']
-  const tableRows = tags?.map((tag, idx) => ({
+  const tableRows = tags?.map((tag) => ({
     displayName: { value: tag.displayName || '', width: '150px' },
     supportedTagValues: {
       value: generateSupportedTagValues(tag),
@@ -186,8 +185,8 @@ export function TagsDashboard() {
         <PanelDrawer
           title="Create Tag"
           onCancel={() => {
-            setSelectedTag(null);
-            setIsCreateTagDrawerOpen(false);
+            setSelectedTag(null)
+            setIsCreateTagDrawerOpen(false)
           }}
           onSubmit={onCreateTag}
           submitButtonTxt="Add Tag"
@@ -209,8 +208,8 @@ export function TagsDashboard() {
         <PanelDrawer
           title="Edit Tag"
           onCancel={() => {
-            setSelectedTag(null);
-            setIsEditTagDrawerOpen(false);
+            setSelectedTag(null)
+            setIsEditTagDrawerOpen(false)
           }}
           onSubmit={onUpdateTag}
           submitButtonTxt="Update Tag"
@@ -231,8 +230,8 @@ export function TagsDashboard() {
       <ConfirmDialog
         isOpen={isDeleteTagDialogOpen}
         onClose={() => {
-          setSelectedTag(null);
-          setIsDeleteTagDialogOpen(false);
+          setSelectedTag(null)
+          setIsDeleteTagDialogOpen(false)
         }}
         title="Delete Tag"
         description={`Are you sure you want to delete the tag "${
@@ -264,5 +263,5 @@ export function TagsDashboard() {
         />
       </SimpleDialog>
     </>
-  );
+  )
 }

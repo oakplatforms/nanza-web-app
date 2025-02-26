@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import { Button } from './Button';
+import { ReactNode } from 'react'
+import { Button } from './Button'
 import { XMarkIcon } from '@heroicons/react/16/solid'
 
 interface PanelDrawerProps {
@@ -45,5 +45,5 @@ export function PanelDrawer ({ title, onSubmit, onCancel, children, submitButton
         </div>
       </div>
     </div>
-  );
+  )
 };

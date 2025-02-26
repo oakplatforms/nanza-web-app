@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 module.exports = {
   content: [
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',

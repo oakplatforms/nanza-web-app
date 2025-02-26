@@ -105,13 +105,13 @@ export function ConfirmDialog({ isOpen, onClose, title, description, confirmBtnT
       <DialogDescription>{description}</DialogDescription>
       <DialogActions>
         <Button
-          plain 
+          plain
           onClick={onClose}>
           Cancel
         </Button>
         <Button onClick={onConfirm} color='red'>{confirmBtnTxt}</Button>
       </DialogActions>
-  </Dialog>
+    </Dialog>
   ) : null
 }
 
@@ -137,7 +137,7 @@ export function SimpleDialog({ isOpen, onClose, title, submitBtnTxt, onSubmit, s
       </DialogBody>
       <DialogActions>
         <Button
-          plain 
+          plain
           onClick={onClose}>
           Cancel
         </Button>

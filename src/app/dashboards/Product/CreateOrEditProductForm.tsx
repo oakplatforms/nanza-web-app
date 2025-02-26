@@ -1,62 +1,61 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Combobox } from '@headlessui/react';
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
-import { Input } from '../../components/Input';
-import { Textarea } from '../../components/Textarea';
-import { Button } from '../../components/Button';
-import { slugify } from '../../helpers';
-import { ProductDto, TagDto, ProductTagDto, ProductPayload } from '../../types';
-import { productService } from '../../services/api/Product';
-import { tagService } from '../../services/api/Tag';
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Combobox } from '@headlessui/react'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { Input } from '../../../components/Input'
+import { Textarea } from '../../../components/Textarea'
+import { Button } from '../../../components/Button'
+import { slugify } from '../../../helpers'
+import { ProductDto, TagDto, ProductTagDto, ProductPayload } from '../../../types'
+import { productService } from '../../../services/api/Product'
+import { tagService } from '../../../services/api/Tag'
 
-export function ProductForm() {
-  const navigate = useNavigate();
-  const { productId } = useParams<{ productId?: string }>();
-  const [product, setProduct] = useState<ProductDto>();  
-  const [tagOptions, setTagOptions] = useState<Record<string, { id: string; values: string[] }>>({});
-  const [initialTags, setInitialTags] = useState<ProductTagDto[]>([]);
-  const [deletedTags, setDeletedTags] = useState<string[]>([]);
-  const [selectedTags, setSelectedTags] = useState<ProductTagDto[]>([]);
-  const [query, setQuery] = useState<Record<string, string>>({});
+export function CreateOrEditProductForm() {
+  const navigate = useNavigate()
+  const { productId } = useParams<{ productId?: string }>()
+  const [product, setProduct] = useState<ProductDto>()
+  const [tagOptions, setTagOptions] = useState<Record<string, { id: string; values: string[] }>>({})
+  const [initialTags, setInitialTags] = useState<ProductTagDto[]>([])
+  const [deletedTags, setDeletedTags] = useState<string[]>([])
+  const [selectedTags, setSelectedTags] = useState<ProductTagDto[]>([])
+  const [query, setQuery] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (productId) {
-      fetchProduct();
+      fetchProduct()
     }
-    fetchTagOptions();
-  }, [productId]);
-
+    fetchTagOptions()
+  }, [productId])
 
   const fetchProduct = async () => {
     try {
-      const fetchedProduct = await productService.get(`${productId}?include=productTags.tag`);
-      const initialTagsFromProduct: ProductTagDto[] = fetchedProduct.productTags || [];
-      setInitialTags(initialTagsFromProduct);
-      setSelectedTags(initialTagsFromProduct);
-      setProduct(fetchedProduct);
+      const fetchedProduct = await productService.get(`${productId}?include=productTags.tag`)
+      const initialTagsFromProduct: ProductTagDto[] = fetchedProduct.productTags || []
+      setInitialTags(initialTagsFromProduct)
+      setSelectedTags(initialTagsFromProduct)
+      setProduct(fetchedProduct)
     } catch (error) {
-      console.error("Error fetching product details:", error);
+      console.error('Error fetching product details:', error)
     }
-  };  
+  }
 
   const fetchTagOptions = async () => {
     try {
-      const tags: TagDto[] = await tagService.list('?include=supportedTagValues');
-      const options: Record<string, { id: string; values: string[] }> = {};
+      const tags: TagDto[] = await tagService.list('?include=supportedTagValues')
+      const options: Record<string, { id: string; values: string[] }> = {}
       tags.forEach((tag) => {
         if (tag.displayName) {
           options[tag.displayName] = {
             id: tag.id!,
             values: tag.supportedTagValues?.map((value) => value.displayName || '') || [],
-          };
+          }
         }
-      });
-      setTagOptions(options);
+      })
+      setTagOptions(options)
     } catch (error) {
-      console.error('Error fetching tag options:', error);
+      console.error('Error fetching tag options:', error)
     }
-  };
+  }
 
   const handleSave = async () => {
     try {
@@ -66,8 +65,8 @@ export function ProductForm() {
             (initialTag) =>
               initialTag.tagId === tag.tagId && initialTag.tagValue === tag.tagValue
           )
-      );
-  
+      )
+
       const payload: ProductPayload = {
         ...product,
         brandCategoryId: 'cm12ukr4b0004rylerclr9gto',
@@ -75,56 +74,56 @@ export function ProductForm() {
           create: createTags,
           delete: deletedTags,
         },
-      };
-  
-      if (productId) {
-        await productService.update(product?.id!, payload);
-      } else {
-        await productService.create(payload);
       }
-  
-      await fetchProduct();
-      navigate('/products');
+
+      if (product && productId) {
+        await productService.update(product.id!, payload)
+      } else {
+        await productService.create(payload)
+      }
+
+      await fetchProduct()
+      navigate('/products')
     } catch (error) {
-      console.error(`Error ${productId ? 'updating' : 'creating'} product:`, error);
+      console.error(`Error ${productId ? 'updating' : 'creating'} product:`, error)
     }
-  };
-  
+  }
+
   const handleAddTagValue = (tagName: string, value: string) => {
-    const tagId = tagOptions[tagName]?.id;
-    if (!tagId) return;
-  
+    const tagId = tagOptions[tagName]?.id
+    if (!tagId) return
+
     setSelectedTags((prev) => {
       if (!prev.some((tag) => tag.tagId === tagId && tag.tagValue === value)) {
-        return [...prev, { tagId, tagValue: value }];
+        return [...prev, { tagId, tagValue: value }]
       }
-      return prev;
-    });
-  
-    setDeletedTags((prev) => prev.filter((id) => id !== tagId));
-  };
-  
+      return prev
+    })
+
+    setDeletedTags((prev) => prev.filter((id) => id !== tagId))
+  }
+
   const handleRemoveTagValue = (tagName: string, value: string) => {
-    const tagId = tagOptions[tagName]?.id;
-    if (!tagId) return;
-  
+    const tagId = tagOptions[tagName]?.id
+    if (!tagId) return
+
     const existingTag = selectedTags.find(
       (tag) => tag.tagId === tagId && tag.tagValue === value
-    );
-  
+    )
+
     if (existingTag?.id) {
       setDeletedTags((prev) => {
         if (!prev.includes(existingTag.id!)) {
-          return [...prev, existingTag.id!];
+          return [...prev, existingTag.id!]
         }
-        return prev;
-      });
+        return prev
+      })
     }
-  
+
     setSelectedTags((prev) =>
       prev.filter((tag) => !(tag.tagId === tagId && tag.tagValue === value))
-    );
-  };
+    )
+  }
 
   const renderProductTags = () => {
     return Object.entries(tagOptions).map(([tagDisplayName, { id, values }]) => (
@@ -208,8 +207,8 @@ export function ProductForm() {
         )}
       </div>
     ))
-    
-  };
+
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -231,7 +230,7 @@ export function ProductForm() {
           </Button>
         </div>
       </div>
-  
+
       <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-6">
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
@@ -265,7 +264,7 @@ export function ProductForm() {
               </div>
             </div>
           </div>
-  
+
           <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Product Tags</h2>
             {renderProductTags()}
@@ -303,5 +302,5 @@ export function ProductForm() {
         </div>
       </div>
     </div>
-  );
+  )
 }

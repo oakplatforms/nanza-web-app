@@ -1,4 +1,4 @@
-// 'use client'
+//'use client'
 import * as Headless from '@headlessui/react'
 import clsx from 'clsx'
 import React, { forwardRef, useState } from 'react'
@@ -45,7 +45,7 @@ export const SidebarItem = forwardRef(function SidebarItem(
   ),
   ref: React.ForwardedRef<HTMLAnchorElement | HTMLButtonElement>
 ) {
-  let classes = clsx(
+  const classes = clsx(
     'flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5',
   )
 
@@ -93,16 +93,16 @@ const classes = clsx(
 )
 
 export function SidebarNavigation() {
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [openMenu, setOpenMenu] = useState<string | null>(null)
 
   const toggleMenu = (menuName: string) => {
-    setOpenMenu((prev) => (prev === menuName ? menuName : menuName));
-  };
+    setOpenMenu((prev) => (prev === menuName ? menuName : menuName))
+  }
 
   const closeMenu = (menuName: string) => {
-    if (openMenu === menuName) return; // Prevent closing the currently open menu when clicking its child links
-    setOpenMenu(null);
-  };
+    if (openMenu === menuName) return //Prevent closing the currently open menu when clicking its child links
+    setOpenMenu(null)
+  }
 
   return (
     <Sidebar>
@@ -110,12 +110,12 @@ export function SidebarNavigation() {
         <SidebarHeading>TCGX Marketplace</SidebarHeading>
       </SidebarHeader>
       <SidebarBody>
-        {/* Dashboard */}
+        {/*Dashboard */}
         <Link to="/" onClick={() => closeMenu('')}>
           <div className={clsx('cursor-default', classes)}>Dashboard</div>
         </Link>
 
-        {/* Products */}
+        {/*Products */}
         <div>
           <div
             className={clsx('cursor-pointer', classes)}
@@ -134,7 +134,7 @@ export function SidebarNavigation() {
           )}
         </div>
 
-        {/* Settings */}
+        {/*Settings */}
         <div>
           <div
             className={clsx('cursor-pointer', classes)}
@@ -154,5 +154,5 @@ export function SidebarNavigation() {
         </div>
       </SidebarBody>
     </Sidebar>
-  );
+  )
 }

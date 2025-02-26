@@ -1,5 +1,5 @@
-import { fetchData } from './index';
-import { ProductTagDto } from '../../types';
+import { fetchData } from './index'
+import { ProductTagDto } from '../../types'
 
 export const productTagService = {
   async create(productTagPayload: Omit<ProductTagDto, 'id' | 'createdAt' | 'updatedAt'>) {
