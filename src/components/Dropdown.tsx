@@ -29,21 +29,21 @@ export function DropdownMenu({
       anchor={anchor}
       className={clsx(
         className,
-        // Anchor positioning
+        //Anchor positioning
         '[--anchor-gap:theme(spacing.2)] [--anchor-padding:theme(spacing.1)] data-[anchor~=start]:[--anchor-offset:-6px] data-[anchor~=end]:[--anchor-offset:6px] sm:data-[anchor~=start]:[--anchor-offset:-4px] sm:data-[anchor~=end]:[--anchor-offset:4px]',
-        // Base styles
+        //Base styles
         'isolate w-max rounded-xl p-1',
-        // Invisible border that is only visible in `forced-colors` mode for accessibility purposes
+        //Invisible border that is only visible in `forced-colors` mode for accessibility purposes
         'outline outline-1 outline-transparent focus:outline-none',
-        // Handle scrolling when menu won't fit in viewport
+        //Handle scrolling when menu won't fit in viewport
         'overflow-y-auto',
-        // Popover background
+        //Popover background
         'bg-white/75 backdrop-blur-xl dark:bg-zinc-800/75',
-        // Shadows
+        //Shadows
         'shadow-lg ring-1 ring-zinc-950/10 dark:ring-inset dark:ring-white/10',
-        // Define grid at the menu level if subgrid is supported
+        //Define grid at the menu level if subgrid is supported
         'supports-[grid-template-columns:subgrid]:grid supports-[grid-template-columns:subgrid]:grid-cols-[auto_1fr_1.5rem_0.5rem_auto]',
-        // Transitions
+        //Transitions
         'transition data-[closed]:data-[leave]:opacity-0 data-[leave]:duration-100 data-[leave]:ease-in'
       )}
     />
@@ -57,24 +57,24 @@ export function DropdownItem({
   | Omit<Headless.MenuItemProps<'button'>, 'as' | 'className'>
   | Omit<Headless.MenuItemProps<typeof Link>, 'as' | 'className'>
 )) {
-  let classes = clsx(
+  const classes = clsx(
     className,
-    // Base styles
+    //Base styles
     'group cursor-default rounded-lg px-3.5 py-2.5 focus:outline-none sm:px-3 sm:py-1.5',
-    // Text styles
+    //Text styles
     'text-left text-base/6 text-zinc-950 sm:text-sm/6 dark:text-white forced-colors:text-[CanvasText]',
-    // Focus
+    //Focus
     'data-[focus]:bg-blue-500 data-[focus]:text-white',
-    // Disabled state
+    //Disabled state
     'data-[disabled]:opacity-50',
-    // Forced colors mode
+    //Forced colors mode
     'forced-color-adjust-none forced-colors:data-[focus]:bg-[Highlight] forced-colors:data-[focus]:text-[HighlightText] forced-colors:[&>[data-slot=icon]]:data-[focus]:text-[HighlightText]',
-    // Use subgrid when available but fallback to an explicit grid layout if not
+    //Use subgrid when available but fallback to an explicit grid layout if not
     'col-span-full grid grid-cols-[auto_1fr_1.5rem_0.5rem_auto] items-center supports-[grid-template-columns:subgrid]:grid-cols-subgrid',
-    // Icons
+    //Icons
     '[&>[data-slot=icon]]:col-start-1 [&>[data-slot=icon]]:row-start-1 [&>[data-slot=icon]]:-ml-0.5 [&>[data-slot=icon]]:mr-2.5 [&>[data-slot=icon]]:size-5 sm:[&>[data-slot=icon]]:mr-2 [&>[data-slot=icon]]:sm:size-4',
     '[&>[data-slot=icon]]:text-zinc-500 [&>[data-slot=icon]]:data-[focus]:text-white [&>[data-slot=icon]]:dark:text-zinc-400 [&>[data-slot=icon]]:data-[focus]:dark:text-white',
-    // Avatar
+    //Avatar
     '[&>[data-slot=avatar]]:-ml-1 [&>[data-slot=avatar]]:mr-2.5 [&>[data-slot=avatar]]:size-6 sm:[&>[data-slot=avatar]]:mr-2 sm:[&>[data-slot=avatar]]:size-5'
   )
 
@@ -98,7 +98,7 @@ export function DropdownSection({
       {...props}
       className={clsx(
         className,
-        // Define grid at the section level instead of the item level if subgrid is supported
+        //Define grid at the section level instead of the item level if subgrid is supported
         'col-span-full supports-[grid-template-columns:subgrid]:grid supports-[grid-template-columns:subgrid]:grid-cols-[auto_1fr_1.5rem_0.5rem_auto]'
       )}
     />
@@ -176,7 +176,7 @@ export function DropdownShortcut({
           key={index}
           className={clsx([
             'min-w-[2ch] text-center font-sans capitalize text-zinc-400 group-data-[focus]:text-white forced-colors:group-data-[focus]:text-[HighlightText]',
-            // Make sure key names that are longer than one character (like "Tab") have extra space
+            //Make sure key names that are longer than one character (like "Tab") have extra space
             index > 0 && char.length > 1 && 'pl-1',
           ])}
         >

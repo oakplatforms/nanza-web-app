@@ -5,7 +5,7 @@ type HeaderProps = { level?: 1 | 2 | 3 | 4 | 5 | 6 } & React.ComponentPropsWitho
 >
 
 export function Header({ className, level = 1, ...props }: HeaderProps) {
-  let Element: `h${typeof level}` = `h${level}`
+  const Element: `h${typeof level}` = `h${level}`
 
   return (
     <Element
@@ -16,7 +16,7 @@ export function Header({ className, level = 1, ...props }: HeaderProps) {
 }
 
 export function Subheader({ className, level = 2, ...props }: HeaderProps) {
-  let Element: `h${typeof level}` = `h${level}`
+  const Element: `h${typeof level}` = `h${level}`
 
   return (
     <Element

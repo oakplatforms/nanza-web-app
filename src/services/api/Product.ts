@@ -1,12 +1,12 @@
-import { fetchData } from './index';
-import { ProductDto, ProductPayload } from '../../types';
+import { fetchData } from './index'
+import { ProductPayload } from '../../types'
 
 export const productService = {
   async get(productId: string, parameters = '') {
-    return fetchData({ url: `/tcgx-marketplace/one-piece/product/${productId}${parameters}` });
+    return fetchData({ url: `/tcgx-marketplace/one-piece/product/${productId}${parameters}` })
   },
   async list(parameters = '') {
-    return fetchData({ url: `/tcgx-marketplace/one-piece/products${parameters}` });
+    return fetchData({ url: `/tcgx-marketplace/one-piece/products${parameters}` })
   },
   async create(productPayload: ProductPayload) {
     return fetchData({
