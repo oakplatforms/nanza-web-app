@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react'
-import { TagsDashboard } from '.'
-import { tagService } from '../../../services/api/Tag'
+import { Tags } from '.'
+import { tagService } from '../../services/api/Tag'
 
-jest.mock('../../../services/api/Tag', () => ({
+jest.mock('../../services/api/Tag', () => ({
   tagService: {
     list: jest.fn(),
     create: jest.fn(),
@@ -11,14 +11,14 @@ jest.mock('../../../services/api/Tag', () => ({
   }
 }))
 
-jest.mock('../../../services/api/SupportedTagValue', () => ({
+jest.mock('../../services/api/SupportedTagValue', () => ({
   supportedTagValueService: {
     create: jest.fn(),
     delete: jest.fn(),
   }
 }))
 
-describe('TagsDashboard', () => {
+describe('Tags', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -34,7 +34,7 @@ describe('TagsDashboard', () => {
     ];
     (tagService.list as jest.Mock).mockResolvedValue(mockTags)
 
-    const { findByText } = render(<TagsDashboard />)
+    const { findByText } = render(<Tags />)
 
     expect(await findByText('Tag 1')).toBeInTheDocument()
     expect(await findByText('Value 1')).toBeInTheDocument()
@@ -43,7 +43,7 @@ describe('TagsDashboard', () => {
   it('handles errors gracefully during tag fetching', async () => {
     (tagService.list as jest.Mock).mockRejectedValue(new Error('Failed to fetch'))
 
-    const { queryByText } = render(<TagsDashboard />)
+    const { queryByText } = render(<Tags />)
 
     expect(await queryByText('Tag 1')).not.toBeInTheDocument()
   })

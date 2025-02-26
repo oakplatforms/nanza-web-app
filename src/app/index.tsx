@@ -2,19 +2,19 @@ import { SidebarNavigation } from '../components/Sidebar'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 import { Layout } from '../components/Layout'
-import { ProductsDashboard } from './dashboards/Product'
-import { CreateOrEditProductForm } from './dashboards/Product/CreateOrEditProductForm'
-import { TagsDashboard } from './dashboards/Tag'
+import { Products } from './Products'
+import { CreateOrEditProduct } from './Products/CreateOrEditProduct'
+import { Tags } from './Tags'
 
 function App() {
   return (
     <Router>
       <Layout sidebar={<SidebarNavigation></SidebarNavigation>}>
         <Routes>
-          <Route path="/products" element={<ProductsDashboard />} />
-          <Route path="/products/new" element={<CreateOrEditProductForm />} />
-          <Route path="/products/edit/:productId" element={<CreateOrEditProductForm />} />
-          <Route path="/tags" element={<TagsDashboard />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/products/new" element={<CreateOrEditProduct />} />
+          <Route path="/products/edit/:productId" element={<CreateOrEditProduct />} />
+          <Route path="/tags" element={<Tags />} />
         </Routes>
       </Layout>
     </Router>

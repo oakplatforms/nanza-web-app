@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Combobox } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
-import { Input } from '../../../components/Input'
-import { Textarea } from '../../../components/Textarea'
-import { Button } from '../../../components/Button'
-import { slugify } from '../../../helpers'
-import { ProductDto, TagDto, ProductTagDto, ProductPayload } from '../../../types'
-import { productService } from '../../../services/api/Product'
-import { tagService } from '../../../services/api/Tag'
+import { Input } from '../../components/Input'
+import { Textarea } from '../../components/Textarea'
+import { Button } from '../../components/Button'
+import { slugify } from '../../helpers'
+import { ProductDto, TagDto, ProductTagDto, ProductPayload } from '../../types'
+import { productService } from '../../services/api/Product'
+import { tagService } from '../../services/api/Tag'
 
-export function CreateOrEditProductForm() {
+export function CreateOrEditProduct() {
   const navigate = useNavigate()
   const { productId } = useParams<{ productId?: string }>()
   const [product, setProduct] = useState<ProductDto>()
@@ -18,7 +18,8 @@ export function CreateOrEditProductForm() {
   const [initialTags, setInitialTags] = useState<ProductTagDto[]>([])
   const [deletedTags, setDeletedTags] = useState<string[]>([])
   const [selectedTags, setSelectedTags] = useState<ProductTagDto[]>([])
-  const [query, setQuery] = useState<Record<string, string>>({})
+  const [updatedTags, setUpdatedTags] = useState<ProductTagDto[]>([])
+  const [tag, setTag] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (productId) {
@@ -73,6 +74,7 @@ export function CreateOrEditProductForm() {
         productTags: {
           create: createTags,
           delete: deletedTags,
+          update: updatedTags,
         },
       }
 
@@ -101,6 +103,28 @@ export function CreateOrEditProductForm() {
     })
 
     setDeletedTags((prev) => prev.filter((id) => id !== tagId))
+  }
+
+  const updateTagValue = (tagName: string, newValue: string) => {
+    const tagId = tagOptions[tagName]?.id
+    if (!tagId) return
+
+    setUpdatedTags((prev) => {
+      const tagExists = prev.some((tag) => tag.tagId === tagId)
+
+      if (tagExists) {
+        return prev.map((tag) =>
+          tag.tagId === tagId ? { ...tag, tagValue: newValue } : tag
+        )
+      } else {
+        const existingTag = selectedTags.find((tag) => tag.tagId === tagId)
+        if (existingTag) {
+          return [...prev, { ...existingTag, tagValue: newValue }]
+        }
+      }
+
+      return prev
+    })
   }
 
   const handleRemoveTagValue = (tagName: string, value: string) => {
@@ -134,11 +158,16 @@ export function CreateOrEditProductForm() {
             type="text"
             className="w-full px-3 py-2 border rounded-md placeholder-gray-400"
             placeholder={`Enter ${tagDisplayName}`}
-            value={query[tagDisplayName] || selectedTags.find(selectedTag => selectedTag.tagId === id)?.tagValue || ''}
-            onChange={(event) => setQuery((prev) => ({ ...prev, [tagDisplayName]: event.target.value }))}
+            value={tag[tagDisplayName] || selectedTags.find(selectedTag => selectedTag.tagId === id)?.tagValue || ''}
+            onChange={(event) => setTag((prev) => ({ ...prev, [tagDisplayName]: event.target.value }))}
             onBlur={() => {
-              if (query[tagDisplayName]) {
-                handleAddTagValue(tagDisplayName, query[tagDisplayName])
+              if (tag[tagDisplayName]) {
+                console.log('is it trye', selectedTags.some((tag) => tag.tagId === id))
+                if (selectedTags.some((tag) => tag.tagId === id)) {
+                  updateTagValue(tagDisplayName, tag[tagDisplayName])
+                } else {
+                  handleAddTagValue(tagDisplayName, tag[tagDisplayName])
+                }
               }
             }}
           />
@@ -172,7 +201,7 @@ export function CreateOrEditProductForm() {
                 <Combobox.Input
                   className="flex-grow bg-transparent outline-none placeholder-gray-400"
                   onChange={(event) =>
-                    setQuery((prev) => ({ ...prev, [tagDisplayName]: event.target.value }))
+                    setTag((prev) => ({ ...prev, [tagDisplayName]: event.target.value }))
                   }
                   placeholder="Search or add..."
                 />
@@ -184,7 +213,7 @@ export function CreateOrEditProductForm() {
                 <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
                   {values
                     .filter((option) =>
-                      option.toLowerCase().includes(query[tagDisplayName]?.toLowerCase() || '')
+                      option.toLowerCase().includes(tag[tagDisplayName]?.toLowerCase() || '')
                     )
                     .map((option) => (
                       <Combobox.Option

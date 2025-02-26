@@ -17,6 +17,7 @@ export type CardDto = components['schemas']['Card']
 export type ProductPayload = Omit<ProductDto, 'productTags'> & {
   productTags?: {
     create?: ProductTagDto[];
+    update?: ProductTagDto[];
     delete?: string[];
   };
 };

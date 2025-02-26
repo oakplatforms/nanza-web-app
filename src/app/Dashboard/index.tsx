@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react'
-import { SupportedTagValuesDto, TagDto } from '../../../types'
-import { tagService } from '../../../services/api/Tag'
-import { SimpleTable } from '../../../components/Table'
-import { Header } from '../../../components/Header'
-import { Badge } from '../../../components/Badge'
-import { PanelDrawer } from '../../../components/PanelDrawer'
-import { Button } from '../../../components/Button'
-import { ConfirmDialog, SimpleDialog } from '../../../components/Dialog'
-import { Input } from '../../../components/Input'
-import { slugify } from '../../../helpers'
-import { supportedTagValueService } from '../../../services/api/SupportedTagValue'
+import { SupportedTagValuesDto, TagDto } from '../../types'
+import { tagService } from '../../services/api/Tag'
+import { SimpleTable } from '../../components/Table'
+import { Header } from '../../components/Header'
+import { Badge } from '../../components/Badge'
+import { PanelDrawer } from '../../components/PanelDrawer'
+import { Button } from '../../components/Button'
+import { ConfirmDialog, SimpleDialog } from '../../components/Dialog'
+import { Input } from '../../components/Input'
+import { slugify } from '../../helpers'
+import { supportedTagValueService } from '../../services/api/SupportedTagValue'
 import { PlusIcon, XCircleIcon } from '@heroicons/react/16/solid'
 
-export function TagsDashboard() {
+export function Tags() {
   const [tags, setTags] = useState<TagDto[]>([])
   const [isCreateTagDrawerOpen, setIsCreateTagDrawerOpen] = useState(false)
   const [isEditTagDrawerOpen, setIsEditTagDrawerOpen] = useState(false)

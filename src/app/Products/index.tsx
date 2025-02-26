@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ProductDto } from '../../../types'
-import { productService } from '../../../services/api/Product'
-import { SimpleTable } from '../../../components/Table'
-import { Header } from '../../../components/Header'
-import { Button } from '../../../components/Button'
-import { ConfirmDialog } from '../../../components/Dialog'
-import { Badge } from '../../../components/Badge'
+import { ProductDto } from '../../types'
+import { productService } from '../../services/api/Product'
+import { SimpleTable } from '../../components/Table'
+import { Header } from '../../components/Header'
+import { Button } from '../../components/Button'
+import { ConfirmDialog } from '../../components/Dialog'
+import { Badge } from '../../components/Badge'
 
-export function ProductsDashboard() {
+export function Products() {
   const navigate = useNavigate()
   const [products, setProducts] = useState<ProductDto[]>([])
   const [isDeleteProductDialogOpen, setIsDeleteProductDialogOpen] = useState(false)
