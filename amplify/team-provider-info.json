@@ -1,0 +1,27 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-oakadmin-dev-a0614-authRole",
+      "UnauthRoleArn": "arn:aws:iam::992382609315:role/amplify-oakadmin-dev-a0614-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::992382609315:role/amplify-oakadmin-dev-a0614-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-oakadmin-dev-a0614-deployment",
+      "UnauthRoleName": "amplify-oakadmin-dev-a0614-unauthRole",
+      "StackName": "amplify-oakadmin-dev-a0614",
+      "StackId": "arn:aws:cloudformation:us-east-1:992382609315:stack/amplify-oakadmin-dev-a0614/de7ec100-f473-11ef-985f-1203711ef11d",
+      "AmplifyAppId": "d2dnnldjjpirod",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-oakadmin-dev-a0614-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+    },
+    "categories": {
+      "auth": {
+        "oakadmin63ec0004": {}
+      },
+      "function": {
+        "oakadmin63ec0004PostConfirmation": {
+          "deploymentBucketName": "amplify-oakadmin-dev-a0614-deployment",
+          "s3Key": "amplify-builds/oakadmin63ec0004PostConfirmation-35485857336332574367-build.zip"
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { Button } from './Button'
+import { Button } from './Tailwind/Button'
 import { XMarkIcon } from '@heroicons/react/16/solid'
 
 interface PanelDrawerProps {

@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Combobox } from '@headlessui/react'
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
-import { Input } from '../../components/Input'
-import { Textarea } from '../../components/Textarea'
-import { Button } from '../../components/Button'
+import { Input, Textarea, Button } from '../../components/Tailwind'
 import { slugify } from '../../helpers'
 import { ProductDto, TagDto, ProductTagDto, ProductPayload } from '../../types'
 import { productService } from '../../services/api/Product'
 import { tagService } from '../../services/api/Tag'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/16/solid'
 
 export function CreateOrEditProduct() {
   const navigate = useNavigate()
