@@ -2,11 +2,9 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ProductDto } from '../../types'
 import { productService } from '../../services/api/Product'
-import { SimpleTable } from '../../components/Table'
-import { Header } from '../../components/Header'
-import { Button } from '../../components/Button'
-import { ConfirmDialog } from '../../components/Dialog'
-import { Badge } from '../../components/Badge'
+import { Button, Badge, Header } from '../../components/Tailwind'
+import { ConfirmDialog } from '../../components/ConfirmDialog'
+import { SimpleTable } from '../../components/SimpleTable'
 
 export function Products() {
   const navigate = useNavigate()

@@ -3,6 +3,8 @@ import * as Headless from '@headlessui/react'
 import clsx from 'clsx'
 import React, { forwardRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useSession } from '../context/SessionContext'
+import { signOut } from 'aws-amplify/auth'
 
 export function Sidebar({ className, ...props }: React.ComponentPropsWithoutRef<'nav'>) {
   return <nav {...props} className={clsx(className, 'flex h-full min-h-0 flex-col')} />
@@ -92,18 +94,28 @@ const classes = clsx(
 )
 
 export function SidebarNavigation() {
-  const [openMenu, setOpenMenu] = useState<string[]>([]);
+  const [openMenu, setOpenMenu] = useState<string[]>([])
+  const { setIsSignedIn, setCurrentUser } = useSession()
 
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      setIsSignedIn(false)
+      setCurrentUser(undefined)
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const toggleMenu = (menuName: string) => {
     setOpenMenu((prev) =>
       prev.includes(menuName) ? prev.filter((menu) => menu !== menuName) : [...prev, menuName]
-    );
-  };
+    )
+  }
 
   const closeMenu = (menuName: string) => {
-    if (openMenu.includes(menuName)) return; // Prevent closing the currently open menu when clicking its child links
-    setOpenMenu([]);
-  };
+    if (openMenu.includes(menuName)) return
+    setOpenMenu([])
+  }
 
   return (
     <Sidebar>
@@ -111,17 +123,12 @@ export function SidebarNavigation() {
         <SidebarHeading>TCGX Marketplace</SidebarHeading>
       </SidebarHeader>
       <SidebarBody>
-        {/* Dashboard */}
         <Link to="/" onClick={() => closeMenu('')}>
           <div className={clsx('cursor-default', classes)}>Dashboard</div>
         </Link>
-
-        {/* Users */}
         <Link to="/" onClick={() => closeMenu('')}>
           <div className={clsx('cursor-default', classes)}>Users</div>
         </Link>
-
-        {/* Marketplace */}
         <div>
           <div
             className={clsx('cursor-pointer', classes)}
@@ -156,8 +163,6 @@ export function SidebarNavigation() {
             </>
           )}
         </div>
-
-        {/* Brands */}
         <div>
           <div
             className={clsx('cursor-pointer', classes)}
@@ -177,20 +182,26 @@ export function SidebarNavigation() {
             </>
           )}
         </div>
-
-        {/* Products */}
         <div>
           <div
             className={clsx('cursor-pointer', classes)}
             onClick={() => toggleMenu('products')}
           >
             <Link to="/products" className="flex-grow">
-              Products
+            Products
             </Link>
+          </div>
+        </div>
+        <div>
+          <div
+            className={clsx('cursor-pointer', classes)}
+            onClick={() => handleSignOut()}
+          >
+            Sign Out
           </div>
         </div>
       </SidebarBody>
     </Sidebar>
-  );
+  )
 }
 

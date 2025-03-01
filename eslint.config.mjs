@@ -7,7 +7,7 @@ import jest from 'eslint-plugin-jest'
 /**@type {import('eslint').Linter.FlatConfig[]} */
 export default [
   {
-    ignores: ['src/types/tcgx-schemas.ts', 'src/components/**'],
+    ignores: ['src/types/tcgx-schemas.ts'],
   },
   {
     files: ['**/*.{js,mjs,cjs,ts,jsx,tsx,test.ts}'],

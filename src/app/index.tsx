@@ -1,23 +1,15 @@
-import { SidebarNavigation } from '../components/Sidebar'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import awsExports from '../aws-exports'
+import { Amplify } from 'aws-amplify'
+import { SessionProvider } from '../context/SessionContext'
+import AppLayout from './AppLayout'
 
-import { Layout } from '../components/Layout'
-import { Products } from './Products'
-import { CreateOrEditProduct } from './Products/CreateOrEditProduct'
-import { Tags } from './Tags'
+Amplify.configure(awsExports)
 
 function App() {
   return (
-    <Router>
-      <Layout sidebar={<SidebarNavigation></SidebarNavigation>}>
-        <Routes>
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/new" element={<CreateOrEditProduct />} />
-          <Route path="/products/edit/:productId" element={<CreateOrEditProduct />} />
-          <Route path="/tags" element={<Tags />} />
-        </Routes>
-      </Layout>
-    </Router>
+    <SessionProvider>
+      <AppLayout />
+    </SessionProvider>
   )
 }
 

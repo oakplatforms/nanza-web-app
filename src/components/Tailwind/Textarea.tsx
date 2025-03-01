@@ -24,8 +24,8 @@ export const Textarea = forwardRef(function Textarea(
           className={clsx(
             'absolute left-3 transition-all bg-white px-1 z-10',
             isFocused || props.value
-              ? '-top-2 text-xs font-medium text-gray-900 opacity-100' //Fully visible when focused or has value
-              : 'top-3 text-gray-500 opacity-0 pointer-events-none' //Transparent and non-interactive when unfocused and empty
+              ? '-top-2 text-xs font-medium text-gray-900 opacity-100'
+              : 'top-3 text-gray-500 opacity-0 pointer-events-none'
           )}
         >
           {label}
@@ -50,7 +50,7 @@ export const Textarea = forwardRef(function Textarea(
         <Headless.Textarea
           ref={ref}
           {...props}
-          placeholder={isFocused ? '' : props.placeholder} //Hide placeholder when focused
+          placeholder={isFocused ? '' : props.placeholder}
           className={clsx([
             //Basic layout
             'relative block h-full w-full appearance-none rounded-lg px-[calc(theme(spacing[3.5])-1px)] py-[calc(theme(spacing[2.5])-1px)] sm:px-[calc(theme(spacing.3)-1px)] sm:py-[calc(theme(spacing[1.5])-1px)]',

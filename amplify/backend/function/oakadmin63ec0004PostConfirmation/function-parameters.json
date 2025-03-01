@@ -1,0 +1,16 @@
+{
+  "trigger": true,
+  "modules": [
+    "custom"
+  ],
+  "parentResource": "oakadmin63ec0004",
+  "functionName": "oakadmin63ec0004PostConfirmation",
+  "resourceName": "oakadmin63ec0004PostConfirmation",
+  "parentStack": "auth",
+  "triggerEnvs": "[]",
+  "triggerDir": "/opt/homebrew/Cellar/aws-amplify/12.14.2/libexec/lib/node_modules/@aws-amplify/cli-internal/node_modules/@aws-amplify/amplify-category-auth/provider-utils/awscloudformation/triggers/PostConfirmation",
+  "triggerTemplate": "PostConfirmation.json.ejs",
+  "triggerEventPath": "PostConfirmation.event.json",
+  "roleName": "oakadmin63ec0004PostConfirmation",
+  "skipEdit": true
+}
