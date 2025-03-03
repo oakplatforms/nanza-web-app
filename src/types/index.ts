@@ -7,17 +7,16 @@ export type BrandDto = components['schemas']['Brand']
 export type ThemeDto = components['schemas']['Theme']
 export type TagDto = components['schemas']['Tag']
 export type SupportedTagValuesDto = components['schemas']['SupportedTagValues']
-export type ProductDto = components['schemas']['Product']
-export type ProductTagDto = components['schemas']['ProductTag']
+export type EntityDto = components['schemas']['Entity']
+export type EntityTagDto = components['schemas']['EntityTag']
 export type CategoryDto = components['schemas']['Category']
 export type BrandCategoryDto = components['schemas']['BrandCategory']
 export type ListDto = components['schemas']['List']
-export type CardDto = components['schemas']['Card']
 
-export type ProductPayload = Omit<ProductDto, 'productTags'> & {
-  productTags?: {
-    create?: ProductTagDto[];
-    update?: ProductTagDto[];
+export type EntityPayload = Omit<EntityDto, 'entityTags'> & {
+  entityTags?: {
+    create?: EntityTagDto[];
+    update?: EntityTagDto[];
     delete?: string[];
   };
 };
