@@ -149,7 +149,7 @@ export function CreateOrEditProduct() {
     )
   }
 
-  const renderentityTags = () => {
+  const renderEntityTags = () => {
     return Object.entries(tagOptions).map(([tagDisplayName, { id, values }]) => (
       <div className="mb-4" key={id}>
         <label className="block text-sm font-bold mb-1">{tagDisplayName}</label>
@@ -297,7 +297,7 @@ export function CreateOrEditProduct() {
 
           <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Product Tags</h2>
-            {renderentityTags()}
+            {renderEntityTags()}
           </div>
         </div>
         <div className="lg:col-span-1 space-y-6">
