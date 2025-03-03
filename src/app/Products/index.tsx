@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ProductDto } from '../../types'
-import { productService } from '../../services/api/Product'
+import { EntityDto } from '../../types'
+import { entityService } from '../../services/api/Entity'
 import { Button, Badge, Header } from '../../components/Tailwind'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { SimpleTable } from '../../components/SimpleTable'
 
 export function Products() {
   const navigate = useNavigate()
-  const [products, setProducts] = useState<ProductDto[]>([])
+  const [productEntities, setProductEntities] = useState<EntityDto[]>([])
   const [isDeleteProductDialogOpen, setIsDeleteProductDialogOpen] = useState(false)
-  const [selectedProduct, setSelectedProduct] = useState<ProductDto | null>(null)
+  const [selectedProductEntity, setSelectedProductEntity] = useState<EntityDto | null>(null)
 
   useEffect(() => {
     initProducts()
@@ -18,28 +18,28 @@ export function Products() {
 
   const initProducts = async () => {
     try {
-      const productsData = await productService.list('?category=tcg&include=productTags.tag')
-      setProducts(productsData)
+      const productEntitiesData = await entityService.list('?category=tcg&include=entityTags.tag')
+      setProductEntities(productEntitiesData)
     } catch (error) {
       console.error('Error fetching products:', error)
     }
   }
 
   const onConfirmDeleteProduct = async (productIdx: number) => {
-    const selectedProduct = products[productIdx]
+    const selectedProductEntity = productEntities[productIdx]
 
-    if (selectedProduct) {
-      setSelectedProduct(selectedProduct)
+    if (selectedProductEntity) {
+      setSelectedProductEntity(selectedProductEntity)
       setIsDeleteProductDialogOpen(true)
     }
   }
 
   const onDeleteProduct = async () => {
     try {
-      if (selectedProduct) {
-        await productService.delete(selectedProduct.id!)
+      if (selectedProductEntity) {
+        await entityService.delete(selectedProductEntity.id!)
         await initProducts()
-        setSelectedProduct(null)
+        setSelectedProductEntity(null)
         setIsDeleteProductDialogOpen(false)
       }
     } catch (error) {
@@ -47,25 +47,25 @@ export function Products() {
     }
   }
 
-  const generateTagBadges = (product: ProductDto) => (
+  const generateTagBadges = (productEntity: EntityDto) => (
     <>
-      {product?.productTags?.map((productTag, idx) => (
+      {productEntity?.entityTags?.map((entityTag, idx) => (
         <Badge
           color="zinc"
           className="ml-3 mt-1 relative whitespace-nowrap align-middle"
           key={idx}
         >
-          {productTag.tag?.displayName} | {productTag.tagValue}
+          {entityTag.tag?.displayName} | {entityTag.tagValue}
         </Badge>
       ))}
     </>
   )
 
   const headers = ['Name', 'Description', 'Tags', '']
-  const tableRows = products?.map((product) => ({
-    displayName: { value: product.displayName || '', width: '200px' },
-    description: { value: product.description || '', width: '400px' },
-    tags: { value: generateTagBadges(product), width: '400px' },
+  const tableRows = productEntities?.map((productEntity) => ({
+    displayName: { value: productEntity.displayName || '', width: '200px' },
+    description: { value: productEntity.description || '', width: '400px' },
+    tags: { value: generateTagBadges(productEntity), width: '400px' },
   }))
 
   return (
@@ -84,17 +84,17 @@ export function Products() {
       <SimpleTable
         headers={headers}
         rows={tableRows}
-        onEdit={(productIdx: number) => navigate(`/products/edit/${products[productIdx].id}`)}
+        onEdit={(productIdx: number) => navigate(`/products/edit/${productEntities[productIdx].id}`)}
         onDelete={onConfirmDeleteProduct}
       />
       <ConfirmDialog
         isOpen={isDeleteProductDialogOpen}
         onClose={() => {
-          setSelectedProduct(null)
+          setSelectedProductEntity(null)
           setIsDeleteProductDialogOpen(false)
         }}
         title="Delete Product"
-        description={`Are you sure you want to delete your product ${selectedProduct?.displayName}?`}
+        description={`Are you sure you want to delete your product ${selectedProductEntity?.displayName}?`}
         onConfirm={onDeleteProduct}
         confirmBtnTxt="Delete"
       />

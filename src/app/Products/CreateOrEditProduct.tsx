@@ -3,20 +3,20 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Combobox } from '@headlessui/react'
 import { Input, Textarea, Button } from '../../components/Tailwind'
 import { slugify } from '../../helpers'
-import { ProductDto, TagDto, ProductTagDto, ProductPayload } from '../../types'
-import { productService } from '../../services/api/Product'
+import { EntityDto, TagDto, EntityTagDto, EntityPayload } from '../../types'
+import { entityService } from '../../services/api/Entity'
 import { tagService } from '../../services/api/Tag'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/16/solid'
 
 export function CreateOrEditProduct() {
   const navigate = useNavigate()
   const { productId } = useParams<{ productId?: string }>()
-  const [product, setProduct] = useState<ProductDto>()
+  const [productEntity, setProductEntity] = useState<EntityDto>()
   const [tagOptions, setTagOptions] = useState<Record<string, { id: string; values: string[] }>>({})
-  const [initialTags, setInitialTags] = useState<ProductTagDto[]>([])
+  const [initialTags, setInitialTags] = useState<EntityTagDto[]>([])
   const [deletedTags, setDeletedTags] = useState<string[]>([])
-  const [selectedTags, setSelectedTags] = useState<ProductTagDto[]>([])
-  const [updatedTags, setUpdatedTags] = useState<ProductTagDto[]>([])
+  const [selectedTags, setSelectedTags] = useState<EntityTagDto[]>([])
+  const [updatedTags, setUpdatedTags] = useState<EntityTagDto[]>([])
   const [tag, setTag] = useState<Record<string, string>>({})
 
   useEffect(() => {
@@ -28,11 +28,12 @@ export function CreateOrEditProduct() {
 
   const fetchProduct = async () => {
     try {
-      const fetchedProduct = await productService.get(`${productId}?include=productTags.tag`)
-      const initialTagsFromProduct: ProductTagDto[] = fetchedProduct.productTags || []
+      if (!productId) return
+      const fetchedProductEntity = await entityService.get(`${productId}?include=entityTags.tag`)
+      const initialTagsFromProduct: EntityTagDto[] = fetchedProductEntity.entityTags || []
       setInitialTags(initialTagsFromProduct)
       setSelectedTags(initialTagsFromProduct)
-      setProduct(fetchedProduct)
+      setProductEntity(fetchedProductEntity)
     } catch (error) {
       console.error('Error fetching product details:', error)
     }
@@ -66,20 +67,21 @@ export function CreateOrEditProduct() {
           )
       )
 
-      const payload: ProductPayload = {
-        ...product,
-        brandCategoryId: 'cm12ukr4b0004rylerclr9gto',
-        productTags: {
+      const payload: EntityPayload = {
+        ...productEntity,
+        type: 'PRODUCT',
+        brandCategoryId: 'cm7rluppj0009fxv47hmryuqe',
+        entityTags: {
           create: createTags,
           delete: deletedTags,
           update: updatedTags,
         },
       }
 
-      if (product && productId) {
-        await productService.update(product.id!, payload)
+      if (productEntity && productId) {
+        await entityService.update(productEntity.id!, payload)
       } else {
-        await productService.create(payload)
+        await entityService.create(payload)
       }
 
       await fetchProduct()
@@ -147,7 +149,7 @@ export function CreateOrEditProduct() {
     )
   }
 
-  const renderProductTags = () => {
+  const renderentityTags = () => {
     return Object.entries(tagOptions).map(([tagDisplayName, { id, values }]) => (
       <div className="mb-4" key={id}>
         <label className="block text-sm font-bold mb-1">{tagDisplayName}</label>
@@ -240,7 +242,7 @@ export function CreateOrEditProduct() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">{productId ? `Edit '${product?.displayName || ''}'` : `Create ${product?.displayName ? `'${product.displayName}'`: ''}`}</h1>
+        <h1 className="text-2xl font-bold">{productId ? `Edit '${productEntity?.displayName || ''}'` : `Create ${productEntity?.displayName ? `'${productEntity.displayName}'`: ''}`}</h1>
         <div className="flex gap-x-2">
           <Button
             onClick={() => navigate('/products')}
@@ -266,10 +268,11 @@ export function CreateOrEditProduct() {
               <div>
                 <Input
                   type="text"
-                  value={product?.displayName || ''}
+                  value={productEntity?.displayName || ''}
                   onChange={(e) =>
-                    setProduct({
-                      ...product,
+                    setProductEntity({
+                      ...productEntity,
+                      type: 'PRODUCT',
                       displayName: e.target.value,
                       name: slugify(e.target.value),
                     })
@@ -281,8 +284,8 @@ export function CreateOrEditProduct() {
               <div>
                 <Textarea
                   label="Description"
-                  value={product?.description || ''}
-                  onChange={(e) => setProduct({ ...product, description: e.target.value })}
+                  value={productEntity?.description || ''}
+                  onChange={(e) => setProductEntity({ ...productEntity, type: 'PRODUCT', description: e.target.value })}
                   placeholder="Enter product description"
                   resizable={false}
                   rows={3}
@@ -294,35 +297,19 @@ export function CreateOrEditProduct() {
 
           <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Product Tags</h2>
-            {renderProductTags()}
+            {renderentityTags()}
           </div>
         </div>
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Visibility</h2>
-            <p className="text-gray-600">[visibility field]</p>
-          </div>
           <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Product Image</h2>
             <div>
               <label className="block text-sm font-bold mb-1">Image URL</label>
               <Input
                 type="text"
-                value={product?.image || ''}
-                onChange={(e) => setProduct({ ...product, image: e.target.value })}
+                value={productEntity?.image || ''}
+                onChange={(e) => setProductEntity({ ...productEntity, type: 'PRODUCT', image: e.target.value })}
                 placeholder="Enter image URL"
-              />
-            </div>
-          </div>
-          <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Price</h2>
-            <div>
-              <Input
-                type="number"
-                value={product?.price || 0}
-                onChange={(e) => setProduct({ ...product, price: parseFloat(e.target.value) || 0 })}
-                label="Price"
-                placeholder="Enter product price"
               />
             </div>
           </div>
