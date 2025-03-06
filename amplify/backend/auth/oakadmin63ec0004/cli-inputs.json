@@ -1,6 +1,8 @@
 {
   "version": "1",
   "cognitoConfig": {
+    "identityPoolName": "oakadminc6ed6c10_identitypool_c6ed6c10",
+    "allowUnauthenticatedIdentities": false,
     "resourceNameTruncated": "oakadm63ec0004",
     "userPoolName": "oakadmin63ec0004_userpool_63ec0004",
     "autoVerifiedAttributes": [
@@ -33,7 +35,7 @@
     "userpoolClientSetAttributes": false,
     "sharedId": "63ec0004",
     "resourceName": "oakadmin63ec0004",
-    "authSelections": "userPoolOnly",
+    "authSelections": "identityPoolAndUserPool",
     "useDefault": "manual",
     "usernameAttributes": [
       "email"
@@ -79,6 +81,7 @@
       "Ref": "AWS::StackId"
     },
     "authTriggerConnections": "[\n  {\n    \"triggerType\": \"PostConfirmation\",\n    \"lambdaFunctionName\": \"oakadmin63ec0004PostConfirmation\"\n  }\n]",
-    "permissions": []
+    "permissions": [],
+    "thirdPartyAuth": true
   }
 }

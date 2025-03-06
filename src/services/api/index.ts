@@ -1,3 +1,5 @@
+import { fetchAuthSession } from '@aws-amplify/auth'
+
 type FetchProps = {
   url: string
   method?: string
@@ -11,18 +13,25 @@ class RateLimitError extends Error {
   }
 }
 
+async function getJwtToken() {
+  const session = await fetchAuthSession()
+  return session.tokens?.accessToken?.toString() || null
+}
+
 export async function fetchData({ url, method = 'GET', payload }: FetchProps) {
+  const token = await getJwtToken()
+
   const options = {
     method,
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: 'ew3fs2xds653xPvb342sda',
+      'Authorization': token ? `Bearer ${token}` : '',
     },
     body: payload ? JSON.stringify(payload) : undefined,
   }
 
-  const response = await fetch(`https://w1pr1uoehk.execute-api.us-east-1.amazonaws.com/api/v1${url}`, options)
+  const response = await fetch(`/api/v1${url}`, options)
 
   if (response.status === 429) {
     throw new RateLimitError('Rate limit exceeded. Stopping further requests.')

@@ -4,8 +4,8 @@ import { UserDto } from '../types'
 import { userService } from '../services/api/User'
 
 type TSessionContext = {
-  isSignedIn: boolean
-  setIsSignedIn: Dispatch<SetStateAction<boolean>>
+  isSignedIn?: boolean
+  setIsSignedIn: Dispatch<SetStateAction<boolean | undefined>>
   currentUser: UserDto | undefined
   setCurrentUser: Dispatch<SetStateAction<UserDto | undefined>>
 }
@@ -15,14 +15,14 @@ type SessionProviderProps = {
 }
 
 const SessionContext = createContext<TSessionContext>({
-  isSignedIn: false,
+  isSignedIn: undefined,
   setIsSignedIn: () => false,
   currentUser: undefined,
   setCurrentUser: () => undefined
 })
 
 const SessionProvider = ({ children } : SessionProviderProps) => {
-  const [isSignedIn, setIsSignedIn] = useState<boolean>(false)
+  const [isSignedIn, setIsSignedIn] = useState<boolean>()
   const [currentUser, setCurrentUser] = useState<UserDto>()
 
   useEffect(() => {
@@ -31,8 +31,11 @@ const SessionProvider = ({ children } : SessionProviderProps) => {
         const session = await fetchAuthSession()
         if (session.credentials) {
           setIsSignedIn(true)
+        } else {
+          setIsSignedIn(false)
         }
       } catch (error) {
+        setIsSignedIn(false)
         console.log(error)
       }
     }
