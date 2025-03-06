@@ -9,7 +9,9 @@ import SignIn from '../components/SignIn'
 
 function AppLayout() {
   const { isSignedIn } = useSession()
-  return isSignedIn ? (
+  return isSignedIn === undefined ? (
+    null
+  ) : isSignedIn ? (
     <Router>
       <Layout sidebar={<SidebarNavigation></SidebarNavigation>}>
         <Routes>

@@ -3,6 +3,8 @@ export type AmplifyDependentResourcesAttributes = {
     "oakadmin63ec0004": {
       "AppClientID": "string",
       "AppClientIDWeb": "string",
+      "IdentityPoolId": "string",
+      "IdentityPoolName": "string",
       "UserPoolArn": "string",
       "UserPoolId": "string",
       "UserPoolName": "string"
