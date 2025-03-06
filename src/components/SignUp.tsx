@@ -31,11 +31,12 @@ const SignUp = ({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) => {
 
     try {
       await confirmSignUp({ username: email, confirmationCode: confirmCode })
-      alert('Account confirmed! You can now sign in.')
       setIsConfirming(false)
       setEmail('')
       setPassword('')
       setConfirmCode('')
+      onSwitchToSignIn()
+      alert('Account confirmed! You can now sign in.')
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message)
