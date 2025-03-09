@@ -1,22 +1,38 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { EntityDto } from '../../types'
+import { EntityDto, EntityPayload, EntityTagDto, TagDto } from '../../types'
 import { entityService } from '../../services/api/Entity'
 import { Button, Badge, Header } from '../../components/Tailwind'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { SimpleTable } from '../../components/SimpleTable'
+import { SimpleDialog } from '../../components/SimpleDialog'
+import { CreateOrEditProduct } from './CreateOrEditProduct'
+import { tagService } from '../../services/api/Tag'
 
 export function Products() {
-  const navigate = useNavigate()
   const [productEntities, setProductEntities] = useState<EntityDto[]>([])
+  const [tags, setTags] = useState<TagDto[]>([])
+  const [isCreateOrEditProductDialogOpen, setIsCreateOrEditProductDialogOpen] = useState(false)
   const [isDeleteProductDialogOpen, setIsDeleteProductDialogOpen] = useState(false)
-  const [selectedProductEntity, setSelectedProductEntity] = useState<EntityDto | null>(null)
+  const [selectedProductEntity, setSelectedProductEntity] = useState<EntityDto>()
+  const [deletedTags, setDeletedTags] = useState<string[]>([])
+  const [selectedTags, setSelectedTags] = useState<EntityTagDto[]>([])
+  const [updatedTags, setUpdatedTags] = useState<EntityTagDto[]>([])
 
   useEffect(() => {
-    initProducts()
+    getProductEntities()
+    getTagsWithSupportedValues()
   }, [])
 
-  const initProducts = async () => {
+  const getTagsWithSupportedValues = async () => {
+    try {
+      const tags: TagDto[] = await tagService.list('?include=supportedTagValues')
+      setTags(tags)
+    } catch (error) {
+      console.error('Error fetching tag options:', error)
+    }
+  }
+
+  const getProductEntities = async () => {
     try {
       const productEntitiesData = await entityService.list('?category=tcg&include=entityTags.tag')
       setProductEntities(productEntitiesData)
@@ -25,11 +41,55 @@ export function Products() {
     }
   }
 
+  const onEditProduct = async (productIdx: number) => {
+    const selectedProductEntity = productEntities[productIdx]
+
+    if (selectedProductEntity) {
+      setSelectedProductEntity(selectedProductEntity)
+      setSelectedTags(selectedProductEntity?.entityTags || [])
+      setIsCreateOrEditProductDialogOpen(true)
+    }
+  }
+
+  const onProductSave = async () => {
+    try {
+      const createTags = selectedTags.filter(
+        (tag) =>
+          !selectedProductEntity?.entityTags?.some(
+            (initialTag) =>
+              initialTag.tagId === tag.tagId && initialTag.tagValue === tag.tagValue
+          )
+      )
+
+      const payload: EntityPayload = {
+        ...selectedProductEntity,
+        type: 'PRODUCT',
+        brandCategoryId: 'cm7rluppj0009fxv47hmryuqe',
+        entityTags: {
+          create: createTags,
+          delete: deletedTags,
+          update: updatedTags,
+        },
+      }
+
+      if (selectedProductEntity) {
+        await entityService.update(selectedProductEntity.id!, payload)
+      } else {
+        await entityService.create(payload)
+      }
+      await getProductEntities()
+      setIsCreateOrEditProductDialogOpen(false)
+    } catch (error) {
+      console.error(`Error ${selectedProductEntity ? 'updating' : 'creating'} product:`, error)
+    }
+  }
+
   const onConfirmDeleteProduct = async (productIdx: number) => {
     const selectedProductEntity = productEntities[productIdx]
 
     if (selectedProductEntity) {
       setSelectedProductEntity(selectedProductEntity)
+      setSelectedTags(selectedProductEntity?.entityTags || [])
       setIsDeleteProductDialogOpen(true)
     }
   }
@@ -38,8 +98,11 @@ export function Products() {
     try {
       if (selectedProductEntity) {
         await entityService.delete(selectedProductEntity.id!)
-        await initProducts()
-        setSelectedProductEntity(null)
+        await getProductEntities()
+        setSelectedProductEntity(undefined)
+        setSelectedTags([])
+        setDeletedTags([])
+        setUpdatedTags([])
         setIsDeleteProductDialogOpen(false)
       }
     } catch (error) {
@@ -74,23 +137,52 @@ export function Products() {
         <Header>Products</Header>
         <Button
           className="text-white px-4 py-2 ml-auto cursor-pointer"
-          onClick={() => navigate('/products/new')}
           color="green"
+          onClick={() => setIsCreateOrEditProductDialogOpen(true)}
         >
-          Create New
+          Add New Product
         </Button>
       </div>
       <br />
       <SimpleTable
         headers={headers}
         rows={tableRows}
-        onEdit={(productIdx: number) => navigate(`/products/edit/${productEntities[productIdx].id}`)}
+        onEdit={onEditProduct}
         onDelete={onConfirmDeleteProduct}
       />
+
+      <SimpleDialog
+        isOpen={isCreateOrEditProductDialogOpen}
+        size='3xl'
+        onClose={() => {
+          setSelectedProductEntity(undefined)
+          setSelectedTags([])
+          setDeletedTags([])
+          setUpdatedTags([])
+          setIsCreateOrEditProductDialogOpen(false)
+        }}
+        title={selectedProductEntity ? `Edit '${selectedProductEntity?.displayName || ''}'` : 'Add New Product'}
+        onSubmit={() => onProductSave()}
+        submitBtnTxt={selectedProductEntity ? 'Update Product' : 'Add Product'}
+        submitBtnColor='green'
+      >
+        <CreateOrEditProduct
+          selectedProductEntity={selectedProductEntity}
+          setSelectedProductEntity={setSelectedProductEntity}
+          tags={tags}
+          selectedTags={selectedTags}
+          setSelectedTags={setSelectedTags}
+          setDeletedTags={setDeletedTags}
+          setUpdatedTags={setUpdatedTags}
+        />
+      </SimpleDialog>
       <ConfirmDialog
         isOpen={isDeleteProductDialogOpen}
         onClose={() => {
-          setSelectedProductEntity(null)
+          setSelectedProductEntity(undefined)
+          setSelectedTags([])
+          setDeletedTags([])
+          setUpdatedTags([])
           setIsDeleteProductDialogOpen(false)
         }}
         title="Delete Product"

@@ -3,7 +3,7 @@ import * as Headless from '@headlessui/react'
 import clsx from 'clsx'
 import { Text } from './Text'
 
-const sizes = {
+export const sizes = {
   xs: 'sm:max-w-xs',
   sm: 'sm:max-w-sm',
   md: 'sm:max-w-md',

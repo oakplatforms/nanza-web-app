@@ -20,3 +20,13 @@ export type EntityPayload = Omit<EntityDto, 'entityTags'> & {
     delete?: string[];
   };
 };
+
+export type TagPayload = Omit<TagDto, 'supportedTagValues'> & {
+  supportedTagValues?: {
+    create?: SupportedTagValuesDto[];
+    update?: SupportedTagValuesDto[];
+    delete?: string[];
+  };
+  createdById?: string
+  lastModifiedById?: string
+};
