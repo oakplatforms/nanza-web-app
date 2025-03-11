@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react'
 import { TagDto } from '../../types'
-import { Combobox } from '@headlessui/react'
 import { tagService } from '../../services/api/Tag'
 import { SimpleTable } from '../../components/SimpleTable'
 import { Header, Badge, Button } from '../../components/Tailwind'
 import { SimpleDialog } from '../../components/SimpleDialog'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 
-import { Input } from '../../components/Tailwind/Input'
-import { slugify } from '../../helpers'
 import { useSession } from '../../context/SessionContext'
+import { CreateOrEditTag } from './CreateOrEditTag'
 
 export function Tags() {
   const { currentUser } = useSession()
@@ -31,46 +29,6 @@ export function Tags() {
     } catch (error) {
       console.log('Error fetching tags.', error)
     }
-  }
-
-  const handleAddSupportedTagValue = (value: string) => {
-    if (!selectedTag || !value.trim()) return
-
-    const formattedValue = value.trim()
-    const name = slugify(formattedValue)
-
-    setSelectedTag((prev) => {
-      if (!prev) return null
-
-      const exists = prev.supportedTagValues?.some(tag => tag?.displayName?.toLowerCase() === formattedValue.toLowerCase())
-      if (exists) return prev
-
-      return {
-        ...prev,
-        supportedTagValues: [
-          ...(prev.supportedTagValues || []),
-          { name, displayName: formattedValue }
-        ]
-      }
-    })
-
-    setDeletedSupportedTagValues((prev) => prev.filter(id => id !== name))
-    setNewSupportedTagValue('')
-  }
-
-  const handleRemoveSupportedTagValue = (tagId: string) => {
-    if (!selectedTag) return
-
-    setSelectedTag((prev) => {
-      if (!prev) return null
-
-      return {
-        ...prev,
-        supportedTagValues: prev.supportedTagValues?.filter(tag => tag.id !== tagId) || []
-      }
-    })
-
-    setDeletedSupportedTagValues((prev) => [...prev, tagId])
   }
 
   const onSaveTag = async () => {
@@ -176,59 +134,13 @@ export function Tags() {
         onSubmit={onSaveTag}
         submitBtnTxt={selectedTag?.id ? 'Update Tag' : 'Add Tag'}
       >
-        <div className="mb-4">
-          <label className="block text-sm font-bold mb-1">Name</label>
-          <Input
-            type="text"
-            value={selectedTag?.displayName || ''}
-            onChange={(e) =>
-              setSelectedTag({
-                ...selectedTag!,
-                displayName: e.target.value,
-                name: slugify(e.target.value),
-              })
-            }
-            placeholder="Enter tag name"
-          />
-          <div className="mb-4">
-            <label className="block text-sm font-bold mb-1 mt-2">Supported Tag Values</label>
-            <div className="relative">
-              <div className="flex flex-wrap items-center gap-2 px-2 py-1.5 border rounded-md bg-white">
-                {selectedTag?.supportedTagValues?.map((tagValue) => (
-                  <span
-                    key={tagValue.id}
-                    className="inline-flex items-center px-2 py-1 text-sm text-neutral-700 bg-gray-200 rounded-full"
-                  >
-                    {tagValue.displayName}
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveSupportedTagValue(tagValue.id!)}
-                      className="ml-2 text-xs text-neutral-700 hover:text-neutral-900"
-                    >
-                      ×
-                    </button>
-                  </span>
-                ))}
-                <Combobox as="div" value="" onChange={handleAddSupportedTagValue}>
-                  <div className="relative mt-1 text-sm">
-                    <Combobox.Input
-                      className="flex-grow bg-transparent outline-none placeholder-gray-400"
-                      value={newSupportedTagValue}
-                      onChange={(e) => setNewSupportedTagValue(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === 'Tab') {
-                          e.preventDefault()
-                          handleAddSupportedTagValue(newSupportedTagValue)
-                        }
-                      }}
-                      placeholder="Add a new value..."
-                    />
-                  </div>
-                </Combobox>
-              </div>
-            </div>
-          </div>
-        </div>
+        <CreateOrEditTag
+          selectedTag={selectedTag}
+          newSupportedTagValue={newSupportedTagValue}
+          setSelectedTag={setSelectedTag}
+          setDeletedSupportedTagValues={setDeletedSupportedTagValues}
+          setNewSupportedTagValue={setNewSupportedTagValue}
+        />
       </SimpleDialog>
       <ConfirmDialog
         isOpen={isDeleteTagDialogOpen}

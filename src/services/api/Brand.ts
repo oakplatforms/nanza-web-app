@@ -1,5 +1,5 @@
 import { fetchData } from './index'
-import { BrandDto } from '../../types'
+import { BrandPayload } from '../../types'
 
 export const brandService = {
   async get(brandId: string, parameters = '') {
@@ -8,14 +8,14 @@ export const brandService = {
   async list(parameters = '') {
     return fetchData({ url: `/tcgx-marketplace/brands${parameters}` })
   },
-  async create(brandPayload: Omit<BrandDto, 'id' | 'createdAt' | 'updatedAt'>) {
+  async create(brandPayload: BrandPayload) {
     return fetchData({
       url: '/tcgx-marketplace/brand',
       method: 'POST',
       payload: brandPayload,
     })
   },
-  async update(brandId: string, brandPayload: Partial<BrandDto>) {
+  async update(brandId: string, brandPayload: BrandPayload) {
     return fetchData({
       url: `/tcgx-marketplace/brand/${brandId}`,
       method: 'PUT',

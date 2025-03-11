@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { EntityDto, EntityPayload, EntityTagDto, TagDto } from '../../types'
+import { EntityDto, EntityTagDto, TagDto } from '../../types'
 import { entityService } from '../../services/api/Entity'
 import { Button, Badge, Header } from '../../components/Tailwind'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
@@ -7,8 +7,10 @@ import { SimpleTable } from '../../components/SimpleTable'
 import { SimpleDialog } from '../../components/SimpleDialog'
 import { CreateOrEditProduct } from './CreateOrEditProduct'
 import { tagService } from '../../services/api/Tag'
+import { useSession } from '../../context/SessionContext'
 
 export function Products() {
+  const { currentUser } = useSession()
   const [productEntities, setProductEntities] = useState<EntityDto[]>([])
   const [tags, setTags] = useState<TagDto[]>([])
   const [isCreateOrEditProductDialogOpen, setIsCreateOrEditProductDialogOpen] = useState(false)
@@ -51,7 +53,8 @@ export function Products() {
     }
   }
 
-  const onProductSave = async () => {
+  const onSaveProduct = async () => {
+    const existingProductEntity = selectedProductEntity?.id
     try {
       const createTags = selectedTags.filter(
         (tag) =>
@@ -61,26 +64,33 @@ export function Products() {
           )
       )
 
-      const payload: EntityPayload = {
-        ...selectedProductEntity,
-        type: 'PRODUCT',
-        brandCategoryId: 'cm7rluppj0009fxv47hmryuqe',
-        entityTags: {
-          create: createTags,
-          delete: deletedTags,
-          update: updatedTags,
-        },
-      }
-
-      if (selectedProductEntity) {
-        await entityService.update(selectedProductEntity.id!, payload)
+      if (existingProductEntity) {
+        await entityService.update(selectedProductEntity.id!, {
+          ...selectedProductEntity,
+          type: 'PRODUCT',
+          lastModifiedById: currentUser?.account?.id,
+          brandCategoryId: 'cm7rluppj0009fxv47hmryuqe',
+          entityTags: {
+            create: createTags,
+            delete: deletedTags,
+            update: updatedTags,
+          },
+        })
       } else {
-        await entityService.create(payload)
+        await entityService.create({
+          ...selectedProductEntity!,
+          type: 'PRODUCT',
+          createdById: currentUser?.account?.id,
+          brandCategoryId: 'cm7rluppj0009fxv47hmryuqe',
+          entityTags: {
+            create: createTags,
+          },
+        })
       }
       await getProductEntities()
       setIsCreateOrEditProductDialogOpen(false)
     } catch (error) {
-      console.error(`Error ${selectedProductEntity ? 'updating' : 'creating'} product:`, error)
+      console.error(`Error ${existingProductEntity ? 'updating' : 'creating'} product:`, error)
     }
   }
 
@@ -150,7 +160,6 @@ export function Products() {
         onEdit={onEditProduct}
         onDelete={onConfirmDeleteProduct}
       />
-
       <SimpleDialog
         isOpen={isCreateOrEditProductDialogOpen}
         size='3xl'
@@ -162,8 +171,8 @@ export function Products() {
           setIsCreateOrEditProductDialogOpen(false)
         }}
         title={selectedProductEntity ? `Edit '${selectedProductEntity?.displayName || ''}'` : 'Add New Product'}
-        onSubmit={() => onProductSave()}
-        submitBtnTxt={selectedProductEntity ? 'Update Product' : 'Add Product'}
+        onSubmit={() => onSaveProduct()}
+        submitBtnTxt={selectedProductEntity?.id ? 'Update Product' : 'Add Product'}
         submitBtnColor='green'
       >
         <CreateOrEditProduct

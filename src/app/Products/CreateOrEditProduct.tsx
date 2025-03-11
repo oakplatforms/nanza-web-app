@@ -127,7 +127,7 @@ export function CreateOrEditProduct({
             onChange={(value: string) => handleAddTagValue(tagDisplayName, value)}
           >
             <div className="relative mt-2">
-              <div className="flex flex-wrap items-center gap-2 px-2 py-1.5 border rounded-md bg-white">
+              <div className="flex flex-wrap items-center gap-2 px-2 py-1.5 border rounded-md bg-white h-[40px]">
                 {selectedTags
                   .filter((tag) => tag.tagId === tagOptions[tagDisplayName]?.id)
                   .map((tag) => tag.tagValue)
