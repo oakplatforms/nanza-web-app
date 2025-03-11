@@ -1,5 +1,5 @@
 import { fetchData } from './index'
-import { TagDto } from '../../types'
+import { TagPayload } from '../../types'
 
 export const tagService = {
   async get(tagId: string, parameters = '') {
@@ -8,14 +8,14 @@ export const tagService = {
   async list(parameters = '') {
     return fetchData({ url: `/tcgx-marketplace/tags${parameters}` })
   },
-  async create(tagPayload: Omit<TagDto, 'id' | 'createdAt' | 'updatedAt'>) {
+  async create(tagPayload: TagPayload) {
     return fetchData({
       url: '/tcgx-marketplace/tag',
       method: 'POST',
       payload: tagPayload,
     })
   },
-  async update(tagId: string, tagPayload: Partial<TagDto>) {
+  async update(tagId: string, tagPayload: TagPayload) {
     return fetchData({
       url: `/tcgx-marketplace/tag/${tagId}`,
       method: 'PUT',

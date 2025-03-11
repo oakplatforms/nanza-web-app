@@ -43,9 +43,58 @@ export interface components {
             wallet?: components["schemas"]["Wallet"] | null;
             user?: components["schemas"]["User"];
             userId?: string;
+            accountShippingCategories?: components["schemas"]["AccountShippingCategory"][];
+            accountCustomShippingOptions?: components["schemas"]["AccountCustomShippingOption"][];
+            createdMarketplaces?: components["schemas"]["Marketplace"][];
+            lastModifiedMarketplaces?: components["schemas"]["Marketplace"][];
+            createdBrands?: components["schemas"]["Brand"][];
+            lastModifiedBrands?: components["schemas"]["Brand"][];
+            createdThemes?: components["schemas"]["Theme"][];
+            lastModifiedThemes?: components["schemas"]["Theme"][];
+            createdCategories?: components["schemas"]["Category"][];
+            lastModifiedCategories?: components["schemas"]["Category"][];
+            createdTags?: components["schemas"]["Tag"][];
+            lastModifiedTags?: components["schemas"]["Tag"][];
+            createdSupportedTagValues?: components["schemas"]["SupportedTagValues"][];
+            lastModifiedSupportedTagValues?: components["schemas"]["SupportedTagValues"][];
+            createdEntities?: components["schemas"]["Entity"][];
+            lastModifiedEntities?: components["schemas"]["Entity"][];
+            createdShippingCategories?: components["schemas"]["ShippingCategory"][];
+            lastModifiedShippingCategories?: components["schemas"]["ShippingCategory"][];
+            createdShippingOptions?: components["schemas"]["ShippingOption"][];
+            lastModifiedShippingOptions?: components["schemas"]["ShippingOption"][];
+            createdLists?: components["schemas"]["List"][];
+            createdReviews?: components["schemas"]["Review"][];
+            createdBids?: components["schemas"]["Bid"][];
+            createdListings?: components["schemas"]["Listing"][];
+            createdPayouts?: components["schemas"]["Payout"][];
+            createdTransactions?: components["schemas"]["Transaction"][];
+            createdShipments?: components["schemas"]["Shipment"][];
             createdOrders?: components["schemas"]["Order"][];
             purchasedOrders?: components["schemas"]["Order"][];
             soldOrders?: components["schemas"]["Order"][];
+        };
+        AccountCustomShippingOption: {
+            id?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            account?: components["schemas"]["Account"];
+            accountId?: string;
+            shippingOption?: components["schemas"]["ShippingOption"];
+            shippingOptionId?: string;
+        };
+        AccountShippingCategory: {
+            id?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            account?: components["schemas"]["Account"];
+            accountId?: string;
+            shippingCategory?: components["schemas"]["ShippingCategory"];
+            shippingCategoryId?: string;
         };
         Bid: {
             id?: string;
@@ -59,8 +108,13 @@ export interface components {
             status?: "ACTIVE" | "DELETED" | "INACTIVE";
             /** @default false */
             multiTransactionsEnabled: boolean | null;
-            profile?: components["schemas"]["Profile"] | null;
-            profileId?: string | null;
+            /**
+             * @default MINT
+             * @enum {string}
+             */
+            condition: "MINT" | "NEAR_MINT" | "VERY_GOOD" | "GOOD" | "FAIR" | "POOR" | "DAMAGED";
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
             entity?: components["schemas"]["Entity"] | null;
             entityId?: string | null;
             orderBids?: components["schemas"]["OrderBid"][];
@@ -97,6 +151,10 @@ export interface components {
             updatedAt?: string;
             name?: string;
             displayName?: string | null;
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
+            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedById?: string | null;
             marketplace?: components["schemas"]["Marketplace"];
             marketplaceName?: string;
             theme?: components["schemas"]["Theme"] | null;
@@ -123,6 +181,11 @@ export interface components {
             updatedAt?: string;
             name?: string;
             displayName?: string | null;
+            description?: string | null;
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
+            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedById?: string | null;
             marketplace?: components["schemas"]["Marketplace"];
             marketplaceName?: string;
             brandCategories?: components["schemas"]["BrandCategory"][];
@@ -142,6 +205,10 @@ export interface components {
              */
             type: "PRODUCT" | "SERVICE" | "CONTENT";
             image?: string | null;
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
+            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedById?: string | null;
             product?: components["schemas"]["Product"] | null;
             brandCategory?: components["schemas"]["BrandCategory"];
             brandCategoryId?: string;
@@ -191,11 +258,11 @@ export interface components {
             description?: string | null;
             /** @enum {string|null} */
             type?: "COLLECTION" | "SET" | "DECK" | "FAVORITE" | null;
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
             brandCategory?: components["schemas"]["BrandCategory"];
             brandCategoryId?: string;
             entities?: components["schemas"]["Entity"][];
-            profile?: components["schemas"]["Profile"];
-            profileId?: string;
         };
         Listing: {
             id?: string;
@@ -216,35 +283,11 @@ export interface components {
             condition: "MINT" | "NEAR_MINT" | "VERY_GOOD" | "GOOD" | "FAIR" | "POOR" | "DAMAGED";
             /** @default false */
             isPrimary: boolean | null;
-            profile?: components["schemas"]["Profile"] | null;
-            profileId?: string | null;
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
             entity?: components["schemas"]["Entity"] | null;
             entityId?: string | null;
             orderListings?: components["schemas"]["OrderListing"][];
-            listingShippingCategories?: components["schemas"]["ListingShippingCategory"][];
-            listingCustomShippingOptions?: components["schemas"]["ListingCustomShippingOption"][];
-        };
-        ListingCustomShippingOption: {
-            id?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            listing?: components["schemas"]["Listing"];
-            listingId?: string;
-            shippingOption?: components["schemas"]["ShippingOption"];
-            shippingOptionId?: string;
-        };
-        ListingShippingCategory: {
-            id?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            listing?: components["schemas"]["Listing"];
-            listingId?: string;
-            shippingCategory?: components["schemas"]["ShippingCategory"];
-            shippingCategoryId?: string;
         };
         Marketplace: {
             id?: string;
@@ -256,6 +299,10 @@ export interface components {
             displayName?: string | null;
             /** @default false */
             hasMultiSellerEnabled: boolean | null;
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
+            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedById?: string | null;
             theme?: components["schemas"]["Theme"] | null;
             brands?: components["schemas"]["Brand"][];
             categories?: components["schemas"]["Category"][];
@@ -321,6 +368,8 @@ export interface components {
             taxRate?: number | null;
             tax?: number | null;
             total?: number | null;
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
             transactions?: components["schemas"]["Transaction"][];
             wallet?: components["schemas"]["Wallet"];
             walletId?: string;
@@ -360,10 +409,6 @@ export interface components {
             qrCode?: string | null;
             account?: components["schemas"]["Account"];
             accountId?: string;
-            lists?: components["schemas"]["List"][];
-            reviews?: components["schemas"]["Review"][];
-            bids?: components["schemas"]["Bid"][];
-            listings?: components["schemas"]["Listing"][];
         };
         Review: {
             id?: string;
@@ -373,8 +418,8 @@ export interface components {
             updatedAt?: string;
             rating?: number;
             description?: string;
-            profile?: components["schemas"]["Profile"];
-            profileId?: string;
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
             entity?: components["schemas"]["Entity"];
             entityId?: string;
         };
@@ -390,6 +435,8 @@ export interface components {
             /** @enum {string} */
             deliveryMethodType?: "FIRST_CLASS_MAIL" | "NEXT_DAY_AIR" | "OVERNIGHT" | "PRIORITY" | "FLAT_RATE" | "EXPRESS" | "ECONOMY" | "INTERNATIONAL" | "IN_PERSON";
             trackingNumber?: string | null;
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
             order?: components["schemas"]["Order"];
             transactionId?: string;
         };
@@ -413,10 +460,14 @@ export interface components {
              * @enum {string|null}
              */
             deliveryMethodType: "FIRST_CLASS_MAIL" | "NEXT_DAY_AIR" | "OVERNIGHT" | "PRIORITY" | "FLAT_RATE" | "EXPRESS" | "ECONOMY" | "INTERNATIONAL" | "IN_PERSON";
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
+            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedById?: string | null;
             marketplace?: components["schemas"]["Marketplace"];
             marketplaceName?: string;
             shippingOptions?: components["schemas"]["ShippingOption"][];
-            listingShippingCategories?: components["schemas"]["ListingShippingCategory"][];
+            accountShippingCategories?: components["schemas"]["AccountShippingCategory"][];
             bidShippingCategories?: components["schemas"]["BidShippingCategory"][];
         };
         ShippingOption: {
@@ -432,9 +483,13 @@ export interface components {
             maxWeight?: number | null;
             rate?: number;
             isRequired?: boolean | null;
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
+            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedById?: string | null;
             shippingCategory?: components["schemas"]["ShippingCategory"] | null;
             shippingCategoryId?: string | null;
-            listingCustomShippingOptions?: components["schemas"]["ListingCustomShippingOption"][];
+            accountCustomShippingOptions?: components["schemas"]["AccountCustomShippingOption"][];
             bidCustomShippingOptions?: components["schemas"]["BidCustomShippingOption"][];
         };
         SupportedTagValues: {
@@ -445,6 +500,10 @@ export interface components {
             updatedAt?: string;
             name?: string;
             displayName?: string | null;
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
+            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedById?: string | null;
             tag?: components["schemas"]["Tag"];
             tagId?: string;
         };
@@ -456,6 +515,10 @@ export interface components {
             updatedAt?: string;
             name?: string;
             displayName?: string | null;
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
+            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedById?: string | null;
             marketplace?: components["schemas"]["Marketplace"];
             marketplaceName?: string;
             entityTags?: components["schemas"]["EntityTag"][];
@@ -470,6 +533,10 @@ export interface components {
             logo?: string | null;
             primaryColor?: string | null;
             secondaryColor?: string | null;
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
+            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedById?: string | null;
             marketplace?: components["schemas"]["Marketplace"];
             marketplaceId?: string;
             brand?: components["schemas"]["Brand"];
@@ -507,6 +574,8 @@ export interface components {
              * @enum {string}
              */
             paymentMethodType: "CARD" | "BANK_ACCOUNT" | "APPLE_PAY";
+            createdBy?: components["schemas"]["Account"] | null;
+            createdById?: string | null;
             order?: components["schemas"]["Order"] | null;
             orderId?: string | null;
             payout?: components["schemas"]["Payout"] | null;

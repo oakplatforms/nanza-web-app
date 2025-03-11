@@ -1,98 +1,47 @@
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useState } from 'react'
 import { Combobox } from '@headlessui/react'
-import { Input, Textarea, Button } from '../../components/Tailwind'
+import { Input, Textarea } from '../../components/Tailwind'
 import { slugify } from '../../helpers'
-import { EntityDto, TagDto, EntityTagDto, EntityPayload } from '../../types'
-import { entityService } from '../../services/api/Entity'
-import { tagService } from '../../services/api/Tag'
+import { EntityDto, TagDto, EntityTagDto } from '../../types'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/16/solid'
 
-export function CreateOrEditProduct() {
-  const navigate = useNavigate()
-  const { productId } = useParams<{ productId?: string }>()
-  const [productEntity, setProductEntity] = useState<EntityDto>()
-  const [tagOptions, setTagOptions] = useState<Record<string, { id: string; values: string[] }>>({})
-  const [initialTags, setInitialTags] = useState<EntityTagDto[]>([])
-  const [deletedTags, setDeletedTags] = useState<string[]>([])
-  const [selectedTags, setSelectedTags] = useState<EntityTagDto[]>([])
-  const [updatedTags, setUpdatedTags] = useState<EntityTagDto[]>([])
+type CreateOrEditProductProps = {
+  selectedProductEntity?: EntityDto
+  setSelectedProductEntity: React.Dispatch<React.SetStateAction<EntityDto | undefined>>
+  tags?: TagDto[]
+  selectedTags: EntityTagDto[] | []
+  setSelectedTags: React.Dispatch<React.SetStateAction<EntityTagDto[]>>
+  setDeletedTags: React.Dispatch<React.SetStateAction<string[]>>
+  setUpdatedTags: React.Dispatch<React.SetStateAction<EntityTagDto[]>>
+}
+
+export function CreateOrEditProduct({
+  selectedProductEntity,
+  setSelectedProductEntity,
+  tags,
+  selectedTags,
+  setSelectedTags,
+  setDeletedTags,
+  setUpdatedTags
+} : CreateOrEditProductProps) {
   const [tag, setTag] = useState<Record<string, string>>({})
 
-  useEffect(() => {
-    if (productId) {
-      fetchProduct()
-    }
-    fetchTagOptions()
-  }, [productId])
-
-  const fetchProduct = async () => {
-    try {
-      if (!productId) return
-      const fetchedProductEntity = await entityService.get(`${productId}?include=entityTags.tag`)
-      const initialTagsFromProduct: EntityTagDto[] = fetchedProductEntity.entityTags || []
-      setInitialTags(initialTagsFromProduct)
-      setSelectedTags(initialTagsFromProduct)
-      setProductEntity(fetchedProductEntity)
-    } catch (error) {
-      console.error('Error fetching product details:', error)
-    }
-  }
-
-  const fetchTagOptions = async () => {
-    try {
-      const tags: TagDto[] = await tagService.list('?include=supportedTagValues')
-      const options: Record<string, { id: string; values: string[] }> = {}
-      tags.forEach((tag) => {
-        if (tag.displayName) {
-          options[tag.displayName] = {
-            id: tag.id!,
-            values: tag.supportedTagValues?.map((value) => value.displayName || '') || [],
-          }
+  const generateTagOptions = () => {
+    const options: Record<string, { id: string; values: string[] }> = {}
+    tags?.forEach((tag) => {
+      if (tag.displayName) {
+        options[tag.displayName] = {
+          id: tag.id!,
+          values: tag.supportedTagValues?.map((value) => value.displayName || '') || [],
         }
-      })
-      setTagOptions(options)
-    } catch (error) {
-      console.error('Error fetching tag options:', error)
-    }
-  }
-
-  const handleSave = async () => {
-    try {
-      const createTags = selectedTags.filter(
-        (tag) =>
-          !initialTags.some(
-            (initialTag) =>
-              initialTag.tagId === tag.tagId && initialTag.tagValue === tag.tagValue
-          )
-      )
-
-      const payload: EntityPayload = {
-        ...productEntity,
-        type: 'PRODUCT',
-        brandCategoryId: 'cm7rluppj0009fxv47hmryuqe',
-        entityTags: {
-          create: createTags,
-          delete: deletedTags,
-          update: updatedTags,
-        },
       }
-
-      if (productEntity && productId) {
-        await entityService.update(productEntity.id!, payload)
-      } else {
-        await entityService.create(payload)
-      }
-
-      await fetchProduct()
-      navigate('/products')
-    } catch (error) {
-      console.error(`Error ${productId ? 'updating' : 'creating'} product:`, error)
-    }
+    })
+    return options
   }
+  const tagOptions = generateTagOptions()
 
   const handleAddTagValue = (tagName: string, value: string) => {
-    const tagId = tagOptions[tagName]?.id
+    const tagId = tagOptions?.[tagName]?.id
     if (!tagId) return
 
     setSelectedTags((prev) => {
@@ -128,7 +77,7 @@ export function CreateOrEditProduct() {
   }
 
   const handleRemoveTagValue = (tagName: string, value: string) => {
-    const tagId = tagOptions[tagName]?.id
+    const tagId = tagOptions?.[tagName]?.id
     if (!tagId) return
 
     const existingTag = selectedTags.find(
@@ -178,7 +127,7 @@ export function CreateOrEditProduct() {
             onChange={(value: string) => handleAddTagValue(tagDisplayName, value)}
           >
             <div className="relative mt-2">
-              <div className="flex flex-wrap items-center gap-2 px-2 py-1.5 border rounded-md bg-white">
+              <div className="flex flex-wrap items-center gap-2 px-2 py-1.5 border rounded-md bg-white h-[40px]">
                 {selectedTags
                   .filter((tag) => tag.tagId === tagOptions[tagDisplayName]?.id)
                   .map((tag) => tag.tagValue)
@@ -198,13 +147,6 @@ export function CreateOrEditProduct() {
                       </button>
                     </span>
                   ))}
-                <Combobox.Input
-                  className="flex-grow bg-transparent outline-none placeholder-gray-400"
-                  onChange={(event) =>
-                    setTag((prev) => ({ ...prev, [tagDisplayName]: event.target.value }))
-                  }
-                  placeholder="Search or add..."
-                />
               </div>
               <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
                 <ChevronUpDownIcon className="size-5 text-gray-400" aria-hidden="true" />
@@ -240,27 +182,8 @@ export function CreateOrEditProduct() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">{productId ? `Edit '${productEntity?.displayName || ''}'` : `Create ${productEntity?.displayName ? `'${productEntity.displayName}'`: ''}`}</h1>
-        <div className="flex gap-x-2">
-          <Button
-            onClick={() => navigate('/products')}
-            className="text-white hover:text-gray-200"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSave}
-            color="green"
-            className="text-white px-4 py-2"
-          >
-            {productId ? 'Update' : 'Add Product'}
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-6">
+    <div>
+      <div>
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Product Details</h2>
@@ -268,10 +191,10 @@ export function CreateOrEditProduct() {
               <div>
                 <Input
                   type="text"
-                  value={productEntity?.displayName || ''}
+                  value={selectedProductEntity?.displayName || ''}
                   onChange={(e) =>
-                    setProductEntity({
-                      ...productEntity,
+                    setSelectedProductEntity({
+                      ...selectedProductEntity,
                       type: 'PRODUCT',
                       displayName: e.target.value,
                       name: slugify(e.target.value),
@@ -284,8 +207,8 @@ export function CreateOrEditProduct() {
               <div>
                 <Textarea
                   label="Description"
-                  value={productEntity?.description || ''}
-                  onChange={(e) => setProductEntity({ ...productEntity, type: 'PRODUCT', description: e.target.value })}
+                  value={selectedProductEntity?.description || ''}
+                  onChange={(e) => setSelectedProductEntity({ ...selectedProductEntity, type: 'PRODUCT', description: e.target.value })}
                   placeholder="Enter product description"
                   resizable={false}
                   rows={3}
@@ -294,23 +217,22 @@ export function CreateOrEditProduct() {
               </div>
             </div>
           </div>
-
-          <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Product Tags</h2>
-            {renderEntityTags()}
-          </div>
-        </div>
-        <div className="lg:col-span-1 space-y-6">
           <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Product Image</h2>
             <div>
               <label className="block text-sm font-bold mb-1">Image URL</label>
               <Input
                 type="text"
-                value={productEntity?.image || ''}
-                onChange={(e) => setProductEntity({ ...productEntity, type: 'PRODUCT', image: e.target.value })}
+                value={selectedProductEntity?.image || ''}
+                onChange={(e) => setSelectedProductEntity({ ...selectedProductEntity, type: 'PRODUCT', image: e.target.value })}
                 placeholder="Enter image URL"
               />
+            </div>
+          </div>
+          <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
+            <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">Product Tags</h2>
+              {renderEntityTags()}
             </div>
           </div>
         </div>

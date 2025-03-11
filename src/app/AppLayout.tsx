@@ -2,10 +2,12 @@ import { SidebarNavigation } from '../components/Sidebar'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { Products } from './Products'
-import { CreateOrEditProduct } from './Products/CreateOrEditProduct'
 import { Tags } from './Tags'
 import { useSession } from '../context/SessionContext'
 import SignIn from '../components/SignIn'
+import { Brands } from './Brands'
+import { Categories } from './Categories'
+import { ShippingCategories } from './Shipping'
 
 function AppLayout() {
   const { isSignedIn } = useSession()
@@ -15,10 +17,11 @@ function AppLayout() {
     <Router>
       <Layout sidebar={<SidebarNavigation></SidebarNavigation>}>
         <Routes>
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/new" element={<CreateOrEditProduct />} />
-          <Route path="/products/edit/:productId" element={<CreateOrEditProduct />} />
           <Route path="/tags" element={<Tags />} />
+          <Route path="/brands" element={<Brands />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/shipping" element={<ShippingCategories />} />
         </Routes>
       </Layout>
     </Router>

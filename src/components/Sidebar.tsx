@@ -94,7 +94,6 @@ const classes = clsx(
 )
 
 export function SidebarNavigation() {
-  const [openMenu, setOpenMenu] = useState<string[]>([])
   const { setIsSignedIn, setCurrentUser } = useSession()
 
   const handleSignOut = async () => {
@@ -106,92 +105,28 @@ export function SidebarNavigation() {
       console.log(error)
     }
   }
-  const toggleMenu = (menuName: string) => {
-    setOpenMenu((prev) =>
-      prev.includes(menuName) ? prev.filter((menu) => menu !== menuName) : [...prev, menuName]
-    )
-  }
-
-  const closeMenu = (menuName: string) => {
-    if (openMenu.includes(menuName)) return
-    setOpenMenu([])
-  }
 
   return (
     <Sidebar>
       <SidebarHeader>
-        <SidebarHeading>TCGX Marketplace</SidebarHeading>
+        <SidebarHeading>TCGx 0.1</SidebarHeading>
       </SidebarHeader>
       <SidebarBody>
-        <Link to="/" onClick={() => closeMenu('')}>
-          <div className={clsx('cursor-default', classes)}>Dashboard</div>
+        <Link to="/tags">
+          <div className={clsx('cursor-default', classes)}>Tags</div>
         </Link>
-        <Link to="/" onClick={() => closeMenu('')}>
-          <div className={clsx('cursor-default', classes)}>Users</div>
+        <Link to="/categories">
+          <div className={clsx('cursor-default', classes)}>Categories</div>
         </Link>
-        <div>
-          <div
-            className={clsx('cursor-pointer', classes)}
-            onClick={() => toggleMenu('marketplace')}
-          >
-            <Link to="/marketplace" className="flex-grow">
-              Marketplace
-            </Link>
-          </div>
-          {openMenu.includes('marketplace') && (
-            <>
-              <div className="ml-4">
-                <Link to="/settings">
-                  <div className={clsx('cursor-default', classes)}>Settings</div>
-                </Link>
-              </div>
-              <div className="ml-4">
-                <Link to="/tags">
-                  <div className={clsx('cursor-default', classes)}>Tags</div>
-                </Link>
-              </div>
-              <div className="ml-4">
-                <Link to="/categories">
-                  <div className={clsx('cursor-default', classes)}>Categories</div>
-                </Link>
-              </div>
-              <div className="ml-4">
-                <Link to="/shipping-options">
-                  <div className={clsx('cursor-default', classes)}>Shipping Options</div>
-                </Link>
-              </div>
-            </>
-          )}
-        </div>
-        <div>
-          <div
-            className={clsx('cursor-pointer', classes)}
-            onClick={() => toggleMenu('brands')}
-          >
-            <Link to="/brands" className="flex-grow">
-              Brands
-            </Link>
-          </div>
-          {openMenu.includes('brands') && (
-            <>
-              <div className="ml-4">
-                <Link to="/themes">
-                  <div className={clsx('cursor-default', classes)}>Themes</div>
-                </Link>
-              </div>
-            </>
-          )}
-        </div>
-        <div>
-          <div
-            className={clsx('cursor-pointer', classes)}
-            onClick={() => toggleMenu('products')}
-          >
-            <Link to="/products" className="flex-grow">
-            Products
-            </Link>
-          </div>
-        </div>
+        <Link to="/shipping">
+          <div className={clsx('cursor-default', classes)}>Shipping</div>
+        </Link>
+        <Link to="/brands">
+          <div className={clsx('cursor-default', classes)}>Brands</div>
+        </Link>
+        <Link to="/products">
+          <div className={clsx('cursor-default', classes)}>Products</div>
+        </Link>
         <div>
           <div
             className={clsx('cursor-pointer', classes)}
