@@ -19,32 +19,17 @@ export interface components {
              */
             status: "ACTIVE" | "DELETED" | "INACTIVE";
             /**
-             * @default CUSTOMER
+             * @default REGISTERED
              * @enum {string}
              */
-            type: "ADMIN" | "MARKET_MANAGER" | "BRAND_MANAGER" | "CUSTOMER" | "SELLER";
-            /** @default false */
-            isPremium: boolean | null;
-            phone?: string | null;
+            type: "ADMIN" | "REGISTERED" | "CUSTOMER" | "SELLER";
             email?: string | null;
-            firstName?: string | null;
-            lastName?: string | null;
-            address?: string | null;
-            city?: string | null;
-            state?: string | null;
-            zipCode?: string | null;
-            paymentCustomerId?: string | null;
-            /**
-             * @default STRIPE
-             * @enum {string}
-             */
-            paymentProcessorType: "STRIPE";
+            seller?: components["schemas"]["Seller"] | null;
+            customer?: components["schemas"]["Customer"] | null;
             profile?: components["schemas"]["Profile"] | null;
             wallet?: components["schemas"]["Wallet"] | null;
             user?: components["schemas"]["User"];
             userId?: string;
-            accountShippingCategories?: components["schemas"]["AccountShippingCategory"][];
-            accountCustomShippingOptions?: components["schemas"]["AccountCustomShippingOption"][];
             createdMarketplaces?: components["schemas"]["Marketplace"][];
             lastModifiedMarketplaces?: components["schemas"]["Marketplace"][];
             createdBrands?: components["schemas"]["Brand"][];
@@ -73,28 +58,6 @@ export interface components {
             createdOrders?: components["schemas"]["Order"][];
             purchasedOrders?: components["schemas"]["Order"][];
             soldOrders?: components["schemas"]["Order"][];
-        };
-        AccountCustomShippingOption: {
-            id?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            account?: components["schemas"]["Account"];
-            accountId?: string;
-            shippingOption?: components["schemas"]["ShippingOption"];
-            shippingOptionId?: string;
-        };
-        AccountShippingCategory: {
-            id?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            account?: components["schemas"]["Account"];
-            accountId?: string;
-            shippingCategory?: components["schemas"]["ShippingCategory"];
-            shippingCategoryId?: string;
         };
         Bid: {
             id?: string;
@@ -189,6 +152,35 @@ export interface components {
             marketplace?: components["schemas"]["Marketplace"];
             marketplaceName?: string;
             brandCategories?: components["schemas"]["BrandCategory"][];
+        };
+        Customer: {
+            id?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /**
+             * @default ACTIVE
+             * @enum {string}
+             */
+            status: "ACTIVE" | "DELETED" | "INACTIVE";
+            paymentAccountId?: string | null;
+            /**
+             * @default STRIPE
+             * @enum {string}
+             */
+            paymentAccountType: "STRIPE";
+            /** @enum {string|null} */
+            paymentAccountStatus?: "COMPLETED" | "PENDING" | "CANCELED" | "FAILED" | null;
+            firstName?: string | null;
+            lastName?: string | null;
+            phone?: string | null;
+            address?: string | null;
+            city?: string | null;
+            state?: string | null;
+            zipCode?: string | null;
+            account?: components["schemas"]["Account"];
+            accountId?: string;
         };
         Entity: {
             id?: string;
@@ -316,7 +308,7 @@ export interface components {
             /** Format: date-time */
             createdAt?: string;
             /** @enum {string} */
-            status?: "COMPLETED" | "PENDING" | "CANCELED";
+            status?: "COMPLETED" | "PENDING" | "CANCELED" | "FAILED";
             subTotal?: number | null;
             taxRate?: number | null;
             tax?: number | null;
@@ -363,7 +355,7 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string;
             /** @enum {string} */
-            status?: "COMPLETED" | "PENDING" | "CANCELED";
+            status?: "COMPLETED" | "PENDING" | "CANCELED" | "FAILED";
             subTotal?: number | null;
             taxRate?: number | null;
             tax?: number | null;
@@ -404,7 +396,6 @@ export interface components {
             username?: string | null;
             /** @default false */
             isPrivate: boolean | null;
-            fullName?: string | null;
             image?: string | null;
             qrCode?: string | null;
             account?: components["schemas"]["Account"];
@@ -423,6 +414,67 @@ export interface components {
             entity?: components["schemas"]["Entity"];
             entityId?: string;
         };
+        Seller: {
+            id?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /**
+             * @default ACTIVE
+             * @enum {string}
+             */
+            status: "ACTIVE" | "DELETED" | "INACTIVE";
+            paymentAccountId?: string | null;
+            /**
+             * @default STRIPE
+             * @enum {string}
+             */
+            paymentAccountType: "STRIPE";
+            /** @enum {string|null} */
+            paymentAccountStatus?: "COMPLETED" | "PENDING" | "CANCELED" | "FAILED" | null;
+            /** @default false */
+            isPaymentAccountVerified: boolean | null;
+            /** @enum {string|null} */
+            sellerType?: "INDIVIDUAL" | "BUSINESS" | null;
+            firstName?: string | null;
+            lastName?: string | null;
+            phone?: string | null;
+            address?: string | null;
+            city?: string | null;
+            state?: string | null;
+            zipCode?: string | null;
+            businessName?: string | null;
+            website?: string | null;
+            account?: components["schemas"]["Account"];
+            accountId?: string;
+            sellerShippingCategories?: components["schemas"]["SellerShippingCategory"][];
+            sellerCustomShippingOptions?: components["schemas"]["SellerCustomShippingOption"][];
+            /** @enum {array} */
+            shippingCarrierTypes?: "USPS" | "UPS" | "FEDEX" | "DHL";
+        };
+        SellerCustomShippingOption: {
+            id?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            seller?: components["schemas"]["Seller"];
+            sellerId?: string;
+            shippingOption?: components["schemas"]["ShippingOption"];
+            shippingOptionId?: string;
+        };
+        SellerShippingCategory: {
+            id?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            seller?: components["schemas"]["Seller"];
+            sellerId?: string;
+            shippingCategory?: components["schemas"]["ShippingCategory"];
+            shippingCategoryId?: string;
+        };
         Shipment: {
             id?: string;
             /** Format: date-time */
@@ -430,10 +482,6 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string;
             fee?: number | null;
-            /** @enum {string} */
-            deliveryType?: "USPS" | "UPS" | "FEDEX" | "IN_PERSON";
-            /** @enum {string} */
-            deliveryMethodType?: "FIRST_CLASS_MAIL" | "NEXT_DAY_AIR" | "OVERNIGHT" | "PRIORITY" | "FLAT_RATE" | "EXPRESS" | "ECONOMY" | "INTERNATIONAL" | "IN_PERSON";
             trackingNumber?: string | null;
             createdBy?: components["schemas"]["Account"] | null;
             createdById?: string | null;
@@ -449,17 +497,21 @@ export interface components {
             name?: string;
             displayName?: string | null;
             description?: string | null;
-            level?: number | null;
             /**
-             * @default USPS
+             * @default SMALL
              * @enum {string|null}
              */
-            deliveryType: "USPS" | "UPS" | "FEDEX" | "IN_PERSON";
+            size: "EXTRA_SMALL" | "SMALL" | "MEDIUM" | "LARGE" | "EXTRA_LARGE";
+            /**
+             * @default ENVELOPE
+             * @enum {string}
+             */
+            shippingPackageType: "ENVELOPE" | "BOX";
             /**
              * @default ECONOMY
-             * @enum {string|null}
+             * @enum {string}
              */
-            deliveryMethodType: "FIRST_CLASS_MAIL" | "NEXT_DAY_AIR" | "OVERNIGHT" | "PRIORITY" | "FLAT_RATE" | "EXPRESS" | "ECONOMY" | "INTERNATIONAL" | "IN_PERSON";
+            shippingServiceType: "FLAT_RATE" | "ECONOMY" | "GROUND" | "FIRST_CLASS" | "PRIORITY" | "EXPRESS" | "OVERNIGHT";
             createdBy?: components["schemas"]["Account"] | null;
             createdById?: string | null;
             lastModifiedBy?: components["schemas"]["Account"] | null;
@@ -467,7 +519,7 @@ export interface components {
             marketplace?: components["schemas"]["Marketplace"];
             marketplaceName?: string;
             shippingOptions?: components["schemas"]["ShippingOption"][];
-            accountShippingCategories?: components["schemas"]["AccountShippingCategory"][];
+            sellerShippingCategories?: components["schemas"]["SellerShippingCategory"][];
             bidShippingCategories?: components["schemas"]["BidShippingCategory"][];
         };
         ShippingOption: {
@@ -489,7 +541,7 @@ export interface components {
             lastModifiedById?: string | null;
             shippingCategory?: components["schemas"]["ShippingCategory"] | null;
             shippingCategoryId?: string | null;
-            accountCustomShippingOptions?: components["schemas"]["AccountCustomShippingOption"][];
+            sellerCustomShippingOptions?: components["schemas"]["SellerCustomShippingOption"][];
             bidCustomShippingOptions?: components["schemas"]["BidCustomShippingOption"][];
         };
         SupportedTagValues: {
@@ -568,7 +620,7 @@ export interface components {
              * @default STRIPE
              * @enum {string}
              */
-            paymentProcessorType: "STRIPE";
+            paymentAccountType: "STRIPE";
             /**
              * @default CARD
              * @enum {string}

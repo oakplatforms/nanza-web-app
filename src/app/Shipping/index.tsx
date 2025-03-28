@@ -63,8 +63,9 @@ export function ShippingCategories() {
             name: selectedShippingCategory.name || slugify(selectedShippingCategory.displayName!),
             displayName: selectedShippingCategory.displayName,
             description: selectedShippingCategory.description,
-            deliveryType: selectedShippingCategory.deliveryType,
-            deliveryMethodType: selectedShippingCategory.deliveryMethodType,
+            shippingPackageType: selectedShippingCategory.shippingPackageType,
+            shippingServiceType: selectedShippingCategory.shippingServiceType,
+            size: selectedShippingCategory.size,
             lastModifiedById: currentUser?.account?.id,
             shippingOptions: {
               create: newOptions,
@@ -77,8 +78,9 @@ export function ShippingCategories() {
             name: selectedShippingCategory.name || slugify(selectedShippingCategory.displayName!),
             displayName: selectedShippingCategory.displayName,
             description: selectedShippingCategory.description,
-            deliveryType: selectedShippingCategory.deliveryType,
-            deliveryMethodType: selectedShippingCategory.deliveryMethodType,
+            shippingPackageType: selectedShippingCategory.shippingPackageType,
+            shippingServiceType: selectedShippingCategory.shippingServiceType,
+            size: selectedShippingCategory.size,
             createdById: currentUser?.account?.id,
             shippingOptions: {
               create: newOptions,
@@ -136,12 +138,12 @@ export function ShippingCategories() {
       </div>
       <br />
       <SimpleTable
-        headers={['Name', 'Description', 'Delivery Type', 'Method Type', 'Shipping Options', '']}
+        headers={['Name', 'Description', 'Package Type', 'Service Type', 'Shipping Options', '']}
         rows={shippingCategories.map((category) => ({
           displayName: { value: category.displayName || '', width: '200px' },
           description: { value: category.description || 'No description', width: '500px' },
-          deliveryType: { value: category.deliveryType, width: '50px' },
-          deliveryMethodType: { value: category.deliveryMethodType, width: '50px' },
+          shippingPackageType: { value: category.shippingPackageType, width: '50px' },
+          shippingServiceType: { value: category.shippingServiceType, width: '50px' },
           shippingOptions: {
             value: category.shippingOptions?.map((option, index) => (
               <Badge key={index} color="zinc" className="ml-3 mt-1 relative whitespace-nowrap align-middle">
