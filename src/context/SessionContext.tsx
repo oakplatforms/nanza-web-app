@@ -47,8 +47,8 @@ const SessionProvider = ({ children } : SessionProviderProps) => {
       try {
         const { userId } = await getCurrentUser()
         if (userId) {
-          const userData = await userService.get(userId, '?include=account.profile')
-          setCurrentUser({...userData, account: { ...userData.account, userId: undefined }})
+          const userData = await userService.get(userId, '?include=admin')
+          setCurrentUser({...userData, admin: { ...userData.admin, userId: undefined }})
         }
       } catch (error) {
         console.log(error)

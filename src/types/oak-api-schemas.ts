@@ -22,16 +22,38 @@ export interface components {
              * @default REGISTERED
              * @enum {string}
              */
-            type: "ADMIN" | "REGISTERED" | "CUSTOMER" | "SELLER";
+            type: "REGISTERED" | "CUSTOMER" | "SELLER";
             email?: string | null;
             seller?: components["schemas"]["Seller"] | null;
             customer?: components["schemas"]["Customer"] | null;
             profile?: components["schemas"]["Profile"] | null;
-            wallet?: components["schemas"]["Wallet"] | null;
             user?: components["schemas"]["User"];
             userId?: string;
-            createdMarketplaces?: components["schemas"]["Marketplace"][];
-            lastModifiedMarketplaces?: components["schemas"]["Marketplace"][];
+            lists?: components["schemas"]["List"][];
+            reviews?: components["schemas"]["Review"][];
+            bids?: components["schemas"]["Bid"][];
+            listings?: components["schemas"]["Listing"][];
+            payouts?: components["schemas"]["Payout"][];
+            transactions?: components["schemas"]["Transaction"][];
+            shipments?: components["schemas"]["Shipment"][];
+            createdOrders?: components["schemas"]["Order"][];
+            purchasedOrders?: components["schemas"]["Order"][];
+            soldOrders?: components["schemas"]["Order"][];
+        };
+        Admin: {
+            id?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /**
+             * @default ACTIVE
+             * @enum {string}
+             */
+            status: "ACTIVE" | "DELETED" | "INACTIVE";
+            email?: string | null;
+            user?: components["schemas"]["User"];
+            userId?: string;
             createdBrands?: components["schemas"]["Brand"][];
             lastModifiedBrands?: components["schemas"]["Brand"][];
             createdThemes?: components["schemas"]["Theme"][];
@@ -40,24 +62,14 @@ export interface components {
             lastModifiedCategories?: components["schemas"]["Category"][];
             createdTags?: components["schemas"]["Tag"][];
             lastModifiedTags?: components["schemas"]["Tag"][];
-            createdSupportedTagValues?: components["schemas"]["SupportedTagValues"][];
-            lastModifiedSupportedTagValues?: components["schemas"]["SupportedTagValues"][];
+            createdSupportedTagValues?: components["schemas"]["SupportedTagValue"][];
+            lastModifiedSupportedTagValues?: components["schemas"]["SupportedTagValue"][];
             createdEntities?: components["schemas"]["Entity"][];
             lastModifiedEntities?: components["schemas"]["Entity"][];
-            createdShippingCategories?: components["schemas"]["ShippingCategory"][];
-            lastModifiedShippingCategories?: components["schemas"]["ShippingCategory"][];
+            createdShippingMethods?: components["schemas"]["ShippingMethod"][];
+            lastModifiedShippingMethods?: components["schemas"]["ShippingMethod"][];
             createdShippingOptions?: components["schemas"]["ShippingOption"][];
             lastModifiedShippingOptions?: components["schemas"]["ShippingOption"][];
-            createdLists?: components["schemas"]["List"][];
-            createdReviews?: components["schemas"]["Review"][];
-            createdBids?: components["schemas"]["Bid"][];
-            createdListings?: components["schemas"]["Listing"][];
-            createdPayouts?: components["schemas"]["Payout"][];
-            createdTransactions?: components["schemas"]["Transaction"][];
-            createdShipments?: components["schemas"]["Shipment"][];
-            createdOrders?: components["schemas"]["Order"][];
-            purchasedOrders?: components["schemas"]["Order"][];
-            soldOrders?: components["schemas"]["Order"][];
         };
         Bid: {
             id?: string;
@@ -76,15 +88,26 @@ export interface components {
              * @enum {string}
              */
             condition: "MINT" | "NEAR_MINT" | "VERY_GOOD" | "GOOD" | "FAIR" | "POOR" | "DAMAGED";
-            createdBy?: components["schemas"]["Account"] | null;
-            createdById?: string | null;
+            account?: components["schemas"]["Account"] | null;
+            accountId?: string | null;
             entity?: components["schemas"]["Entity"] | null;
             entityId?: string | null;
             orderBids?: components["schemas"]["OrderBid"][];
-            bidShippingCategories?: components["schemas"]["BidShippingCategory"][];
-            bidCustomShippingOptions?: components["schemas"]["BidCustomShippingOption"][];
+            bidShippingMethods?: components["schemas"]["BidShippingMethod"][];
+            bidShippingOptions?: components["schemas"]["BidShippingOption"][];
         };
-        BidCustomShippingOption: {
+        BidShippingMethod: {
+            id?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            bid?: components["schemas"]["Bid"];
+            bidId?: string;
+            shippingMethod?: components["schemas"]["ShippingMethod"];
+            shippingMethodId?: string;
+        };
+        BidShippingOption: {
             id?: string;
             /** Format: date-time */
             createdAt?: string;
@@ -95,17 +118,6 @@ export interface components {
             shippingOption?: components["schemas"]["ShippingOption"];
             shippingOptionId?: string;
         };
-        BidShippingCategory: {
-            id?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            bid?: components["schemas"]["Bid"];
-            bidId?: string;
-            shippingCategory?: components["schemas"]["ShippingCategory"];
-            shippingCategoryId?: string;
-        };
         Brand: {
             id?: string;
             /** Format: date-time */
@@ -114,26 +126,11 @@ export interface components {
             updatedAt?: string;
             name?: string;
             displayName?: string | null;
-            createdBy?: components["schemas"]["Account"] | null;
+            createdBy?: components["schemas"]["Admin"] | null;
             createdById?: string | null;
-            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedBy?: components["schemas"]["Admin"] | null;
             lastModifiedById?: string | null;
-            marketplace?: components["schemas"]["Marketplace"];
-            marketplaceName?: string;
             theme?: components["schemas"]["Theme"] | null;
-            brandCategories?: components["schemas"]["BrandCategory"][];
-        };
-        BrandCategory: {
-            id?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            brand?: components["schemas"]["Brand"];
-            brandName?: string;
-            category?: components["schemas"]["Category"];
-            categoryName?: string;
-            lists?: components["schemas"]["List"][];
             entities?: components["schemas"]["Entity"][];
         };
         Category: {
@@ -145,13 +142,11 @@ export interface components {
             name?: string;
             displayName?: string | null;
             description?: string | null;
-            createdBy?: components["schemas"]["Account"] | null;
+            createdBy?: components["schemas"]["Admin"] | null;
             createdById?: string | null;
-            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedBy?: components["schemas"]["Admin"] | null;
             lastModifiedById?: string | null;
-            marketplace?: components["schemas"]["Marketplace"];
-            marketplaceName?: string;
-            brandCategories?: components["schemas"]["BrandCategory"][];
+            entities?: components["schemas"]["Entity"][];
         };
         Customer: {
             id?: string;
@@ -172,6 +167,8 @@ export interface components {
             paymentAccountType: "STRIPE";
             /** @enum {string|null} */
             paymentAccountStatus?: "COMPLETED" | "PENDING" | "CANCELED" | "FAILED" | null;
+            /** @default false */
+            hasPaymentMethod: boolean | null;
             firstName?: string | null;
             lastName?: string | null;
             phone?: string | null;
@@ -197,15 +194,15 @@ export interface components {
              */
             type: "PRODUCT" | "SERVICE" | "CONTENT";
             image?: string | null;
-            createdBy?: components["schemas"]["Account"] | null;
+            createdBy?: components["schemas"]["Admin"] | null;
             createdById?: string | null;
-            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedBy?: components["schemas"]["Admin"] | null;
             lastModifiedById?: string | null;
+            category?: components["schemas"]["Category"] | null;
+            categoryId?: string | null;
+            brand?: components["schemas"]["Brand"] | null;
+            brandId?: string | null;
             product?: components["schemas"]["Product"] | null;
-            brandCategory?: components["schemas"]["BrandCategory"];
-            brandCategoryId?: string;
-            list?: components["schemas"]["List"] | null;
-            listId?: string | null;
             entityTags?: components["schemas"]["EntityTag"][];
             reviews?: components["schemas"]["Review"][];
             bids?: components["schemas"]["Bid"][];
@@ -237,7 +234,6 @@ export interface components {
              */
             status: "ACTIVE" | "DELETED" | "INACTIVE";
             orders?: components["schemas"]["Order"][];
-            payouts?: components["schemas"]["Payout"][];
         };
         List: {
             id?: string;
@@ -249,12 +245,9 @@ export interface components {
             displayName?: string | null;
             description?: string | null;
             /** @enum {string|null} */
-            type?: "COLLECTION" | "SET" | "DECK" | "FAVORITE" | null;
-            createdBy?: components["schemas"]["Account"] | null;
-            createdById?: string | null;
-            brandCategory?: components["schemas"]["BrandCategory"];
-            brandCategoryId?: string;
-            entities?: components["schemas"]["Entity"][];
+            type?: "COLLECTION" | "DECK" | "FAVORITE" | null;
+            account?: components["schemas"]["Account"] | null;
+            accountId?: string | null;
         };
         Listing: {
             id?: string;
@@ -275,31 +268,11 @@ export interface components {
             condition: "MINT" | "NEAR_MINT" | "VERY_GOOD" | "GOOD" | "FAIR" | "POOR" | "DAMAGED";
             /** @default false */
             isPrimary: boolean | null;
-            createdBy?: components["schemas"]["Account"] | null;
-            createdById?: string | null;
+            account?: components["schemas"]["Account"] | null;
+            accountId?: string | null;
             entity?: components["schemas"]["Entity"] | null;
             entityId?: string | null;
             orderListings?: components["schemas"]["OrderListing"][];
-        };
-        Marketplace: {
-            id?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            name?: string;
-            displayName?: string | null;
-            /** @default false */
-            hasMultiSellerEnabled: boolean | null;
-            createdBy?: components["schemas"]["Account"] | null;
-            createdById?: string | null;
-            lastModifiedBy?: components["schemas"]["Account"] | null;
-            lastModifiedById?: string | null;
-            theme?: components["schemas"]["Theme"] | null;
-            brands?: components["schemas"]["Brand"][];
-            categories?: components["schemas"]["Category"][];
-            shippingCategories?: components["schemas"]["ShippingCategory"][];
-            tags?: components["schemas"]["Tag"][];
         };
         Order: {
             id?: string;
@@ -356,17 +329,11 @@ export interface components {
             updatedAt?: string;
             /** @enum {string} */
             status?: "COMPLETED" | "PENDING" | "CANCELED" | "FAILED";
-            subTotal?: number | null;
-            taxRate?: number | null;
-            tax?: number | null;
             total?: number | null;
-            createdBy?: components["schemas"]["Account"] | null;
-            createdById?: string | null;
+            last4?: string | null;
+            account?: components["schemas"]["Account"] | null;
+            accountId?: string | null;
             transactions?: components["schemas"]["Transaction"][];
-            wallet?: components["schemas"]["Wallet"];
-            walletId?: string;
-            invoice?: components["schemas"]["Invoice"];
-            invoiceId?: string;
         };
         Product: {
             id?: string;
@@ -394,12 +361,10 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string;
             username?: string | null;
-            /** @default false */
-            isPrivate: boolean | null;
             image?: string | null;
             qrCode?: string | null;
-            account?: components["schemas"]["Account"];
-            accountId?: string;
+            account?: components["schemas"]["Account"] | null;
+            accountId?: string | null;
         };
         Review: {
             id?: string;
@@ -409,8 +374,8 @@ export interface components {
             updatedAt?: string;
             rating?: number;
             description?: string;
-            createdBy?: components["schemas"]["Account"] | null;
-            createdById?: string | null;
+            account?: components["schemas"]["Account"] | null;
+            accountId?: string | null;
             entity?: components["schemas"]["Entity"];
             entityId?: string;
         };
@@ -435,6 +400,8 @@ export interface components {
             paymentAccountStatus?: "COMPLETED" | "PENDING" | "CANCELED" | "FAILED" | null;
             /** @default false */
             isPaymentAccountVerified: boolean | null;
+            /** @default false */
+            hasPaymentMethod: boolean | null;
             /** @enum {string|null} */
             sellerType?: "INDIVIDUAL" | "BUSINESS" | null;
             firstName?: string | null;
@@ -448,12 +415,23 @@ export interface components {
             website?: string | null;
             account?: components["schemas"]["Account"];
             accountId?: string;
-            sellerShippingCategories?: components["schemas"]["SellerShippingCategory"][];
-            sellerCustomShippingOptions?: components["schemas"]["SellerCustomShippingOption"][];
+            sellerShippingMethods?: components["schemas"]["SellerShippingMethod"][];
+            sellerShippingOptions?: components["schemas"]["SellerShippingOption"][];
             /** @enum {array} */
             shippingCarrierTypes?: "USPS" | "UPS" | "FEDEX" | "DHL";
         };
-        SellerCustomShippingOption: {
+        SellerShippingMethod: {
+            id?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            seller?: components["schemas"]["Seller"];
+            sellerId?: string;
+            shippingMethod?: components["schemas"]["ShippingMethod"];
+            shippingMethodId?: string;
+        };
+        SellerShippingOption: {
             id?: string;
             /** Format: date-time */
             createdAt?: string;
@@ -464,17 +442,6 @@ export interface components {
             shippingOption?: components["schemas"]["ShippingOption"];
             shippingOptionId?: string;
         };
-        SellerShippingCategory: {
-            id?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            seller?: components["schemas"]["Seller"];
-            sellerId?: string;
-            shippingCategory?: components["schemas"]["ShippingCategory"];
-            shippingCategoryId?: string;
-        };
         Shipment: {
             id?: string;
             /** Format: date-time */
@@ -483,12 +450,12 @@ export interface components {
             updatedAt?: string;
             fee?: number | null;
             trackingNumber?: string | null;
-            createdBy?: components["schemas"]["Account"] | null;
-            createdById?: string | null;
+            account?: components["schemas"]["Account"] | null;
+            accountId?: string | null;
             order?: components["schemas"]["Order"];
             transactionId?: string;
         };
-        ShippingCategory: {
+        ShippingMethod: {
             id?: string;
             /** Format: date-time */
             createdAt?: string;
@@ -512,15 +479,13 @@ export interface components {
              * @enum {string}
              */
             shippingServiceType: "FLAT_RATE" | "ECONOMY" | "GROUND" | "FIRST_CLASS" | "PRIORITY" | "EXPRESS" | "OVERNIGHT";
-            createdBy?: components["schemas"]["Account"] | null;
+            createdBy?: components["schemas"]["Admin"] | null;
             createdById?: string | null;
-            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedBy?: components["schemas"]["Admin"] | null;
             lastModifiedById?: string | null;
-            marketplace?: components["schemas"]["Marketplace"];
-            marketplaceName?: string;
             shippingOptions?: components["schemas"]["ShippingOption"][];
-            sellerShippingCategories?: components["schemas"]["SellerShippingCategory"][];
-            bidShippingCategories?: components["schemas"]["BidShippingCategory"][];
+            sellerShippingMethods?: components["schemas"]["SellerShippingMethod"][];
+            bidShippingMethods?: components["schemas"]["BidShippingMethod"][];
         };
         ShippingOption: {
             id?: string;
@@ -534,17 +499,18 @@ export interface components {
             maxQuantity?: number | null;
             maxWeight?: number | null;
             rate?: number;
-            isRequired?: boolean | null;
-            createdBy?: components["schemas"]["Account"] | null;
+            /** @default false */
+            isStandalone: boolean | null;
+            createdBy?: components["schemas"]["Admin"] | null;
             createdById?: string | null;
-            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedBy?: components["schemas"]["Admin"] | null;
             lastModifiedById?: string | null;
-            shippingCategory?: components["schemas"]["ShippingCategory"] | null;
-            shippingCategoryId?: string | null;
-            sellerCustomShippingOptions?: components["schemas"]["SellerCustomShippingOption"][];
-            bidCustomShippingOptions?: components["schemas"]["BidCustomShippingOption"][];
+            shippingMethod?: components["schemas"]["ShippingMethod"] | null;
+            shippingMethodId?: string | null;
+            sellerShippingOptions?: components["schemas"]["SellerShippingOption"][];
+            bidShippingOptions?: components["schemas"]["BidShippingOption"][];
         };
-        SupportedTagValues: {
+        SupportedTagValue: {
             id?: string;
             /** Format: date-time */
             createdAt?: string;
@@ -552,9 +518,9 @@ export interface components {
             updatedAt?: string;
             name?: string;
             displayName?: string | null;
-            createdBy?: components["schemas"]["Account"] | null;
+            createdBy?: components["schemas"]["Admin"] | null;
             createdById?: string | null;
-            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedBy?: components["schemas"]["Admin"] | null;
             lastModifiedById?: string | null;
             tag?: components["schemas"]["Tag"];
             tagId?: string;
@@ -567,14 +533,12 @@ export interface components {
             updatedAt?: string;
             name?: string;
             displayName?: string | null;
-            createdBy?: components["schemas"]["Account"] | null;
+            createdBy?: components["schemas"]["Admin"] | null;
             createdById?: string | null;
-            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedBy?: components["schemas"]["Admin"] | null;
             lastModifiedById?: string | null;
-            marketplace?: components["schemas"]["Marketplace"];
-            marketplaceName?: string;
             entityTags?: components["schemas"]["EntityTag"][];
-            supportedTagValues?: components["schemas"]["SupportedTagValues"][];
+            supportedTagValues?: components["schemas"]["SupportedTagValue"][];
         };
         Theme: {
             id?: string;
@@ -585,12 +549,10 @@ export interface components {
             logo?: string | null;
             primaryColor?: string | null;
             secondaryColor?: string | null;
-            createdBy?: components["schemas"]["Account"] | null;
+            createdBy?: components["schemas"]["Admin"] | null;
             createdById?: string | null;
-            lastModifiedBy?: components["schemas"]["Account"] | null;
+            lastModifiedBy?: components["schemas"]["Admin"] | null;
             lastModifiedById?: string | null;
-            marketplace?: components["schemas"]["Marketplace"];
-            marketplaceId?: string;
             brand?: components["schemas"]["Brand"];
             brandId?: string;
         };
@@ -603,12 +565,10 @@ export interface components {
             amount?: number;
             refundedAmount?: number | null;
             /**
-             * @default ORDER
+             * @default ORDER_PAYMENT
              * @enum {string}
              */
-            transactionType: "ORDER" | "PAYOUT";
-            /** @enum {string} */
-            status?: "COMPLETED" | "FAILED" | "PENDING" | "CANCELED" | "REFUNDED" | "REQUIRES_ACTION";
+            transactionType: "ORDER_PAYMENT" | "ORDER_REFUND" | "PAYOUT";
             description?: string | null;
             /**
              * @default USD
@@ -626,8 +586,8 @@ export interface components {
              * @enum {string}
              */
             paymentMethodType: "CARD" | "BANK_ACCOUNT" | "APPLE_PAY";
-            createdBy?: components["schemas"]["Account"] | null;
-            createdById?: string | null;
+            account?: components["schemas"]["Account"] | null;
+            accountId?: string | null;
             order?: components["schemas"]["Order"] | null;
             orderId?: string | null;
             payout?: components["schemas"]["Payout"] | null;
@@ -648,17 +608,7 @@ export interface components {
             /** @default false */
             isAdmin: boolean | null;
             account?: components["schemas"]["Account"] | null;
-        };
-        Wallet: {
-            id?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            balance?: number;
-            payouts?: components["schemas"]["Payout"][];
-            account?: components["schemas"]["Account"];
-            accountId?: string;
+            admin?: components["schemas"]["Admin"] | null;
         };
     };
     responses: never;

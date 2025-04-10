@@ -1,32 +1,32 @@
 import { useEffect, useState } from 'react'
-import { ShippingCategoryDto, ShippingOptionDto } from '../../types'
-import { shippingCategoryService } from '../../services/api/ShippingCategory'
+import { ShippingMethodDto, ShippingOptionDto } from '../../types'
+import { shippingMethodService } from '../../services/api/ShippingMethod'
 import { SimpleTable } from '../../components/SimpleTable'
 import { Header, Badge, Button } from '../../components/Tailwind'
 import { SimpleDialog } from '../../components/SimpleDialog'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
-import { CreateOrEditShippingCategory } from './CreateOrEditShippingCategory'
+import { CreateOrEditShippingMethod } from './CreateOrEditShippingMethod'
 import { useSession } from '../../context/SessionContext'
 import { slugify } from '../../helpers'
 
-export function ShippingCategories() {
+export function ShippingMethods() {
   const { currentUser } = useSession()
-  const [shippingCategories, setShippingCategories] = useState<ShippingCategoryDto[]>([])
+  const [shippingMethods, setShippingMethods] = useState<ShippingMethodDto[]>([])
   const [isCreateOrEditModalOpen, setIsCreateOrEditModalOpen] = useState(false)
-  const [selectedShippingCategory, setSelectedShippingCategory] = useState<ShippingCategoryDto | null>(null)
+  const [selectedShippingMethod, setSelectedShippingMethod] = useState<ShippingMethodDto | null>(null)
   const [isDeleteCategoryDialogOpen, setIsDeleteCategoryDialogOpen] = useState(false)
   const [deletedShippingOptions, setDeletedShippingOptions] = useState<string[]>([])
   const [newShippingOptions, setNewShippingOptions] = useState<ShippingOptionDto[]>([])
   const [updatedShippingOptions, setUpdatedShippingOptions] = useState<ShippingOptionDto[]>([])
 
   useEffect(() => {
-    getShippingCategories()
+    getShippingMethods()
   }, [])
 
-  const getShippingCategories = async () => {
+  const getShippingMethods = async () => {
     try {
-      const categoriesData = await shippingCategoryService.list('?include=shippingOptions')
-      setShippingCategories(categoriesData)
+      const categoriesData = await shippingMethodService.list('?include=shippingOptions')
+      setShippingMethods(categoriesData)
     } catch (error) {
       console.log('Error fetching shipping categories.', error)
     }
@@ -34,17 +34,17 @@ export function ShippingCategories() {
 
   const onSaveCategory = async () => {
     try {
-      if (selectedShippingCategory) {
-        const existingCategory = !!selectedShippingCategory.id
+      if (selectedShippingMethod) {
+        const existingCategory = !!selectedShippingMethod.id
 
         const newOptions = newShippingOptions.map(opt => ({
           name: slugify(opt.displayName || ''),
           displayName: opt.displayName,
           description: opt.description,
-          maxQuantity: opt.maxQuantity,
-          maxWeight: opt.maxWeight,
+          maxQuantity: opt.maxQuantity === 0 ? undefined : opt.maxQuantity,
+          maxWeight: opt.maxWeight === 0 ? undefined : opt.maxWeight,
           rate: opt.rate,
-          isRequired: opt.isRequired,
+          isStandalone: false
         }))
 
         const updatedOptions = updatedShippingOptions.map(opt => ({
@@ -52,21 +52,21 @@ export function ShippingCategories() {
           name: slugify(opt.displayName || ''),
           displayName: opt.displayName,
           description: opt.description,
-          maxQuantity: opt.maxQuantity,
-          maxWeight: opt.maxWeight,
+          maxQuantity: opt.maxQuantity === 0 ? undefined : opt.maxQuantity,
+          maxWeight: opt.maxWeight === 0 ? undefined : opt.maxWeight,
           rate: opt.rate,
-          isRequired: opt.isRequired,
+          isStandalone: false
         }))
 
         if (existingCategory) {
-          await shippingCategoryService.update(selectedShippingCategory.id!, {
-            name: selectedShippingCategory.name || slugify(selectedShippingCategory.displayName!),
-            displayName: selectedShippingCategory.displayName,
-            description: selectedShippingCategory.description,
-            shippingPackageType: selectedShippingCategory.shippingPackageType,
-            shippingServiceType: selectedShippingCategory.shippingServiceType,
-            size: selectedShippingCategory.size,
-            lastModifiedById: currentUser?.account?.id,
+          await shippingMethodService.update(selectedShippingMethod.id!, {
+            name: selectedShippingMethod.name || slugify(selectedShippingMethod.displayName!),
+            displayName: selectedShippingMethod.displayName,
+            description: selectedShippingMethod.description,
+            shippingPackageType: selectedShippingMethod.shippingPackageType,
+            shippingServiceType: selectedShippingMethod.shippingServiceType,
+            size: selectedShippingMethod.size,
+            lastModifiedById: currentUser?.admin?.id,
             shippingOptions: {
               create: newOptions,
               update: updatedOptions,
@@ -74,23 +74,23 @@ export function ShippingCategories() {
             },
           })
         } else {
-          await shippingCategoryService.create({
-            name: selectedShippingCategory.name || slugify(selectedShippingCategory.displayName!),
-            displayName: selectedShippingCategory.displayName,
-            description: selectedShippingCategory.description,
-            shippingPackageType: selectedShippingCategory.shippingPackageType,
-            shippingServiceType: selectedShippingCategory.shippingServiceType,
-            size: selectedShippingCategory.size,
-            createdById: currentUser?.account?.id,
+          await shippingMethodService.create({
+            name: selectedShippingMethod.name || slugify(selectedShippingMethod.displayName!),
+            displayName: selectedShippingMethod.displayName,
+            description: selectedShippingMethod.description,
+            shippingPackageType: selectedShippingMethod.shippingPackageType,
+            shippingServiceType: selectedShippingMethod.shippingServiceType,
+            size: selectedShippingMethod.size,
+            createdById: currentUser?.admin?.id,
             shippingOptions: {
               create: newOptions,
             },
           })
         }
 
-        await getShippingCategories()
+        await getShippingMethods()
+        setSelectedShippingMethod(null)
         setIsCreateOrEditModalOpen(false)
-        setSelectedShippingCategory(null)
         setDeletedShippingOptions([])
         setNewShippingOptions([])
         setUpdatedShippingOptions([])
@@ -102,11 +102,11 @@ export function ShippingCategories() {
 
   const onDeleteCategory = async () => {
     try {
-      if (selectedShippingCategory?.id) {
-        await shippingCategoryService.delete(selectedShippingCategory.id)
-        await getShippingCategories()
+      if (selectedShippingMethod?.id) {
+        await shippingMethodService.delete(selectedShippingMethod.id)
+        await getShippingMethods()
         setIsDeleteCategoryDialogOpen(false)
-        setSelectedShippingCategory(null)
+        setSelectedShippingMethod(null)
       }
     } catch (error) {
       console.log('Error deleting shipping category.', error)
@@ -114,32 +114,32 @@ export function ShippingCategories() {
   }
 
   const onSelectCategory = (categoryIdx: number) => {
-    setSelectedShippingCategory(shippingCategories[categoryIdx])
+    setSelectedShippingMethod(shippingMethods[categoryIdx])
     setDeletedShippingOptions([])
     setIsCreateOrEditModalOpen(true)
   }
 
   const onConfirmDeleteCategory = (categoryIdx: number) => {
-    setSelectedShippingCategory(shippingCategories[categoryIdx])
+    setSelectedShippingMethod(shippingMethods[categoryIdx])
     setIsDeleteCategoryDialogOpen(true)
   }
 
   return (
     <>
       <div className="flex">
-        <Header>Shipping</Header>
+        <Header>Shipping Methods</Header>
         <Button
           className="text-white px-4 py-2 ml-auto cursor-pointer"
           onClick={() => setIsCreateOrEditModalOpen(true)}
           color="green"
         >
-          Create New Shipping Category
+          Create Shipping Method
         </Button>
       </div>
       <br />
       <SimpleTable
         headers={['Name', 'Description', 'Package Type', 'Service Type', 'Shipping Options', '']}
-        rows={shippingCategories.map((category) => ({
+        rows={shippingMethods.map((category) => ({
           displayName: { value: category.displayName || '', width: '200px' },
           description: { value: category.description || 'No description', width: '500px' },
           shippingPackageType: { value: category.shippingPackageType, width: '50px' },
@@ -160,18 +160,18 @@ export function ShippingCategories() {
       <SimpleDialog
         isOpen={isCreateOrEditModalOpen}
         size="3xl"
-        title={selectedShippingCategory?.id ? 'Edit Shipping Category' : 'Create Shipping Category'}
+        title={selectedShippingMethod?.id ? 'Edit Shipping Category' : 'Create Shipping Category'}
         onClose={() => {
-          setSelectedShippingCategory(null)
+          setSelectedShippingMethod(null)
           setIsCreateOrEditModalOpen(false)
         }}
         onSubmit={onSaveCategory}
-        submitBtnTxt={selectedShippingCategory?.id ? 'Update' : 'Add'}
+        submitBtnTxt={selectedShippingMethod?.id ? 'Update' : 'Add'}
       >
-        <CreateOrEditShippingCategory
-          selectedShippingCategory={selectedShippingCategory}
+        <CreateOrEditShippingMethod
+          selectedShippingMethod={selectedShippingMethod}
           setNewShippingOptions={setNewShippingOptions}
-          setSelectedShippingCategory={setSelectedShippingCategory}
+          setSelectedShippingMethod={setSelectedShippingMethod}
           setDeletedShippingOptions={setDeletedShippingOptions}
           setUpdatedShippingOptions={setUpdatedShippingOptions}
         />
@@ -180,12 +180,12 @@ export function ShippingCategories() {
       <ConfirmDialog
         isOpen={isDeleteCategoryDialogOpen}
         onClose={() => {
-          setSelectedShippingCategory(null)
+          setSelectedShippingMethod(null)
           setIsDeleteCategoryDialogOpen(false)
         }}
         title="Delete Shipping Category"
         description={`Are you sure you want to delete the category "${
-          selectedShippingCategory?.displayName
+          selectedShippingMethod?.displayName
         }"?`}
         onConfirm={onDeleteCategory}
         confirmBtnTxt="Delete"

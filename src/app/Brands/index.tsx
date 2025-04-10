@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { BrandDto } from '../../types'
 import { brandService } from '../../services/api/Brand'
 import { SimpleTable } from '../../components/SimpleTable'
-import { Header, Badge, Button } from '../../components/Tailwind'
+import { Header, Button } from '../../components/Tailwind'
 import { SimpleDialog } from '../../components/SimpleDialog'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { CreateOrEditBrand } from './CreateOrEditBrand'
@@ -14,7 +14,6 @@ export function Brands() {
   const [isCreateOrEditModalOpen, setIsCreateOrEditModalOpen] = useState(false)
   const [selectedBrand, setSelectedBrand] = useState<BrandDto | null>(null)
   const [isDeleteBrandDialogOpen, setIsDeleteBrandDialogOpen] = useState(false)
-  const [deletedBrandCategories, setDeletedBrandCategories] = useState<string[]>([])
 
   useEffect(() => {
     getBrands()
@@ -22,7 +21,7 @@ export function Brands() {
 
   const getBrands = async () => {
     try {
-      const brandsData = await brandService.list('?include=brandCategories')
+      const brandsData = await brandService.list('')
       setBrands(brandsData)
     } catch (error) {
       console.log('Error fetching brands.', error)
@@ -34,35 +33,23 @@ export function Brands() {
       if (selectedBrand) {
         const existingBrand = !!selectedBrand.id
 
-        const newCategories = (selectedBrand.brandCategories || [])
-          .filter(cat => !cat.id)
-          .map(cat => ({ categoryName: cat.categoryName }))
-
         if (existingBrand) {
           await brandService.update(selectedBrand.id!, {
             name: selectedBrand.name,
             displayName: selectedBrand.displayName,
-            lastModifiedById: currentUser?.account?.id,
-            brandCategories: {
-              create: newCategories,
-              delete: deletedBrandCategories,
-            }
+            lastModifiedById: currentUser?.admin?.id
           })
         } else {
           await brandService.create({
             name: selectedBrand.name,
             displayName: selectedBrand.displayName,
-            createdById: currentUser?.account?.id,
-            brandCategories: {
-              create: newCategories,
-            }
+            createdById: currentUser?.admin?.id,
           })
         }
 
         await getBrands()
         setIsCreateOrEditModalOpen(false)
         setSelectedBrand(null)
-        setDeletedBrandCategories([])
       }
     } catch (error) {
       console.log('Error saving brand.', error)
@@ -84,7 +71,6 @@ export function Brands() {
 
   const onSelectBrand = (brandIdx: number) => {
     setSelectedBrand(brands[brandIdx])
-    setDeletedBrandCategories([])
     setIsCreateOrEditModalOpen(true)
   }
 
@@ -107,17 +93,9 @@ export function Brands() {
       </div>
       <br />
       <SimpleTable
-        headers={['Name', 'Categories', '']}
+        headers={['Name', '']}
         rows={brands.map((brand) => ({
-          displayName: { value: brand.displayName || '', width: '250px' },
-          brandCategories: {
-            value: brand.brandCategories?.map((category, index) => (
-              <Badge key={index} color="zinc" className="ml-3 mt-1 relative whitespace-nowrap align-middle">
-                {category.categoryName}
-              </Badge>
-            )),
-            width: '800px',
-          },
+          displayName: { value: brand.displayName || '', width: '1050px' },
         }))}
         onEdit={onSelectBrand}
         onDelete={onConfirmDeleteBrand}
@@ -136,7 +114,6 @@ export function Brands() {
         <CreateOrEditBrand
           selectedBrand={selectedBrand}
           setSelectedBrand={setSelectedBrand}
-          setDeletedBrandCategories={setDeletedBrandCategories}
         />
       </SimpleDialog>
       <ConfirmDialog

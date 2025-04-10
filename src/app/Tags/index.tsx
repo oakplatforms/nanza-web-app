@@ -43,7 +43,7 @@ export function Tags() {
           await tagService.update(selectedTag.id!, {
             name: selectedTag.name,
             displayName: selectedTag.displayName,
-            lastModifiedById: currentUser?.account?.id,
+            lastModifiedById: currentUser?.admin?.id,
             supportedTagValues: {
               create: newValues,
               delete: deletedSupportedTagValues.filter(id => id)
@@ -53,7 +53,7 @@ export function Tags() {
           await tagService.create({
             name: selectedTag.name,
             displayName: selectedTag.displayName,
-            createdById: currentUser?.account?.id,
+            createdById: currentUser?.admin?.id,
             supportedTagValues: {
               create: newValues,
             }

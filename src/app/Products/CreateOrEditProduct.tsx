@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Combobox } from '@headlessui/react'
-import { Input, Textarea } from '../../components/Tailwind'
+import { Input, Select, Textarea } from '../../components/Tailwind'
 import { slugify } from '../../helpers'
-import { EntityDto, TagDto, EntityTagDto } from '../../types'
+import { EntityDto, TagDto, EntityTagDto, CategoryDto, BrandDto } from '../../types'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/16/solid'
 
 type CreateOrEditProductProps = {
@@ -13,6 +13,8 @@ type CreateOrEditProductProps = {
   setSelectedTags: React.Dispatch<React.SetStateAction<EntityTagDto[]>>
   setDeletedTags: React.Dispatch<React.SetStateAction<string[]>>
   setUpdatedTags: React.Dispatch<React.SetStateAction<EntityTagDto[]>>
+  categories: CategoryDto[]
+  brands: BrandDto[]
 }
 
 export function CreateOrEditProduct({
@@ -22,7 +24,9 @@ export function CreateOrEditProduct({
   selectedTags,
   setSelectedTags,
   setDeletedTags,
-  setUpdatedTags
+  setUpdatedTags,
+  categories,
+  brands
 } : CreateOrEditProductProps) {
   const [tag, setTag] = useState<Record<string, string>>({})
 
@@ -214,6 +218,62 @@ export function CreateOrEditProduct({
                   rows={3}
                   className="resize-none"
                 />
+              </div>
+              <div>
+                <Input
+                  type="text"
+                  value={selectedProductEntity?.product?.number || ''}
+                  onChange={(e) =>
+                    setSelectedProductEntity({
+                      ...selectedProductEntity,
+                      type: 'PRODUCT',
+                      product: {
+                        type: 'CARD',
+                        number: e.target.value,
+                      }
+                    })
+                  }
+                  label="Product Number"
+                  placeholder="Enter product number"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold mb-1">Category</label>
+                <Select
+                  value={selectedProductEntity?.categoryId || ''}
+                  onChange={(e) =>
+                    setSelectedProductEntity((prev) => ({
+                      ...prev!,
+                      categoryId: e.target.value,
+                    }))
+                  }
+                >
+                  <option value="">Select a category</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.displayName || category.name}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              <div>
+                <label className="block text-sm font-bold mb-1">Brand</label>
+                <Select
+                  value={selectedProductEntity?.brandId || ''}
+                  onChange={(e) =>
+                    setSelectedProductEntity((prev) => ({
+                      ...prev!,
+                      brandId: e.target.value,
+                    }))
+                  }
+                >
+                  <option value="">Select a brand</option>
+                  {brands.map((brand) => (
+                    <option key={brand.id} value={brand.id}>
+                      {brand.displayName || brand.name}
+                    </option>
+                  ))}
+                </Select>
               </div>
             </div>
           </div>

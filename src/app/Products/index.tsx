@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { EntityDto, EntityTagDto, TagDto } from '../../types'
+import { BrandDto, CategoryDto, EntityDto, EntityTagDto, TagDto } from '../../types'
 import { entityService } from '../../services/api/Entity'
 import { Button, Badge, Header } from '../../components/Tailwind'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
@@ -8,6 +8,8 @@ import { SimpleDialog } from '../../components/SimpleDialog'
 import { CreateOrEditProduct } from './CreateOrEditProduct'
 import { tagService } from '../../services/api/Tag'
 import { useSession } from '../../context/SessionContext'
+import { categoryService } from '../../services/api/Category'
+import { brandService } from '../../services/api/Brand'
 
 export function Products() {
   const { currentUser } = useSession()
@@ -19,11 +21,24 @@ export function Products() {
   const [deletedTags, setDeletedTags] = useState<string[]>([])
   const [selectedTags, setSelectedTags] = useState<EntityTagDto[]>([])
   const [updatedTags, setUpdatedTags] = useState<EntityTagDto[]>([])
+  const [categories, setCategories] = useState<CategoryDto[]>([])
+  const [brands, setBrands] = useState<BrandDto[]>([])
 
   useEffect(() => {
     getProductEntities()
     getTagsWithSupportedValues()
+    getCategories()
+    getBrands()
   }, [])
+
+  const getProductEntities = async () => {
+    try {
+      const productEntitiesData = await entityService.list('?include=entityTags.tag&include=product')
+      setProductEntities(productEntitiesData)
+    } catch (error) {
+      console.error('Error fetching products:', error)
+    }
+  }
 
   const getTagsWithSupportedValues = async () => {
     try {
@@ -34,12 +49,21 @@ export function Products() {
     }
   }
 
-  const getProductEntities = async () => {
+  const getCategories = async () => {
     try {
-      const productEntitiesData = await entityService.list('?category=tcg&include=entityTags.tag')
-      setProductEntities(productEntitiesData)
+      const categoriesData = await categoryService.list()
+      setCategories(categoriesData)
     } catch (error) {
-      console.error('Error fetching products:', error)
+      console.log('Error fetching categories.', error)
+    }
+  }
+
+  const getBrands = async () => {
+    try {
+      const brandsData = await brandService.list('')
+      setBrands(brandsData)
+    } catch (error) {
+      console.log('Error fetching brands.', error)
     }
   }
 
@@ -67,9 +91,12 @@ export function Products() {
       if (existingProductEntity) {
         await entityService.update(selectedProductEntity.id!, {
           ...selectedProductEntity,
+          product: {
+            type: 'CARD',
+            number: selectedProductEntity?.product?.number,
+          },
           type: 'PRODUCT',
-          lastModifiedById: currentUser?.account?.id,
-          brandCategoryId: 'cm7rluppj0009fxv47hmryuqe',
+          lastModifiedById: currentUser?.admin?.id,
           entityTags: {
             create: createTags,
             delete: deletedTags,
@@ -79,9 +106,12 @@ export function Products() {
       } else {
         await entityService.create({
           ...selectedProductEntity!,
+          product: {
+            type: 'CARD',
+            number: selectedProductEntity?.product?.number,
+          },
           type: 'PRODUCT',
-          createdById: currentUser?.account?.id,
-          brandCategoryId: 'cm7rluppj0009fxv47hmryuqe',
+          createdById: currentUser?.admin?.id,
           entityTags: {
             create: createTags,
           },
@@ -183,6 +213,8 @@ export function Products() {
           setSelectedTags={setSelectedTags}
           setDeletedTags={setDeletedTags}
           setUpdatedTags={setUpdatedTags}
+          categories={categories}
+          brands={brands}
         />
       </SimpleDialog>
       <ConfirmDialog

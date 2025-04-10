@@ -1,29 +1,29 @@
-import { Input, Textarea, Checkbox, Button } from '../../components/Tailwind'
-import { ShippingCategoryDto, ShippingOptionDto } from '../../types'
+import { Input, Textarea, Button } from '../../components/Tailwind'
+import { ShippingMethodDto, ShippingOptionDto } from '../../types'
 import cuid from 'cuid'
 
 type ShippingOptionWithState = ShippingOptionDto & {
   isNew?: boolean;
 };
 
-type CreateOrEditShippingCategoryProps = {
-  selectedShippingCategory: ShippingCategoryDto | null
-  setSelectedShippingCategory: React.Dispatch<React.SetStateAction<ShippingCategoryDto | null>>
+type CreateOrEditShippingMethodProps = {
+  selectedShippingMethod: ShippingMethodDto | null
+  setSelectedShippingMethod: React.Dispatch<React.SetStateAction<ShippingMethodDto | null>>
   setDeletedShippingOptions: React.Dispatch<React.SetStateAction<string[]>>
   setUpdatedShippingOptions: React.Dispatch<React.SetStateAction<ShippingOptionWithState[] | []>>
   setNewShippingOptions: React.Dispatch<React.SetStateAction<ShippingOptionWithState[] | []>>
 }
 
-export function CreateOrEditShippingCategory({
-  selectedShippingCategory,
-  setSelectedShippingCategory,
+export function CreateOrEditShippingMethod({
+  selectedShippingMethod,
+  setSelectedShippingMethod,
   setDeletedShippingOptions,
   setUpdatedShippingOptions,
   setNewShippingOptions
-}: CreateOrEditShippingCategoryProps) {
+}: CreateOrEditShippingMethodProps) {
 
   const handleAddShippingOption = () => {
-    setSelectedShippingCategory((prev) => ({
+    setSelectedShippingMethod((prev) => ({
       ...prev!,
       shippingOptions: [...(prev?.shippingOptions || []), {
         id: cuid(),
@@ -34,13 +34,14 @@ export function CreateOrEditShippingCategory({
         maxWeight: 0,
         rate: 0,
         isRequired: false,
-        isNew: true
+        isNew: true,
+        isStandalone: false
       }]
     }))
   }
 
   const handleShippingOptionChange = (index: number, field: keyof ShippingOptionDto, value: string | number | boolean, isExistingOption: boolean) => {
-    setSelectedShippingCategory((prev) => {
+    setSelectedShippingMethod((prev) => {
       if (!prev) return null
       const updatedOptions = [...(prev.shippingOptions || [])]
       updatedOptions[index] = { ...updatedOptions[index], [field]: value }
@@ -49,33 +50,33 @@ export function CreateOrEditShippingCategory({
 
     if (isExistingOption) {
       setUpdatedShippingOptions((prev) => {
-        const existingOption = prev.find((opt) => opt.id === selectedShippingCategory?.shippingOptions?.[index]?.id)
+        const existingOption = prev.find((opt) => opt.id === selectedShippingMethod?.shippingOptions?.[index]?.id)
         if (existingOption) {
           return prev.map((opt) =>
-            opt.id === selectedShippingCategory?.shippingOptions?.[index]?.id
+            opt.id === selectedShippingMethod?.shippingOptions?.[index]?.id
               ? { ...opt, [field]: value }
               : opt
           )
         } else {
           return [
             ...prev,
-            { ...selectedShippingCategory?.shippingOptions?.[index], [field]: value },
+            { ...selectedShippingMethod?.shippingOptions?.[index], isStandalone: false, [field]: value },
           ]
         }
       })
     } else {
       setNewShippingOptions((prev) => {
-        const existingOption = prev.find((opt) => opt.id === selectedShippingCategory?.shippingOptions?.[index]?.id)
+        const existingOption = prev.find((opt) => opt.id === selectedShippingMethod?.shippingOptions?.[index]?.id)
         if (existingOption) {
           return prev.map((opt) =>
-            opt.id === selectedShippingCategory?.shippingOptions?.[index]?.id
+            opt.id === selectedShippingMethod?.shippingOptions?.[index]?.id
               ? { ...opt, [field]: value }
               : opt
           )
         } else {
           return [
             ...prev,
-            { ...selectedShippingCategory?.shippingOptions?.[index], [field]: value },
+            { ...selectedShippingMethod?.shippingOptions?.[index], isStandalone: false, [field]: value },
           ]
         }
       })
@@ -83,7 +84,7 @@ export function CreateOrEditShippingCategory({
   }
 
   const handleRemoveShippingOption = (index: number) => {
-    setSelectedShippingCategory((prev) => {
+    setSelectedShippingMethod((prev) => {
       if (!prev) return null
 
       const optionToRemove = prev.shippingOptions?.[index]
@@ -103,25 +104,25 @@ export function CreateOrEditShippingCategory({
       <label className="block text-sm font-bold mb-1">Name</label>
       <Input
         type="text"
-        value={selectedShippingCategory?.displayName || ''}
+        value={selectedShippingMethod?.displayName || ''}
         onChange={(e) =>
-          setSelectedShippingCategory({ ...selectedShippingCategory!, displayName: e.target.value })
+          setSelectedShippingMethod({ ...selectedShippingMethod!, displayName: e.target.value })
         }
         placeholder="Enter category name"
       />
       <label className="block text-sm font-bold mb-1">Description</label>
       <Input
         type="text"
-        value={selectedShippingCategory?.description || ''}
+        value={selectedShippingMethod?.description || ''}
         onChange={(e) =>
-          setSelectedShippingCategory({ ...selectedShippingCategory!, description: e.target.value })
+          setSelectedShippingMethod({ ...selectedShippingMethod!, description: e.target.value })
         }
         placeholder="Enter description"
       />
 
       <label className="block text-sm font-bold mb-1 mt-4">Shipping Options</label>
 
-      {selectedShippingCategory?.shippingOptions?.map((option, index) => {
+      {selectedShippingMethod?.shippingOptions?.map((option, index) => {
         const optionWithState = option as ShippingOptionWithState
         return (
           <div key={index} className="mb-4 border p-3 rounded-md">
@@ -169,12 +170,6 @@ export function CreateOrEditShippingCategory({
             </div>
 
             <div className="mt-2 flex items-center">
-              <Checkbox
-                checked={option.isRequired || false}
-                onChange={(checked) => handleShippingOptionChange(index, 'isRequired', checked, !optionWithState.isNew)}
-              />
-              <span className="ml-2 text-sm">Is Required</span>
-
               <div className="ml-auto flex items-center space-x-2">
                 <Button
                   type="button"

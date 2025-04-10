@@ -36,14 +36,14 @@ export function Categories() {
             name: selectedCategory.name,
             displayName: selectedCategory.displayName,
             description: selectedCategory.description,
-            lastModifiedById: currentUser?.account?.id,
+            lastModifiedById: currentUser?.admin?.id,
           })
         } else {
           await categoryService.create({
             name: selectedCategory.name,
             displayName: selectedCategory.displayName,
             description: selectedCategory.description,
-            createdById: currentUser?.account?.id,
+            createdById: currentUser?.admin?.id,
           })
         }
 

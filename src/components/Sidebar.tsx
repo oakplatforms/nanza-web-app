@@ -1,7 +1,7 @@
 //'use client'
 import * as Headless from '@headlessui/react'
 import clsx from 'clsx'
-import React, { forwardRef, useState } from 'react'
+import React, { forwardRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useSession } from '../context/SessionContext'
 import { signOut } from 'aws-amplify/auth'
@@ -118,14 +118,17 @@ export function SidebarNavigation() {
         <Link to="/categories">
           <div className={clsx('cursor-default', classes)}>Categories</div>
         </Link>
-        <Link to="/shipping">
-          <div className={clsx('cursor-default', classes)}>Shipping</div>
-        </Link>
         <Link to="/brands">
           <div className={clsx('cursor-default', classes)}>Brands</div>
         </Link>
         <Link to="/products">
           <div className={clsx('cursor-default', classes)}>Products</div>
+        </Link>
+        <Link to="/shipping-methods">
+          <div className={clsx('cursor-default', classes)}>Shipping Methods</div>
+        </Link>
+        <Link to="/shipping-options">
+          <div className={clsx('cursor-default', classes)}>Shipping Options</div>
         </Link>
         <div>
           <div
