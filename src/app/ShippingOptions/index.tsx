@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { ShippingOptionDto } from '../../types'
 import { shippingOptionService } from '../../services/api/ShippingOption'
 import { SimpleTable } from '../../components/SimpleTable'
@@ -8,24 +8,27 @@ import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { CreateOrEditShippingOption } from './CreateOrEditShippingOptions'
 import { useSession } from '../../context/SessionContext'
 import { slugify } from '../../helpers'
+import { fetchShippingOptions } from './data/fetchShippingOptions'
+import { PaginationControls } from '../../components/PaginationControls'
 
 export function ShippingOptions() {
   const { currentUser } = useSession()
-  const [shippingOptions, setShippingOptions] = useState<ShippingOptionDto[]>([])
+  const [currentPage, setCurrentPage] = useState(0)
   const [isCreateOrEditModalOpen, setIsCreateOrEditModalOpen] = useState(false)
   const [selectedShippingOption, setSelectedShippingOption] = useState<ShippingOptionDto | null>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
-  useEffect(() => {
-    getShippingOptions()
-  }, [])
+  const { shippingOptions, refetchShippingOptions } = fetchShippingOptions(currentPage)
 
-  const getShippingOptions = async () => {
-    try {
-      const options = await shippingOptionService.list('?isStandalone=true')
-      setShippingOptions(options)
-    } catch (error) {
-      console.error('Error fetching shipping options:', error)
+  const handleNextPage = () => {
+    if (shippingOptions?.total !== null && (currentPage + 1) * 10 < shippingOptions!.total) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
+
+  const handlePrevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1)
     }
   }
 
@@ -48,7 +51,8 @@ export function ShippingOptions() {
             createdById: currentUser?.admin?.id,
           })
         }
-        await getShippingOptions()
+        await refetchShippingOptions()
+        setCurrentPage(0)
         setSelectedShippingOption(null)
         setIsCreateOrEditModalOpen(false)
       }
@@ -61,7 +65,8 @@ export function ShippingOptions() {
     try {
       if (selectedShippingOption?.id) {
         await shippingOptionService.delete(selectedShippingOption.id)
-        await getShippingOptions()
+        await refetchShippingOptions()
+        setCurrentPage(0)
         setSelectedShippingOption(null)
         setIsDeleteDialogOpen(false)
       }
@@ -85,21 +90,30 @@ export function ShippingOptions() {
       <br />
       <SimpleTable
         headers={['Name', 'Rate', 'Max Quantity', 'Max Weight', '']}
-        rows={shippingOptions.map((option) => ({
+        rows={shippingOptions?.data.map((option) => ({
           displayName: { value: option.displayName || '', width: '450px' },
           rate: { value: `$${option.rate}`, width: '200px' },
           maxQuantity: { value: option.maxQuantity || '-', width: '200px' },
-          maxWeight: { value: option.maxWeight || '-', width: '200px' },
-        }))}
+          weight: { value: option.weight || '-', width: '200px' },
+        })) || []}
         onEdit={(idx) => {
-          setSelectedShippingOption(shippingOptions[idx])
+          setSelectedShippingOption(shippingOptions!.data[idx])
           setIsCreateOrEditModalOpen(true)
         }}
         onDelete={(idx) => {
-          setSelectedShippingOption(shippingOptions[idx])
+          setSelectedShippingOption(shippingOptions!.data[idx])
           setIsDeleteDialogOpen(true)
         }}
       />
+
+      {shippingOptions && shippingOptions.total !== null && shippingOptions.total > 10 && (
+        <PaginationControls
+          currentPage={currentPage}
+          total={shippingOptions.total}
+          onPrev={handlePrevPage}
+          onNext={handleNextPage}
+        />
+      )}
 
       <SimpleDialog
         isOpen={isCreateOrEditModalOpen}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { CategoryDto } from '../../types'
 import { categoryService } from '../../services/api/Category'
 import { SimpleTable } from '../../components/SimpleTable'
@@ -7,24 +7,29 @@ import { SimpleDialog } from '../../components/SimpleDialog'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { CreateOrEditCategory } from './CreateOrEditCategory'
 import { useSession } from '../../context/SessionContext'
+import { PaginationControls } from '../../components/PaginationControls'
+import { fetchCategories } from './data/fetchCategories'
 
 export function Categories() {
   const { currentUser } = useSession()
-  const [categories, setCategories] = useState<CategoryDto[]>([])
+  const [currentPage, setCurrentPage] = useState(0)
   const [isCreateOrEditModalOpen, setIsCreateOrEditModalOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<CategoryDto | null>(null)
   const [isDeleteCategoryDialogOpen, setIsDeleteCategoryDialogOpen] = useState(false)
 
-  useEffect(() => {
-    getCategories()
-  }, [])
+  const { categories, refetchCategories } = fetchCategories(currentPage)
 
-  const getCategories = async () => {
-    try {
-      const categoriesData = await categoryService.list()
-      setCategories(categoriesData)
-    } catch (error) {
-      console.log('Error fetching categories.', error)
+  const handleNextPage = () => {
+    if (categories?.total !== null && (currentPage + 1) * 10 < categories!.total) {
+      const nextPage = currentPage + 1
+      setCurrentPage(nextPage)
+    }
+  }
+
+  const handlePrevPage = () => {
+    if (currentPage > 0) {
+      const prevPage = currentPage - 1
+      setCurrentPage(prevPage)
     }
   }
 
@@ -46,8 +51,8 @@ export function Categories() {
             createdById: currentUser?.admin?.id,
           })
         }
-
-        await getCategories()
+        await refetchCategories()
+        setCurrentPage(0)
         setIsCreateOrEditModalOpen(false)
         setSelectedCategory(null)
       }
@@ -60,7 +65,8 @@ export function Categories() {
     try {
       if (selectedCategory?.id) {
         await categoryService.delete(selectedCategory.id)
-        await getCategories()
+        await refetchCategories()
+        setCurrentPage(0)
         setIsDeleteCategoryDialogOpen(false)
         setSelectedCategory(null)
       }
@@ -70,13 +76,19 @@ export function Categories() {
   }
 
   const onSelectCategory = (categoryIdx: number) => {
-    setSelectedCategory(categories[categoryIdx])
-    setIsCreateOrEditModalOpen(true)
+    const selected = categories?.data?.[categoryIdx]
+    if (selected) {
+      setSelectedCategory(selected)
+      setIsCreateOrEditModalOpen(true)
+    }
   }
 
   const onConfirmDeleteCategory = (categoryIdx: number) => {
-    setSelectedCategory(categories[categoryIdx])
-    setIsDeleteCategoryDialogOpen(true)
+    const selected = categories?.data?.[categoryIdx]
+    if (selected) {
+      setSelectedCategory(selected)
+      setIsDeleteCategoryDialogOpen(true)
+    }
   }
 
   return (
@@ -94,14 +106,21 @@ export function Categories() {
       <br />
       <SimpleTable
         headers={['Name', 'Description', '']}
-        rows={categories.map((category) => ({
+        rows={categories?.data.map((category) => ({
           displayName: { value: category.displayName || category.name || '', width: '250px' },
           description: { value: category.description || 'No description', width: '800px' },
-        }))}
+        })) || []}
         onEdit={onSelectCategory}
         onDelete={onConfirmDeleteCategory}
       />
-
+      {categories && categories.total !== null && categories.total > 10 && (
+        <PaginationControls
+          currentPage={currentPage}
+          total={categories.total}
+          onPrev={handlePrevPage}
+          onNext={handleNextPage}
+        />
+      )}
       <SimpleDialog
         isOpen={isCreateOrEditModalOpen}
         size="3xl"
@@ -118,7 +137,6 @@ export function Categories() {
           setSelectedCategory={setSelectedCategory}
         />
       </SimpleDialog>
-
       <ConfirmDialog
         isOpen={isDeleteCategoryDialogOpen}
         onClose={() => {
@@ -126,9 +144,7 @@ export function Categories() {
           setIsDeleteCategoryDialogOpen(false)
         }}
         title="Delete Category"
-        description={`Are you sure you want to delete the category "${
-          selectedCategory?.displayName
-        }"?`}
+        description={`Are you sure you want to delete the category "${selectedCategory?.displayName}"?`}
         onConfirm={onDeleteCategory}
         confirmBtnTxt="Delete"
       />

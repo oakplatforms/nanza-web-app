@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { BrandDto } from '../../types'
 import { brandService } from '../../services/api/Brand'
 import { SimpleTable } from '../../components/SimpleTable'
@@ -7,24 +7,29 @@ import { SimpleDialog } from '../../components/SimpleDialog'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { CreateOrEditBrand } from './CreateOrEditBrand'
 import { useSession } from '../../context/SessionContext'
+import { PaginationControls } from '../../components/PaginationControls'
+import { fetchBrands } from './data/fetchBrands'
 
 export function Brands() {
   const { currentUser } = useSession()
-  const [brands, setBrands] = useState<BrandDto[]>([])
+  const [currentPage, setCurrentPage] = useState(0)
   const [isCreateOrEditModalOpen, setIsCreateOrEditModalOpen] = useState(false)
   const [selectedBrand, setSelectedBrand] = useState<BrandDto | null>(null)
   const [isDeleteBrandDialogOpen, setIsDeleteBrandDialogOpen] = useState(false)
 
-  useEffect(() => {
-    getBrands()
-  }, [])
+  const { brands } = fetchBrands(currentPage)
 
-  const getBrands = async () => {
-    try {
-      const brandsData = await brandService.list('')
-      setBrands(brandsData)
-    } catch (error) {
-      console.log('Error fetching brands.', error)
+  const handleNextPage = () => {
+    if (brands?.total !== null && (currentPage + 1) * 10 < brands!.total) {
+      const nextPage = currentPage + 1
+      setCurrentPage(nextPage)
+    }
+  }
+
+  const handlePrevPage = () => {
+    if (currentPage > 0) {
+      const prevPage = currentPage - 1
+      setCurrentPage(prevPage)
     }
   }
 
@@ -47,7 +52,7 @@ export function Brands() {
           })
         }
 
-        await getBrands()
+        setCurrentPage(0)
         setIsCreateOrEditModalOpen(false)
         setSelectedBrand(null)
       }
@@ -60,7 +65,7 @@ export function Brands() {
     try {
       if (selectedBrand?.id) {
         await brandService.delete(selectedBrand.id)
-        await getBrands()
+        setCurrentPage(0)
         setIsDeleteBrandDialogOpen(false)
         setSelectedBrand(null)
       }
@@ -70,13 +75,19 @@ export function Brands() {
   }
 
   const onSelectBrand = (brandIdx: number) => {
-    setSelectedBrand(brands[brandIdx])
-    setIsCreateOrEditModalOpen(true)
+    const selected = brands?.data?.[brandIdx]
+    if (selected) {
+      setSelectedBrand(selected)
+      setIsCreateOrEditModalOpen(true)
+    }
   }
 
   const onConfirmDeleteBrand = (brandIdx: number) => {
-    setSelectedBrand(brands[brandIdx])
-    setIsDeleteBrandDialogOpen(true)
+    const selected = brands?.data?.[brandIdx]
+    if (selected) {
+      setSelectedBrand(selected)
+      setIsDeleteBrandDialogOpen(true)
+    }
   }
 
   return (
@@ -94,12 +105,20 @@ export function Brands() {
       <br />
       <SimpleTable
         headers={['Name', '']}
-        rows={brands.map((brand) => ({
+        rows={brands?.data.map((brand) => ({
           displayName: { value: brand.displayName || '', width: '1050px' },
-        }))}
+        })) || []}
         onEdit={onSelectBrand}
         onDelete={onConfirmDeleteBrand}
       />
+      {brands && brands.total !== null && brands.total > 10 && (
+        <PaginationControls
+          currentPage={currentPage}
+          total={brands.total}
+          onPrev={handlePrevPage}
+          onNext={handleNextPage}
+        />
+      )}
       <SimpleDialog
         isOpen={isCreateOrEditModalOpen}
         size="3xl"
@@ -123,9 +142,7 @@ export function Brands() {
           setIsDeleteBrandDialogOpen(false)
         }}
         title="Delete Brand"
-        description={`Are you sure you want to delete the brand "${
-          selectedBrand?.displayName
-        }"?`}
+        description={`Are you sure you want to delete the brand "${selectedBrand?.displayName}"?`}
         onConfirm={onDeleteBrand}
         confirmBtnTxt="Delete"
       />

@@ -60,7 +60,7 @@ export function CreateOrEditShippingOption({
           <label className="block text-sm font-bold mb-1">Max Weight</label>
           <Input
             type="number"
-            value={selectedShippingOption?.maxWeight || ''}
+            value={selectedShippingOption?.weight || ''}
             onChange={(e) =>
               setSelectedShippingOption((prev) => ({
                 ...prev!,

@@ -8,18 +8,18 @@ export const shippingMethodService = {
   async list(parameters = '') {
     return fetchData({ url: `/shipping-methods${parameters}` })
   },
-  async create(categoryPayload: ShippingMethodPayload) {
+  async create(shipmentMethodPayload: ShippingMethodPayload) {
     return fetchData({
       url: '/shipping-method',
       method: 'POST',
-      payload: categoryPayload,
+      payload: shipmentMethodPayload,
     })
   },
-  async update(categoryId: string, categoryPayload: ShippingMethodPayload) {
+  async update(categoryId: string, shipmentMethodPayload: ShippingMethodPayload) {
     return fetchData({
       url: `/shipping-method/${categoryId}`,
       method: 'PUT',
-      payload: categoryPayload,
+      payload: shipmentMethodPayload,
     })
   },
   async delete(categoryId: string) {

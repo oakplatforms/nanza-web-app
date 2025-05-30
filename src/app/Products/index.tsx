@@ -1,78 +1,40 @@
-import { useEffect, useState } from 'react'
-import { BrandDto, CategoryDto, EntityDto, EntityTagDto, TagDto } from '../../types'
-import { entityService } from '../../services/api/Entity'
+import { useState } from 'react'
+import { EntityDto, EntityTagDto } from '../../types'
 import { Button, Badge, Header } from '../../components/Tailwind'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { SimpleTable } from '../../components/SimpleTable'
 import { SimpleDialog } from '../../components/SimpleDialog'
 import { CreateOrEditProduct } from './CreateOrEditProduct'
-import { tagService } from '../../services/api/Tag'
 import { useSession } from '../../context/SessionContext'
-import { categoryService } from '../../services/api/Category'
-import { brandService } from '../../services/api/Brand'
+import { PaginationControls } from '../../components/PaginationControls'
+
+import { fetchProductEntities } from './data/fetchProductEntities'
+import { fetchTags } from './data/fetchTags'
+import { fetchCategories } from './data/fetchCategories'
+import { fetchBrands } from './data/fetchBrands'
+import { entityService } from '../../services/api/Entity'
 
 export function Products() {
   const { currentUser } = useSession()
-  const [productEntities, setProductEntities] = useState<EntityDto[]>([])
-  const [tags, setTags] = useState<TagDto[]>([])
+
+  const [currentPage, setCurrentPage] = useState(0)
+  const [selectedProductEntity, setSelectedProductEntity] = useState<EntityDto>()
+  const [selectedTags, setSelectedTags] = useState<EntityTagDto[]>([])
+  const [deletedTags, setDeletedTags] = useState<string[]>([])
+  const [updatedTags, setUpdatedTags] = useState<EntityTagDto[]>([])
   const [isCreateOrEditProductDialogOpen, setIsCreateOrEditProductDialogOpen] = useState(false)
   const [isDeleteProductDialogOpen, setIsDeleteProductDialogOpen] = useState(false)
-  const [selectedProductEntity, setSelectedProductEntity] = useState<EntityDto>()
-  const [deletedTags, setDeletedTags] = useState<string[]>([])
-  const [selectedTags, setSelectedTags] = useState<EntityTagDto[]>([])
-  const [updatedTags, setUpdatedTags] = useState<EntityTagDto[]>([])
-  const [categories, setCategories] = useState<CategoryDto[]>([])
-  const [brands, setBrands] = useState<BrandDto[]>([])
 
-  useEffect(() => {
-    getProductEntities()
-    getTagsWithSupportedValues()
-    getCategories()
-    getBrands()
-  }, [])
+  const { productEntities, refetchProductEntities } = fetchProductEntities(currentPage)
+  const { tags } = fetchTags()
+  const { categories } = fetchCategories()
+  const { brands } = fetchBrands()
 
-  const getProductEntities = async () => {
-    try {
-      const productEntitiesData = await entityService.list('?include=entityTags.tag&include=product')
-      setProductEntities(productEntitiesData)
-    } catch (error) {
-      console.error('Error fetching products:', error)
-    }
-  }
-
-  const getTagsWithSupportedValues = async () => {
-    try {
-      const tags: TagDto[] = await tagService.list('?include=supportedTagValues')
-      setTags(tags)
-    } catch (error) {
-      console.error('Error fetching tag options:', error)
-    }
-  }
-
-  const getCategories = async () => {
-    try {
-      const categoriesData = await categoryService.list()
-      setCategories(categoriesData)
-    } catch (error) {
-      console.log('Error fetching categories.', error)
-    }
-  }
-
-  const getBrands = async () => {
-    try {
-      const brandsData = await brandService.list('')
-      setBrands(brandsData)
-    } catch (error) {
-      console.log('Error fetching brands.', error)
-    }
-  }
-
-  const onEditProduct = async (productIdx: number) => {
-    const selectedProductEntity = productEntities[productIdx]
-
-    if (selectedProductEntity) {
-      setSelectedProductEntity(selectedProductEntity)
-      setSelectedTags(selectedProductEntity?.entityTags || [])
+  const onEditProduct = (productIdx: number) => {
+    const selected = productEntities?.data?.[productIdx]
+    if (selected) {
+      setSelectedProductEntity(selected)
+      setSelectedTags(selected.entityTags || [])
       setIsCreateOrEditProductDialogOpen(true)
     }
   }
@@ -117,19 +79,20 @@ export function Products() {
           },
         })
       }
-      await getProductEntities()
+
+      await refetchProductEntities()
+      setCurrentPage(0)
       setIsCreateOrEditProductDialogOpen(false)
     } catch (error) {
       console.error(`Error ${existingProductEntity ? 'updating' : 'creating'} product:`, error)
     }
   }
 
-  const onConfirmDeleteProduct = async (productIdx: number) => {
-    const selectedProductEntity = productEntities[productIdx]
-
-    if (selectedProductEntity) {
-      setSelectedProductEntity(selectedProductEntity)
-      setSelectedTags(selectedProductEntity?.entityTags || [])
+  const onConfirmDeleteProduct = (productIdx: number) => {
+    const selected = productEntities?.data?.[productIdx]
+    if (selected) {
+      setSelectedProductEntity(selected)
+      setSelectedTags(selected.entityTags || [])
       setIsDeleteProductDialogOpen(true)
     }
   }
@@ -138,7 +101,8 @@ export function Products() {
     try {
       if (selectedProductEntity) {
         await entityService.delete(selectedProductEntity.id!)
-        await getProductEntities()
+        await refetchProductEntities()
+        setCurrentPage(0)
         setSelectedProductEntity(undefined)
         setSelectedTags([])
         setDeletedTags([])
@@ -164,8 +128,20 @@ export function Products() {
     </>
   )
 
+  const handleNextPage = () => {
+    if (productEntities && (currentPage + 1) * 10 < productEntities.total!) {
+      setCurrentPage((prev) => prev + 1)
+    }
+  }
+
+  const handlePrevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage((prev) => prev - 1)
+    }
+  }
+
   const headers = ['Name', 'Description', 'Tags', '']
-  const tableRows = productEntities?.map((productEntity) => ({
+  const tableRows = productEntities?.data?.map((productEntity) => ({
     displayName: { value: productEntity.displayName || '', width: '200px' },
     description: { value: productEntity.description || '', width: '400px' },
     tags: { value: generateTagBadges(productEntity), width: '400px' },
@@ -186,13 +162,21 @@ export function Products() {
       <br />
       <SimpleTable
         headers={headers}
-        rows={tableRows}
+        rows={tableRows || []}
         onEdit={onEditProduct}
         onDelete={onConfirmDeleteProduct}
       />
+      {productEntities && productEntities.total! > 10 && (
+        <PaginationControls
+          currentPage={currentPage}
+          total={productEntities.total!}
+          onPrev={handlePrevPage}
+          onNext={handleNextPage}
+        />
+      )}
       <SimpleDialog
         isOpen={isCreateOrEditProductDialogOpen}
-        size='3xl'
+        size="3xl"
         onClose={() => {
           setSelectedProductEntity(undefined)
           setSelectedTags([])
@@ -201,20 +185,20 @@ export function Products() {
           setIsCreateOrEditProductDialogOpen(false)
         }}
         title={selectedProductEntity ? `Edit '${selectedProductEntity?.displayName || ''}'` : 'Add New Product'}
-        onSubmit={() => onSaveProduct()}
+        onSubmit={onSaveProduct}
         submitBtnTxt={selectedProductEntity?.id ? 'Update Product' : 'Add Product'}
-        submitBtnColor='green'
+        submitBtnColor="green"
       >
         <CreateOrEditProduct
           selectedProductEntity={selectedProductEntity}
           setSelectedProductEntity={setSelectedProductEntity}
-          tags={tags}
+          tags={tags?.data || []}
           selectedTags={selectedTags}
           setSelectedTags={setSelectedTags}
           setDeletedTags={setDeletedTags}
           setUpdatedTags={setUpdatedTags}
-          categories={categories}
-          brands={brands}
+          categories={categories?.data || []}
+          brands={brands?.data || []}
         />
       </SimpleDialog>
       <ConfirmDialog

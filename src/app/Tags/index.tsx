@@ -1,33 +1,36 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { TagDto } from '../../types'
 import { tagService } from '../../services/api/Tag'
 import { SimpleTable } from '../../components/SimpleTable'
 import { Header, Badge, Button } from '../../components/Tailwind'
 import { SimpleDialog } from '../../components/SimpleDialog'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
-
 import { useSession } from '../../context/SessionContext'
 import { CreateOrEditTag } from './CreateOrEditTag'
+import { PaginationControls } from '../../components/PaginationControls'
+import { fetchTags } from './data/fetchTags'
 
 export function Tags() {
   const { currentUser } = useSession()
-  const [tags, setTags] = useState<TagDto[]>([])
+  const [currentPage, setCurrentPage] = useState(0)
   const [isCreateOrEditModalOpen, setIsCreateOrEditModalOpen] = useState(false)
   const [selectedTag, setSelectedTag] = useState<TagDto | null>(null)
   const [isDeleteTagDialogOpen, setIsDeleteTagDialogOpen] = useState(false)
   const [newSupportedTagValue, setNewSupportedTagValue] = useState<string>('')
   const [deletedSupportedTagValues, setDeletedSupportedTagValues] = useState<string[]>([])
+  const { tags, refetchTags } = fetchTags(currentPage)
 
-  useEffect(() => {
-    getTags()
-  }, [])
+  const handleNextPage = () => {
+    if (tags?.total !== null && (currentPage + 1) * 10 < tags!.total) {
+      const nextPage = currentPage + 1
+      setCurrentPage(nextPage)
+    }
+  }
 
-  const getTags = async () => {
-    try {
-      const tagsData = await tagService.list('?include=supportedTagValues')
-      setTags(tagsData)
-    } catch (error) {
-      console.log('Error fetching tags.', error)
+  const handlePrevPage = () => {
+    if (currentPage > 0) {
+      const prevPage = currentPage - 1
+      setCurrentPage(prevPage)
     }
   }
 
@@ -59,8 +62,8 @@ export function Tags() {
             }
           })
         }
-
-        await getTags()
+        await refetchTags()
+        setCurrentPage(0)
         setIsCreateOrEditModalOpen(false)
         setSelectedTag(null)
         setDeletedSupportedTagValues([])
@@ -74,7 +77,8 @@ export function Tags() {
     try {
       if (selectedTag?.id) {
         await tagService.delete(selectedTag.id)
-        await getTags()
+        await refetchTags()
+        setCurrentPage(0)
         setIsDeleteTagDialogOpen(false)
         setSelectedTag(null)
       }
@@ -84,14 +88,20 @@ export function Tags() {
   }
 
   const onSelectTag = (tagIdx: number) => {
-    setSelectedTag(tags[tagIdx])
-    setDeletedSupportedTagValues([])
-    setIsCreateOrEditModalOpen(true)
+    const selected = tags?.data?.[tagIdx]
+    if (selected) {
+      setSelectedTag(selected)
+      setDeletedSupportedTagValues([])
+      setIsCreateOrEditModalOpen(true)
+    }
   }
 
   const onConfirmDeleteTag = (tagIdx: number) => {
-    setSelectedTag(tags[tagIdx])
-    setIsDeleteTagDialogOpen(true)
+    const selected = tags?.data?.[tagIdx]
+    if (selected) {
+      setSelectedTag(selected)
+      setIsDeleteTagDialogOpen(true)
+    }
   }
 
   return (
@@ -109,7 +119,7 @@ export function Tags() {
       <br />
       <SimpleTable
         headers={['Name', 'Supported Tag Values', '']}
-        rows={tags.map((tag) => ({
+        rows={tags?.data.map((tag) => ({
           displayName: { value: tag.displayName || '', width: '250px' },
           supportedTagValues: {
             value: tag.supportedTagValues?.map((val, index) => (
@@ -119,10 +129,18 @@ export function Tags() {
             )),
             width: '800px',
           },
-        }))}
+        })) || []}
         onEdit={onSelectTag}
         onDelete={onConfirmDeleteTag}
       />
+      {tags && tags.total !== null && tags.total > 10 && (
+        <PaginationControls
+          currentPage={currentPage}
+          total={tags.total}
+          onPrev={handlePrevPage}
+          onNext={handleNextPage}
+        />
+      )}
       <SimpleDialog
         isOpen={isCreateOrEditModalOpen}
         size='3xl'
@@ -149,9 +167,7 @@ export function Tags() {
           setIsDeleteTagDialogOpen(false)
         }}
         title="Delete Tag"
-        description={`Are you sure you want to delete the tag "${
-          selectedTag?.displayName
-        }"?`}
+        description={`Are you sure you want to delete the tag "${selectedTag?.displayName}"?`}
         onConfirm={onDeleteTag}
         confirmBtnTxt="Delete"
       />
