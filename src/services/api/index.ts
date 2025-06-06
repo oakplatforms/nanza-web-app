@@ -21,14 +21,20 @@ async function getJwtToken() {
 export async function fetchData({ url, method = 'GET', payload }: FetchProps) {
   const token = await getJwtToken()
 
-  const options = {
+  const isFormData = payload instanceof FormData
+
+  const options: RequestInit = {
     method,
     headers: {
       Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'Authorization': token ? `Bearer ${token}` : '',
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: payload ? JSON.stringify(payload) : undefined,
+    body: payload
+      ? isFormData
+        ? payload
+        : JSON.stringify(payload)
+      : undefined,
   }
 
   const response = await fetch(`/api/v1${url}`, options)

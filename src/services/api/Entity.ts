@@ -27,5 +27,12 @@ export const entityService = {
       url: `/entity/${entityId}`,
       method: 'DELETE',
     })
+  },
+  async uploadImage(entityId: string, formData: FormData) {
+    return fetchData({
+      url: `/entity/upload-image/${entityId}`,
+      method: 'PUT',
+      payload: formData,
+    })
   }
 }

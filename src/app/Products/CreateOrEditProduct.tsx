@@ -4,6 +4,7 @@ import { Input, Select, Textarea } from '../../components/Tailwind'
 import { slugify } from '../../helpers'
 import { EntityDto, TagDto, EntityTagDto, CategoryDto, BrandDto } from '../../types'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/16/solid'
+import { entityService } from '../../services/api/Entity'
 
 type CreateOrEditProductProps = {
   selectedProductEntity?: EntityDto
@@ -279,16 +280,35 @@ export function CreateOrEditProduct({
           </div>
           <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Product Image</h2>
-            <div>
-              <label className="block text-sm font-bold mb-1">Image URL</label>
-              <Input
-                type="text"
-                value={selectedProductEntity?.image || ''}
-                onChange={(e) => setSelectedProductEntity({ ...selectedProductEntity, type: 'PRODUCT', image: e.target.value })}
-                placeholder="Enter image URL"
+            {selectedProductEntity?.image && (
+              <img
+                src={`${process.env.REACT_APP_S3_BASE_URL}/${selectedProductEntity.image}`}
+                alt="Product"
+                className="mb-4 w-48 h-auto rounded"
               />
-            </div>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={async (e) => {
+                const file = e.target.files?.[0]
+                if (!file || !selectedProductEntity?.id) return
+
+                const formData = new FormData()
+                formData.append('file', file)
+                formData.append('marketId', 'tcgx')
+
+                try {
+                  const response = await entityService.uploadImage(selectedProductEntity.id, formData)
+                  setSelectedProductEntity((prev) => prev && { ...prev, image: response?.image })
+                } catch (err) {
+                  console.error('Image upload failed:', err)
+                }
+              }}
+              className="block text-sm text-gray-700"
+            />
           </div>
+
           <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
             <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">Product Tags</h2>
