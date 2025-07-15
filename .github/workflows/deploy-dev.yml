@@ -24,7 +24,7 @@ jobs:
         run: npm install -g @aws-amplify/cli
 
       - name: Pull Amplify environment
-        run: amplify pull --yes --envName dev
+        run: amplify pull --yes --appId ${{ vars.AMPLIFY_APP_ID }} --envName dev
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
