@@ -282,7 +282,7 @@ export function CreateOrEditProduct({
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Product Image</h2>
             {selectedProductEntity?.image && (
               <img
-                src={`${process.env.REACT_APP_S3_BASE_URL}/${selectedProductEntity.image}`}
+                src={`${process.env.REACT_APP_S3_IMAGE_BUCKET}/${selectedProductEntity.image}`}
                 alt="Product"
                 className="mb-4 w-48 h-auto rounded"
               />

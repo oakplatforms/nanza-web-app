@@ -37,7 +37,8 @@ export async function fetchData({ url, method = 'GET', payload }: FetchProps) {
       : undefined,
   }
 
-  const response = await fetch(`/api/v1${url}`, options)
+  const baseUrl = process.env.REACT_APP_API_BASE_URL || ''
+  const response = await fetch(`${baseUrl}/api/v1${url}`, options)
 
   if (response.status === 429) {
     throw new RateLimitError('Rate limit exceeded. Stopping further requests.')
