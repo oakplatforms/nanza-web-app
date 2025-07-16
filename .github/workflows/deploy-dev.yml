@@ -33,7 +33,7 @@ jobs:
       - name: Build React app
         run: npm run build
         env:
-          REACT_APP_S3_IMAGE_BUCKET: ${{ vars.S3_IMAGE_BUCKET_DEV }}
+          REACT_APP_S3_IMAGE_BASE_URL: ${{ vars.S3_IMAGE_BASE_URL_DEV }}
           REACT_APP_API_BASE_URL: ${{ vars.API_BASE_URL_DEV }}
 
       - name: Configure AWS credentials
