@@ -1,5 +1,5 @@
 import { createContext, useState, ReactNode, useEffect, Dispatch, SetStateAction, useContext } from 'react'
-import { fetchAuthSession, getCurrentUser } from 'aws-amplify/auth'
+import { getCurrentUser } from 'aws-amplify/auth'
 import { UserDto } from '../types'
 import { userService } from '../services/api/User'
 
@@ -26,20 +26,15 @@ const SessionProvider = ({ children } : SessionProviderProps) => {
   const [currentUser, setCurrentUser] = useState<UserDto>()
 
   useEffect(() => {
-    async function fetchSession() {
+    async function checkUser() {
       try {
-        const session = await fetchAuthSession()
-        if (session.credentials) {
-          setIsSignedIn(true)
-        } else {
-          setIsSignedIn(false)
-        }
-      } catch (error) {
+        await getCurrentUser();
+        setIsSignedIn(true)
+      } catch {
         setIsSignedIn(false)
-        console.log(error)
       }
     }
-    fetchSession()
+    checkUser()
   }, [])
 
   useEffect(() => {
