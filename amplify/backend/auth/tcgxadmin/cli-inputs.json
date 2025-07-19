@@ -1,10 +1,8 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "oakadminc6ed6c10_identitypool_c6ed6c10",
-    "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "oakadm63ec0004",
-    "userPoolName": "oakadmin63ec0004_userpool_63ec0004",
+    "resourceNameTruncated": "tcgxadbcd0cd0a",
+    "userPoolName": "tcgx-admin",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -24,22 +22,26 @@
     ],
     "aliasAttributes": [],
     "userpoolClientGenerateSecret": false,
-    "userpoolClientRefreshTokenValidity": 30,
+    "userpoolClientRefreshTokenValidity": "90",
     "userpoolClientWriteAttributes": [
       "email"
     ],
     "userpoolClientReadAttributes": [
       "email"
     ],
-    "userpoolClientLambdaRole": "oakadm63ec0004_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "tcgxadbcd0cd0a_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "63ec0004",
-    "resourceName": "oakadmin63ec0004",
-    "authSelections": "identityPoolAndUserPool",
+    "sharedId": "bcd0cd0a",
+    "resourceName": "tcgxadmin",
+    "authSelections": "userPoolOnly",
     "useDefault": "manual",
     "usernameAttributes": [
       "email"
     ],
+    "userPoolGroups": false,
+    "adminQueries": false,
+    "triggers": {},
+    "hostedUI": false,
     "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
@@ -57,31 +59,11 @@
       ]
     },
     "breakCircularDependency": true,
-    "dependsOn": [
-      {
-        "category": "function",
-        "resourceName": "oakadmin63ec0004PostConfirmation",
-        "triggerProvider": "Cognito",
-        "attributes": [
-          "Arn",
-          "Name"
-        ]
-      }
-    ],
-    "userPoolGroups": false,
-    "adminQueries": false,
-    "triggers": {
-      "PostConfirmation": [
-        "custom"
-      ]
-    },
-    "hostedUI": false,
+    "dependsOn": [],
     "authProviders": [],
     "parentStack": {
       "Ref": "AWS::StackId"
     },
-    "authTriggerConnections": "[\n  {\n    \"triggerType\": \"PostConfirmation\",\n    \"lambdaFunctionName\": \"oakadmin63ec0004PostConfirmation\"\n  }\n]",
-    "permissions": [],
-    "thirdPartyAuth": true
+    "permissions": []
   }
 }

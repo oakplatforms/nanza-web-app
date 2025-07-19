@@ -1,27 +1,46 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-oakadmin-dev-a0614-authRole",
-      "UnauthRoleArn": "arn:aws:iam::992382609315:role/amplify-oakadmin-dev-a0614-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::992382609315:role/amplify-oakadmin-dev-a0614-authRole",
+      "AuthRoleName": "amplify-tcgxadmin-dev-3b17a-authRole",
+      "UnauthRoleArn": "arn:aws:iam::992382609315:role/amplify-tcgxadmin-dev-3b17a-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::992382609315:role/amplify-tcgxadmin-dev-3b17a-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-oakadmin-dev-a0614-deployment",
-      "UnauthRoleName": "amplify-oakadmin-dev-a0614-unauthRole",
-      "StackName": "amplify-oakadmin-dev-a0614",
-      "StackId": "arn:aws:cloudformation:us-east-1:992382609315:stack/amplify-oakadmin-dev-a0614/de7ec100-f473-11ef-985f-1203711ef11d",
-      "AmplifyAppId": "d2dnnldjjpirod",
-      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-oakadmin-dev-a0614-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+      "DeploymentBucketName": "amplify-tcgxadmin-dev-3b17a-deployment",
+      "UnauthRoleName": "amplify-tcgxadmin-dev-3b17a-unauthRole",
+      "StackName": "amplify-tcgxadmin-dev-3b17a",
+      "StackId": "arn:aws:cloudformation:us-east-1:992382609315:stack/amplify-tcgxadmin-dev-3b17a/61cb67d0-6435-11f0-bac1-0afff0a67099",
+      "AmplifyAppId": "d3shsxr68w11h1"
     },
     "categories": {
       "auth": {
-        "oakadmin63ec0004": {}
-      },
-      "function": {
-        "oakadmin63ec0004PostConfirmation": {
-          "deploymentBucketName": "amplify-oakadmin-dev-a0614-deployment",
-          "s3Key": "amplify-builds/oakadmin63ec0004PostConfirmation-35485857336332574367-build.zip"
-        }
+        "tcgxadmin": {}
       }
+    }
+  },
+  "stage": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tcgxadmin-stage-44cb7-authRole",
+      "UnauthRoleArn": "arn:aws:iam::992382609315:role/amplify-tcgxadmin-stage-44cb7-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::992382609315:role/amplify-tcgxadmin-stage-44cb7-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-tcgxadmin-stage-44cb7-deployment",
+      "UnauthRoleName": "amplify-tcgxadmin-stage-44cb7-unauthRole",
+      "StackName": "amplify-tcgxadmin-stage-44cb7",
+      "StackId": "arn:aws:cloudformation:us-east-1:992382609315:stack/amplify-tcgxadmin-stage-44cb7/db697050-6435-11f0-a51d-0afff787a121",
+      "AmplifyAppId": "d3shsxr68w11h1"
+    }
+  },
+  "prod": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tcgxadmin-prod-805ef-authRole",
+      "UnauthRoleArn": "arn:aws:iam::992382609315:role/amplify-tcgxadmin-prod-805ef-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::992382609315:role/amplify-tcgxadmin-prod-805ef-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-tcgxadmin-prod-805ef-deployment",
+      "UnauthRoleName": "amplify-tcgxadmin-prod-805ef-unauthRole",
+      "StackName": "amplify-tcgxadmin-prod-805ef",
+      "StackId": "arn:aws:cloudformation:us-east-1:992382609315:stack/amplify-tcgxadmin-prod-805ef/fde76510-6435-11f0-adf4-0e2ac79fa5f5",
+      "AmplifyAppId": "d3shsxr68w11h1"
     }
   }
 }
