@@ -28,7 +28,7 @@ const SessionProvider = ({ children } : SessionProviderProps) => {
   useEffect(() => {
     async function checkUser() {
       try {
-        await getCurrentUser();
+        await getCurrentUser()
         setIsSignedIn(true)
       } catch {
         setIsSignedIn(false)

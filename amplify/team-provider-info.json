@@ -46,6 +46,11 @@
       "StackName": "amplify-tcgxadmin-prod-805ef",
       "StackId": "arn:aws:cloudformation:us-east-1:992382609315:stack/amplify-tcgxadmin-prod-805ef/fde76510-6435-11f0-adf4-0e2ac79fa5f5",
       "AmplifyAppId": "d3shsxr68w11h1"
+    },
+    "categories": {
+      "auth": {
+        "tcgxadmin": {}
+      }
     }
   }
 }

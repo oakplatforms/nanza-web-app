@@ -29,11 +29,11 @@ export function CreateOrEditShippingMethod({
     carrier: undefined as ParcelDto['carrier'],
     type: '' as ParcelTemplate,
   })
-  const [parcels, setParcels] = useState<{ id: string; carrier: ParcelDto['carrier']; type: ParcelTemplate }[]>(selectedShippingMethod!.parcels!.map(p => ({
+  const [parcels, setParcels] = useState<{ id: string; carrier: ParcelDto['carrier']; type: ParcelTemplate }[]>(selectedShippingMethod?.parcels?.map(p => ({
     id: p.id!,
     carrier: p.carrier,
     type: p.type!,
-  })))
+  })) || [])
 
   const handleAddShippingOption = () => {
     setSelectedShippingMethod((prev) => ({
