@@ -16,6 +16,7 @@ type CreateOrEditProductProps = {
   setUpdatedTags: React.Dispatch<React.SetStateAction<EntityTagDto[]>>
   categories: CategoryDto[]
   brands: BrandDto[]
+  refetchProductEntities: () => void
 }
 
 export function CreateOrEditProduct({
@@ -27,10 +28,11 @@ export function CreateOrEditProduct({
   setDeletedTags,
   setUpdatedTags,
   categories,
-  brands
+  brands,
+  refetchProductEntities
 } : CreateOrEditProductProps) {
   const [tag, setTag] = useState<Record<string, string>>({})
-
+  console.log('selectedProductEntity', selectedProductEntity)
   const generateTagOptions = () => {
     const options: Record<string, { id: string; values: string[] }> = {}
     tags?.forEach((tag) => {
@@ -81,6 +83,58 @@ export function CreateOrEditProduct({
     })
   }
 
+  const handleTagInputChange = (tagDisplayName: string, value: string) => {
+    setTag((prev) => ({ ...prev, [tagDisplayName]: value }))
+  }
+
+  const handleTagInputBlur = (tagDisplayName: string) => {
+    const tagId = tagOptions[tagDisplayName]?.id
+    if (!tagId || !tag[tagDisplayName]) return
+
+    if (selectedTags.some((tag) => tag.tagId === tagId)) {
+      updateTagValue(tagDisplayName, tag[tagDisplayName])
+    } else {
+      handleAddTagValue(tagDisplayName, tag[tagDisplayName])
+    }
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, imageField: 'image' | 'secondaryImage') => {
+    const file = e.target.files?.[0]
+    if (!file || !selectedProductEntity?.id) return
+
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('marketId', 'tcgx')
+
+    try {
+      const response = await entityService.uploadImage(selectedProductEntity.id, formData, imageField)
+      setSelectedProductEntity((prev) => prev && { ...prev, [imageField]: imageField === 'image' ? response?.image : response?.secondaryImage })
+      refetchProductEntities()
+    } catch (err) {
+      console.error('Image upload failed:', err)
+    }
+  }
+
+  const handlePrimaryImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleImageUpload(e, 'image')
+  }
+
+  const handleSecondaryImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleImageUpload(e, 'secondaryImage')
+  }
+
+  const handleRemoveImage = async (imageField: 'image' | 'secondaryImage') => {
+    if (!selectedProductEntity?.id) return
+
+    try {
+      await entityService.deleteImage(selectedProductEntity.id, imageField)
+      setSelectedProductEntity((prev) => prev && { ...prev, [imageField]: null })
+      refetchProductEntities()
+    } catch (err) {
+      console.error('Image deletion failed:', err)
+    }
+  }
+
   const handleRemoveTagValue = (tagName: string, value: string) => {
     const tagId = tagOptions?.[tagName]?.id
     if (!tagId) return
@@ -113,17 +167,8 @@ export function CreateOrEditProduct({
             className="w-full px-3 py-2 border rounded-md placeholder-gray-400"
             placeholder={`Enter ${tagDisplayName}`}
             value={tag[tagDisplayName] || selectedTags.find(selectedTag => selectedTag.tagId === id)?.tagValue || ''}
-            onChange={(event) => setTag((prev) => ({ ...prev, [tagDisplayName]: event.target.value }))}
-            onBlur={() => {
-              if (tag[tagDisplayName]) {
-                console.log('is it trye', selectedTags.some((tag) => tag.tagId === id))
-                if (selectedTags.some((tag) => tag.tagId === id)) {
-                  updateTagValue(tagDisplayName, tag[tagDisplayName])
-                } else {
-                  handleAddTagValue(tagDisplayName, tag[tagDisplayName])
-                }
-              }
-            }}
+            onChange={(event) => handleTagInputChange(tagDisplayName, event.target.value)}
+            onBlur={() => handleTagInputBlur(tagDisplayName)}
           />
         ) : (
           <Combobox
@@ -279,34 +324,78 @@ export function CreateOrEditProduct({
             </div>
           </div>
           <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Product Image</h2>
-            {selectedProductEntity?.image && (
-              <img
-                src={`${process.env.REACT_APP_S3_IMAGE_BASE_URL}/${selectedProductEntity.image}`}
-                alt="Product"
-                className="mb-4 w-48 h-auto rounded"
-              />
-            )}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={async (e) => {
-                const file = e.target.files?.[0]
-                if (!file || !selectedProductEntity?.id) return
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Product Images</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-bold mb-2">Primary Image</label>
+                {selectedProductEntity?.image ? (
+                  <img
+                    src={`${process.env.REACT_APP_S3_IMAGE_BASE_URL}/${selectedProductEntity.image}`}
+                    alt="Product Primary"
+                    className="w-full max-w-48 h-auto rounded border"
+                  />
+                ) : (
+                  <div className="w-full max-w-48 h-32 bg-gray-100 rounded border-2 border-dashed border-gray-300 flex items-center justify-center">
+                    <span className="text-gray-500 text-sm">No primary image</span>
+                  </div>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-bold mb-2">Secondary Image</label>
+                {selectedProductEntity?.secondaryImage ? (
+                  <img
+                    src={`${process.env.REACT_APP_S3_IMAGE_BASE_URL}/${selectedProductEntity.secondaryImage}`}
+                    alt="Product Secondary"
+                    className="w-full max-w-48 h-auto rounded border"
+                  />
+                ) : (
+                  <div className="w-full max-w-48 h-32 bg-gray-100 rounded border-2 border-dashed border-gray-300 flex items-center justify-center">
+                    <span className="text-gray-500 text-sm">No secondary image</span>
+                  </div>
+                )}
+              </div>
+            </div>
 
-                const formData = new FormData()
-                formData.append('file', file)
-                formData.append('marketId', 'tcgx')
-
-                try {
-                  const response = await entityService.uploadImage(selectedProductEntity.id, formData)
-                  setSelectedProductEntity((prev) => prev && { ...prev, image: response?.image })
-                } catch (err) {
-                  console.error('Image upload failed:', err)
-                }
-              }}
-              className="block text-sm text-gray-700"
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                {!selectedProductEntity?.image && (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePrimaryImageUpload}
+                    className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  />
+                )}
+                {selectedProductEntity?.image && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage('image')}
+                    className="px-3 py-2 text-sm text-red-600 border border-red-300 rounded-md hover:bg-red-50 hover:border-red-400 transition-colors"
+                  >
+                    Remove Image
+                  </button>
+                )}
+              </div>
+              <div>
+                {!selectedProductEntity?.secondaryImage && (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleSecondaryImageUpload}
+                    className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  />
+                )}
+                {selectedProductEntity?.secondaryImage && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage('secondaryImage')}
+                    className="px-3 py-2 text-sm text-red-600 border border-red-300 rounded-md hover:bg-red-50 hover:border-red-400 transition-colors"
+                  >
+                    Remove Image
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">

@@ -28,11 +28,19 @@ export const entityService = {
       method: 'DELETE',
     })
   },
-  async uploadImage(entityId: string, formData: FormData) {
+  async uploadImage(entityId: string, formData: FormData, field?: 'image' | 'secondaryImage') {
+    const queryParams = field ? `?field=${field}` : ''
     return fetchData({
-      url: `/entity/upload-image/${entityId}`,
+      url: `/entity/upload-image/${entityId}${queryParams}`,
       method: 'PUT',
       payload: formData,
+    })
+  },
+  async deleteImage(entityId: string, field?: 'image' | 'secondaryImage') {
+    const queryParams = field ? `?field=${field}` : ''
+    return fetchData({
+      url: `/entity/delete-image/${entityId}${queryParams}`,
+      method: 'DELETE',
     })
   }
 }

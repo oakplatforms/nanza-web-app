@@ -89,6 +89,7 @@ export interface components {
             accountId?: string | null;
             entity?: components["schemas"]["Entity"] | null;
             entityId?: string | null;
+            offers?: components["schemas"]["Offer"][];
         };
         Brand: {
             id?: string;
@@ -98,6 +99,7 @@ export interface components {
             updatedAt?: string;
             name?: string;
             displayName?: string | null;
+            logo?: string | null;
             createdBy?: components["schemas"]["Admin"] | null;
             createdById?: string | null;
             lastModifiedBy?: components["schemas"]["Admin"] | null;
@@ -179,6 +181,7 @@ export interface components {
              */
             type: "PRODUCT" | "SERVICE" | "CONTENT" | "EVENT";
             image?: string | null;
+            secondaryImage?: string | null;
             createdBy?: components["schemas"]["Admin"] | null;
             createdById?: string | null;
             lastModifiedBy?: components["schemas"]["Admin"] | null;
@@ -269,11 +272,33 @@ export interface components {
             condition: "MINT" | "NEAR_MINT" | "VERY_GOOD" | "GOOD" | "FAIR" | "POOR" | "DAMAGED";
             /** @default false */
             isPrimary: boolean | null;
+            /** @default false */
+            isOffer: boolean | null;
+            image?: string | null;
+            imageCaption?: string | null;
             account?: components["schemas"]["Account"] | null;
             accountId?: string | null;
             entity?: components["schemas"]["Entity"] | null;
             entityId?: string | null;
             orderListings?: components["schemas"]["OrderListing"][];
+            offer?: components["schemas"]["Offer"] | null;
+        };
+        Offer: {
+            id?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /**
+             * @default PENDING
+             * @enum {string}
+             */
+            status: "PENDING" | "ACCEPTED" | "DECLINED" | "CANCELED";
+            bid?: components["schemas"]["Bid"] | null;
+            bidId?: string | null;
+            listing?: components["schemas"]["Listing"] | null;
+            listingId?: string | null;
+            order?: components["schemas"]["Order"] | null;
         };
         Order: {
             id?: string;
@@ -285,6 +310,7 @@ export interface components {
             status?: "CREATED" | "DELETED" | "PENDING" | "COMPLETED" | "CANCELED" | "FAILED";
             subTotal?: number | null;
             tax?: number | null;
+            shipping?: number | null;
             total?: number | null;
             cart?: components["schemas"]["Cart"] | null;
             cartId?: string | null;
@@ -300,6 +326,8 @@ export interface components {
             shippingMethod?: components["schemas"]["ShippingMethod"] | null;
             shippingMethodId?: string | null;
             orderShippingOptions?: components["schemas"]["OrderShippingOption"][];
+            offer?: components["schemas"]["Offer"] | null;
+            offerId?: string | null;
         };
         OrderListing: {
             id?: string;
@@ -366,6 +394,7 @@ export interface components {
             height?: number | null;
             sku?: string | null;
             number?: string | null;
+            price?: number | null;
             entity?: components["schemas"]["Entity"];
             entityId?: string;
         };
@@ -376,7 +405,9 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string;
             username?: string | null;
-            image?: string | null;
+            avatar?: string | null;
+            banner?: string | null;
+            description?: string | null;
             qrCode?: string | null;
             account?: components["schemas"]["Account"] | null;
             accountId?: string | null;
@@ -481,6 +512,13 @@ export interface components {
             /** @enum {string} */
             status?: "CREATED" | "DELETED" | "PENDING" | "COMPLETED" | "CANCELED" | "FAILED";
             rate?: number;
+            trackingNumber?: string | null;
+            /**
+             * @default UNKNOWN
+             * @enum {string|null}
+             */
+            trackingStatus: "UNKNOWN" | "PRE_TRANSIT" | "TRANSIT" | "OUT_FOR_DELIVERY" | "DELIVERED" | "RETURNED" | "FAILURE";
+            labelUrl?: string | null;
             externalShipmentId?: string | null;
             externalShipmentRateId?: string | null;
             externalShipmentServiceId?: string | null;

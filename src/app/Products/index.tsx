@@ -82,6 +82,10 @@ export function Products() {
 
       await refetchProductEntities()
       setCurrentPage(0)
+      setSelectedProductEntity(undefined)
+      setSelectedTags([])
+      setDeletedTags([])
+      setUpdatedTags([])
       setIsCreateOrEditProductDialogOpen(false)
     } catch (error) {
       console.error(`Error ${existingProductEntity ? 'updating' : 'creating'} product:`, error)
@@ -199,6 +203,7 @@ export function Products() {
           setUpdatedTags={setUpdatedTags}
           categories={categories?.data || []}
           brands={brands?.data || []}
+          refetchProductEntities={refetchProductEntities}
         />
       </SimpleDialog>
       <ConfirmDialog

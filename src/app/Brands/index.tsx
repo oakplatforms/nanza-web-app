@@ -17,7 +17,7 @@ export function Brands() {
   const [selectedBrand, setSelectedBrand] = useState<BrandDto | null>(null)
   const [isDeleteBrandDialogOpen, setIsDeleteBrandDialogOpen] = useState(false)
 
-  const { brands } = fetchBrands(currentPage)
+  const { brands, refetchBrands } = fetchBrands(currentPage)
 
   const handleNextPage = () => {
     if (brands?.total !== null && (currentPage + 1) * 10 < brands!.total) {
@@ -51,7 +51,7 @@ export function Brands() {
             createdById: currentUser?.admin?.id,
           })
         }
-
+        await refetchBrands()
         setCurrentPage(0)
         setIsCreateOrEditModalOpen(false)
         setSelectedBrand(null)
@@ -65,6 +65,7 @@ export function Brands() {
     try {
       if (selectedBrand?.id) {
         await brandService.delete(selectedBrand.id)
+        await refetchBrands()
         setCurrentPage(0)
         setIsDeleteBrandDialogOpen(false)
         setSelectedBrand(null)
