@@ -13,7 +13,8 @@
     },
     "categories": {
       "auth": {
-        "tcgxadmin": {}
+        "tcgxadmin": {},
+        "userPoolGroups": {}
       }
     }
   },
@@ -31,7 +32,8 @@
     },
     "categories": {
       "auth": {
-        "tcgxadmin": {}
+        "tcgxadmin": {},
+        "userPoolGroups": {}
       }
     }
   },
@@ -49,7 +51,8 @@
     },
     "categories": {
       "auth": {
-        "tcgxadmin": {}
+        "tcgxadmin": {},
+        "userPoolGroups": {}
       }
     }
   }

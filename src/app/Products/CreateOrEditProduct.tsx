@@ -330,7 +330,7 @@ export function CreateOrEditProduct({
                 <label className="block text-sm font-bold mb-2">Primary Image</label>
                 {selectedProductEntity?.image ? (
                   <img
-                    src={`${process.env.REACT_APP_S3_IMAGE_BASE_URL}/${selectedProductEntity.image}`}
+                    src={`${process.env.REACT_APP_S3_IMAGE_BASE_URL}${selectedProductEntity.image}`}
                     alt="Product Primary"
                     className="w-full max-w-48 h-auto rounded border"
                   />
@@ -344,7 +344,7 @@ export function CreateOrEditProduct({
                 <label className="block text-sm font-bold mb-2">Secondary Image</label>
                 {selectedProductEntity?.secondaryImage ? (
                   <img
-                    src={`${process.env.REACT_APP_S3_IMAGE_BASE_URL}/${selectedProductEntity.secondaryImage}`}
+                    src={`${process.env.REACT_APP_S3_IMAGE_BASE_URL}${selectedProductEntity.secondaryImage}`}
                     alt="Product Secondary"
                     className="w-full max-w-48 h-auto rounded border"
                   />
