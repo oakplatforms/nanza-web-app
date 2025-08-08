@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Combobox } from '@headlessui/react'
-import { Input, Select, Textarea } from '../../components/Tailwind'
+import { Input, Select, RichTextEditor } from '../../components/Tailwind'
 import { slugify } from '../../helpers'
 import { EntityDto, TagDto, EntityTagDto, CategoryDto, BrandDto } from '../../types'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/16/solid'
@@ -255,14 +255,11 @@ export function CreateOrEditProduct({
                 />
               </div>
               <div>
-                <Textarea
+                <RichTextEditor
                   label="Description"
                   value={selectedProductEntity?.description || ''}
-                  onChange={(e) => setSelectedProductEntity({ ...selectedProductEntity, type: 'PRODUCT', description: e.target.value })}
+                  onChange={(value) => setSelectedProductEntity({ ...selectedProductEntity, type: 'PRODUCT', description: value })}
                   placeholder="Enter product description"
-                  resizable={false}
-                  rows={3}
-                  className="resize-none"
                 />
               </div>
               <div>
