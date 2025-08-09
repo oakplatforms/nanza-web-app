@@ -206,7 +206,7 @@ export function CreateOrEditShippingMethod({
             {parcels.map(parcel => (
               <div key={parcel.id} className="py-1 px-3 mb-2 flex items-center justify-between">
                 <div className="text-gray-800">{parcel.carrier} - {parcel.type}</div>
-                <Button color="red" onClick={() => handleDeleteParcel(parcel)}>Delete</Button>
+                <Button color="red" onClick={() => handleDeleteParcel(parcel as ParcelDto)}>Delete</Button>
               </div>
             ))}
           </div>
