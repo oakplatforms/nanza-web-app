@@ -196,6 +196,8 @@ export interface components {
             reviews?: components["schemas"]["Review"][];
             bids?: components["schemas"]["Bid"][];
             listings?: components["schemas"]["Listing"][];
+            set?: components["schemas"]["Set"] | null;
+            setId?: string | null;
         };
         EntityList: {
             id?: string;
@@ -357,7 +359,7 @@ export interface components {
             /** @enum {string} */
             carrier?: "USPS" | "UPS" | "FEDEX" | "DHL";
             /** @enum {string} */
-            type?: "USPS_FlatRateEnvelope" | "USPS_SoftPack" | "UPS_Box_10kg" | "UPS_Box_25kg" | "UPS_Pad_Pak" | "FedEx_Envelope" | "FedEx_Padded_Pak" | "FedEx_Box_10kg" | "FedEx_Box_25kg";
+            type?: "Custom_Cheapest" | "USPS_FlatRateEnvelope" | "USPS_GroundAdvantage" | "USPS_SoftPack" | "UPS_Box_10kg" | "UPS_Box_25kg" | "UPS_Pad_Pak" | "FedEx_Envelope" | "FedEx_Padded_Pak" | "FedEx_Box_10kg" | "FedEx_Box_25kg";
             shippingMethod?: components["schemas"]["ShippingMethod"] | null;
             shippingMethodId?: string | null;
         };
@@ -489,6 +491,20 @@ export interface components {
             sellerId?: string;
             shippingOption?: components["schemas"]["ShippingOption"];
             shippingOptionId?: string;
+        };
+        Set: {
+            id?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            banner?: string | null;
+            logo?: string | null;
+            name?: string;
+            displayName?: string | null;
+            code?: string;
+            description?: string | null;
+            entities?: components["schemas"]["Entity"][];
         };
         Shipment: {
             id?: string;

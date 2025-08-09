@@ -59,7 +59,8 @@ export type ShippingCarrier = 'USPS' | 'UPS' | 'FEDEX' | 'DHL'
 export const PARCEL_TEMPLATES = [
   'USPS_FlatRateEnvelope',
   'USPS_SoftPack',
-  'USPS_First_Class_Package_Service',
+  'USPS_GroundAdvantage',
+  'Custom_Cheapest',
   'UPS_Box_10kg',
   'UPS_Box_25kg',
   'UPS_Pad_Pak',
@@ -70,7 +71,7 @@ export const PARCEL_TEMPLATES = [
 ] as const
 
 export const PARCEL_TEMPLATES_BY_CARRIER: Record<ShippingCarrier, readonly ParcelTemplate[]> = {
-  USPS: ['USPS_FlatRateEnvelope', 'USPS_SoftPack', 'USPS_First_Class_Package_Service'],
+  USPS: ['USPS_FlatRateEnvelope', 'USPS_SoftPack', 'Custom_Cheapest', 'USPS_GroundAdvantage'],
   UPS: ['UPS_Box_10kg', 'UPS_Box_25kg', 'UPS_Pad_Pak'],
   FEDEX: ['FedEx_Envelope', 'FedEx_Padded_Pak', 'FedEx_Box_10kg', 'FedEx_Box_25kg'],
   DHL: [],
