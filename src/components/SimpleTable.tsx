@@ -1,5 +1,6 @@
 import { Table, TableHead, TableRow, TableHeader, TableBody, TableCell, Button, } from './Tailwind'
 import { TrashIcon, PencilIcon } from '@heroicons/react/16/solid'
+import React from 'react'
 
 type SimpleTableProps = {
   headers: string[]
@@ -21,7 +22,14 @@ export function SimpleTable ({ headers, rows, onEdit, onDelete } : SimpleTablePr
       <TableBody>
         {rows.map((row, idx) => (
           <TableRow key={idx}>
-            {Object.values(row)?.map((rowItem, idx) => <TableCell key={idx} style={{ width: rowItem.width, whiteSpace: 'pre-wrap', overflowWrap: 'break-word' }}>{rowItem.value as string}</TableCell>)}
+            {Object.values(row)?.map((rowItem, cellIdx) => (
+              <TableCell 
+                key={cellIdx} 
+                style={{ width: rowItem.width, whiteSpace: 'pre-wrap', overflowWrap: 'break-word' }}
+              >
+                {React.isValidElement(rowItem.value) ? rowItem.value : rowItem.value as string}
+              </TableCell>
+            ))}
             {(onEdit || onDelete) && (
               <TableCell>
                 <div className="flex">

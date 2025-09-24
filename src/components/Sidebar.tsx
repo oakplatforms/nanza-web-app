@@ -112,6 +112,9 @@ export function SidebarNavigation() {
         <SidebarHeading>TCGx 0.1</SidebarHeading>
       </SidebarHeader>
       <SidebarBody>
+        <Link to="/homepage">
+          <div className={clsx('cursor-default', classes)}>Homepage</div>
+        </Link>
         <Link to="/tags">
           <div className={clsx('cursor-default', classes)}>Tags</div>
         </Link>
@@ -129,6 +132,9 @@ export function SidebarNavigation() {
         </Link>
         <Link to="/shipping-options">
           <div className={clsx('cursor-default', classes)}>Shipping Options</div>
+        </Link>
+        <Link to="/conditions">
+          <div className={clsx('cursor-default', classes)}>Conditions</div>
         </Link>
         <div>
           <div

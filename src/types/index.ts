@@ -10,6 +10,7 @@ export type EntityDto = components['schemas']['Entity']
 export type EntityTagDto = components['schemas']['EntityTag']
 export type CategoryDto = components['schemas']['Category']
 export type ListDto = components['schemas']['List']
+export type ConditionDto = components['schemas']['Condition']
 export type ShippingMethodDto = components['schemas']['ShippingMethod']
 export type ShippingOptionDto = components['schemas']['ShippingOption']
 export type ParcelDto = components['schemas']['Parcel']
@@ -35,6 +36,25 @@ export type TagPayload = Omit<TagDto, 'supportedTagValues'> & {
 };
 
 export type BrandPayload = Omit<BrandDto, 'brandCategories'> & {
+  createdById?: string | null
+  lastModifiedById?: string | null
+};
+
+export type ListPayload = Omit<ListDto, 'id' | 'createdAt' | 'lastModifiedAt'> & {
+  createdById?: string | null
+  lastModifiedById?: string | null
+  isPrivate?: boolean | null
+};
+
+export type ListUpdatePayload = Omit<ListPayload, 'entityList'> & {
+  entityList?: {
+    create?: Array<{ entityId: string; quantity?: number }>
+    update?: Array<{ id: string; quantity?: number }>
+    delete?: string[]
+  }
+};
+
+export type ConditionPayload = Omit<ConditionDto, 'id' | 'createdAt' | 'lastModifiedAt'> & {
   createdById?: string | null
   lastModifiedById?: string | null
 };

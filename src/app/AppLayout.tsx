@@ -9,6 +9,8 @@ import { Brands } from './Brands'
 import { Categories } from './Categories'
 import { ShippingMethods } from './ShippingMethods'
 import { ShippingOptions } from './ShippingOptions'
+import { Homepage } from './Homepage'
+import { Conditions } from './Conditions'
 
 function AppLayout() {
   const { isSignedIn } = useSession()
@@ -24,6 +26,8 @@ function AppLayout() {
           <Route path="/products" element={<Products />} />
           <Route path="/shipping-methods" element={<ShippingMethods />} />
           <Route path="/shipping-options" element={<ShippingOptions />} />
+          <Route path="/homepage" element={<Homepage />} />
+          <Route path="/conditions" element={<Conditions />} />
         </Routes>
       </Layout>
     </Router>
