@@ -7,6 +7,7 @@ import { SimpleDialog } from '../../components/SimpleDialog'
 import { CreateOrEditProduct } from './CreateOrEditProduct'
 import { useSession } from '../../context/SessionContext'
 import { PaginationControls } from '../../components/PaginationControls'
+import { SearchInput } from '../../components/SearchInput'
 
 import { fetchProductEntities } from './data/fetchProductEntities'
 import { fetchTags } from './data/fetchTags'
@@ -18,6 +19,9 @@ export function Products() {
   const { currentUser } = useSession()
 
   const [currentPage, setCurrentPage] = useState(0)
+  const [searchText, setSearchText] = useState('')
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchResults, setSearchResults] = useState<{ data: EntityDto[]; total: number } | null>(null)
   const [selectedProductEntity, setSelectedProductEntity] = useState<EntityDto>()
   const [selectedTags, setSelectedTags] = useState<EntityTagDto[]>([])
   const [deletedTags, setDeletedTags] = useState<string[]>([])
@@ -30,8 +34,48 @@ export function Products() {
   const { categories } = fetchCategories()
   const { brands } = fetchBrands()
 
+  //Search functionality
+  const performSearch = async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults(null)
+      setIsSearching(false)
+      return
+    }
+
+    setIsSearching(true)
+    try {
+      const productEntitiesQueryParams = new URLSearchParams({
+        search: query,
+        page: '0',
+        limit: '20',
+      })
+
+      productEntitiesQueryParams.append('include', 'product')
+      productEntitiesQueryParams.append('include', 'brand')
+      productEntitiesQueryParams.append('include', 'entityTags.tag')
+
+      const queryString = `?${productEntitiesQueryParams.toString()}`
+      const results = await entityService.list(queryString)
+      setSearchResults(results)
+    } catch (error) {
+      console.error('Error searching products:', error)
+      setSearchResults(null)
+    } finally {
+      setIsSearching(false)
+    }
+  }
+
+  const handleSearch = (query: string) => {
+    setSearchText(query)
+    setCurrentPage(0)
+    performSearch(query)
+  }
+
+  //Use search results if searching, otherwise use regular product entities
+  const displayData = searchText ? searchResults : productEntities
+
   const onEditProduct = (productIdx: number) => {
-    const selected = productEntities?.data?.[productIdx]
+    const selected = displayData?.data?.[productIdx]
     if (selected) {
       setSelectedProductEntity(selected)
       setSelectedTags(selected.entityTags || [])
@@ -81,6 +125,10 @@ export function Products() {
       }
 
       await refetchProductEntities()
+      //If we're in search mode, refetch search results
+      if (searchText) {
+        await performSearch(searchText)
+      }
       setCurrentPage(0)
       setSelectedProductEntity(undefined)
       setSelectedTags([])
@@ -93,7 +141,7 @@ export function Products() {
   }
 
   const onConfirmDeleteProduct = (productIdx: number) => {
-    const selected = productEntities?.data?.[productIdx]
+    const selected = displayData?.data?.[productIdx]
     if (selected) {
       setSelectedProductEntity(selected)
       setSelectedTags(selected.entityTags || [])
@@ -106,6 +154,10 @@ export function Products() {
       if (selectedProductEntity) {
         await entityService.delete(selectedProductEntity.id!)
         await refetchProductEntities()
+        //If we're in search mode, refetch search results
+        if (searchText) {
+          await performSearch(searchText)
+        }
         setCurrentPage(0)
         setSelectedProductEntity(undefined)
         setSelectedTags([])
@@ -145,7 +197,7 @@ export function Products() {
   }
 
   const headers = ['Name', 'Description', 'Tags', '']
-  const tableRows = productEntities?.data?.map((productEntity) => ({
+  const tableRows = displayData?.data?.map((productEntity) => ({
     displayName: { value: productEntity.displayName || '', width: '200px' },
     description: { value: productEntity.description || '', width: '400px' },
     tags: { value: generateTagBadges(productEntity), width: '400px' },
@@ -153,30 +205,47 @@ export function Products() {
 
   return (
     <>
-      <div className="flex">
+      <div className="flex items-center justify-between mb-6">
         <Header>Products</Header>
-        <Button
-          className="text-white px-4 py-2 ml-auto cursor-pointer"
-          color="green"
-          onClick={() => setIsCreateOrEditProductDialogOpen(true)}
-        >
-          Add New Product
-        </Button>
+        <div className="flex items-center gap-4">
+          <SearchInput
+            value={searchText}
+            onSearch={handleSearch}
+            placeholder="Search products..."
+            className="w-80"
+          />
+          <Button
+            className="text-white px-4 py-2 cursor-pointer"
+            color="green"
+            onClick={() => setIsCreateOrEditProductDialogOpen(true)}
+          >
+            Add New Product
+          </Button>
+        </div>
       </div>
-      <br />
       <SimpleTable
         headers={headers}
         rows={tableRows || []}
         onEdit={onEditProduct}
         onDelete={onConfirmDeleteProduct}
       />
-      {productEntities && productEntities.total! > 10 && (
+      {!searchText && productEntities && productEntities.total! > 10 && (
         <PaginationControls
           currentPage={currentPage}
           total={productEntities.total!}
           onPrev={handlePrevPage}
           onNext={handleNextPage}
         />
+      )}
+      {searchText && isSearching && (
+        <div className="text-center py-4 text-gray-500">
+          Searching...
+        </div>
+      )}
+      {searchText && !isSearching && searchResults && searchResults.data.length === 0 && (
+        <div className="text-center py-4 text-gray-500">
+          No products found for &quot;{searchText}&quot;
+        </div>
       )}
       <SimpleDialog
         isOpen={isCreateOrEditProductDialogOpen}
