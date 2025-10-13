@@ -5,7 +5,7 @@ import { PaginatedResponse, TagDto } from '../../../types'
 function useFetchTags() {
   const query = useQuery<PaginatedResponse<TagDto>>({
     queryKey: ['productTags'],
-    queryFn: () => tagService.list('?include=supportedTagValues'),
+    queryFn: () => tagService.list('?include=supportedTagValues&limit=50'),
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: true,
   })
