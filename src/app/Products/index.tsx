@@ -13,6 +13,7 @@ import { fetchProductEntities } from './data/fetchProductEntities'
 import { fetchTags } from './data/fetchTags'
 import { fetchCategories } from './data/fetchCategories'
 import { fetchBrands } from './data/fetchBrands'
+import { fetchSets } from './data/fetchSets'
 import { entityService } from '../../services/api/Entity'
 
 export function Products() {
@@ -33,6 +34,7 @@ export function Products() {
   const { tags } = fetchTags()
   const { categories } = fetchCategories()
   const { brands } = fetchBrands()
+  const { sets } = fetchSets()
 
   //Search functionality
   const performSearch = async (query: string) => {
@@ -53,6 +55,7 @@ export function Products() {
       productEntitiesQueryParams.append('include', 'product')
       productEntitiesQueryParams.append('include', 'brand')
       productEntitiesQueryParams.append('include', 'entityTags.tag')
+      productEntitiesQueryParams.append('include', 'set')
 
       const queryString = `?${productEntitiesQueryParams.toString()}`
       const results = await entityService.list(queryString)
@@ -102,6 +105,7 @@ export function Products() {
             number: selectedProductEntity?.product?.number,
           },
           type: 'PRODUCT',
+          setId: selectedProductEntity.setId,
           lastModifiedById: currentUser?.admin?.id,
           entityTags: {
             create: createTags,
@@ -117,6 +121,7 @@ export function Products() {
             number: selectedProductEntity?.product?.number,
           },
           type: 'PRODUCT',
+          setId: selectedProductEntity?.setId,
           createdById: currentUser?.admin?.id,
           entityTags: {
             create: createTags,
@@ -272,6 +277,7 @@ export function Products() {
           setUpdatedTags={setUpdatedTags}
           categories={categories?.data || []}
           brands={brands?.data || []}
+          sets={sets?.data || []}
           refetchProductEntities={refetchProductEntities}
         />
       </SimpleDialog>

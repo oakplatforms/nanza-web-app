@@ -127,6 +127,9 @@ export function SidebarNavigation() {
         <Link to="/products">
           <div className={clsx('cursor-default', classes)}>Products</div>
         </Link>
+        <Link to="/sets">
+          <div className={clsx('cursor-default', classes)}>Sets</div>
+        </Link>
         <Link to="/shipping-methods">
           <div className={clsx('cursor-default', classes)}>Shipping Methods</div>
         </Link>

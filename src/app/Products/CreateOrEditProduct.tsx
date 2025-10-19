@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Combobox } from '@headlessui/react'
 import { Input, Select, RichTextEditor } from '../../components/Tailwind'
 import { slugify } from '../../helpers'
-import { EntityDto, TagDto, EntityTagDto, CategoryDto, BrandDto } from '../../types'
+import { EntityDto, TagDto, EntityTagDto, CategoryDto, BrandDto, SetDto } from '../../types'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/16/solid'
 import { entityService } from '../../services/api/Entity'
 
@@ -16,6 +16,7 @@ type CreateOrEditProductProps = {
   setUpdatedTags: React.Dispatch<React.SetStateAction<EntityTagDto[]>>
   categories: CategoryDto[]
   brands: BrandDto[]
+  sets: SetDto[]
   refetchProductEntities: () => void
 }
 
@@ -29,6 +30,7 @@ export function CreateOrEditProduct({
   setUpdatedTags,
   categories,
   brands,
+  sets,
   refetchProductEntities
 } : CreateOrEditProductProps) {
   const [tag, setTag] = useState<Record<string, string>>({})
@@ -392,6 +394,35 @@ export function CreateOrEditProduct({
                   </button>
                 )}
               </div>
+            </div>
+          </div>
+
+          <div className="bg-white shadow-md ring-1 ring-gray-200 rounded-lg p-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Set</h2>
+            <div>
+              <label className="block text-sm font-bold mb-1">Set</label>
+              <Select
+                value={selectedProductEntity?.setId || ''}
+                onChange={(e) =>
+                  setSelectedProductEntity((prev) => ({
+                    ...prev!,
+                    setId: e.target.value || null,
+                  }))
+                }
+              >
+                <option value="">Select a set</option>
+                {sets
+                  .sort((a, b) => {
+                    const nameA = (a.displayName || a.name || '').toLowerCase()
+                    const nameB = (b.displayName || b.name || '').toLowerCase()
+                    return nameA.localeCompare(nameB)
+                  })
+                  .map((set) => (
+                    <option key={set.id} value={set.id}>
+                      {set.displayName || set.name}
+                    </option>
+                  ))}
+              </Select>
             </div>
           </div>
 

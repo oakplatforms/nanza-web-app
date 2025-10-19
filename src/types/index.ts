@@ -14,6 +14,7 @@ export type ConditionDto = components['schemas']['Condition']
 export type ShippingMethodDto = components['schemas']['ShippingMethod']
 export type ShippingOptionDto = components['schemas']['ShippingOption']
 export type ParcelDto = components['schemas']['Parcel']
+export type SetDto = components['schemas']['Set']
 
 export type EntityPayload = Omit<EntityDto, 'entityTags'> & {
   createdById?: string | null
@@ -55,6 +56,11 @@ export type ListUpdatePayload = Omit<ListPayload, 'entityList'> & {
 };
 
 export type ConditionPayload = Omit<ConditionDto, 'id' | 'createdAt' | 'lastModifiedAt'> & {
+  createdById?: string | null
+  lastModifiedById?: string | null
+};
+
+export type SetPayload = Omit<SetDto, 'id' | 'createdAt' | 'updatedAt' | 'entities'> & {
   createdById?: string | null
   lastModifiedById?: string | null
 };

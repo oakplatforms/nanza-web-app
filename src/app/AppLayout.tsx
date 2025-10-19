@@ -11,6 +11,7 @@ import { ShippingMethods } from './ShippingMethods'
 import { ShippingOptions } from './ShippingOptions'
 import { Homepage } from './Homepage'
 import { Conditions } from './Conditions'
+import { Sets } from './Sets'
 
 function AppLayout() {
   const { isSignedIn } = useSession()
@@ -28,6 +29,7 @@ function AppLayout() {
           <Route path="/shipping-options" element={<ShippingOptions />} />
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/conditions" element={<Conditions />} />
+          <Route path="/sets" element={<Sets />} />
         </Routes>
       </Layout>
     </Router>
