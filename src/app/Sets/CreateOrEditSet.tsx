@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Input, Textarea, Button, Header } from '../../components/Tailwind'
 import { slugify } from '../../helpers'
 import { SetDto } from '../../types'
