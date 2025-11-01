@@ -15,6 +15,7 @@ const navigation = [
   { name: 'Brands', to: '/brands' },
   { name: 'Categories', to: '/categories' },
   { name: 'Conditions', to: '/conditions' },
+  { name: 'Homepage', to: '/homepage' },
   { name: 'Shipping Methods', to: '/shipping-methods' },
   { name: 'Shipping Options', to: '/shipping-options' },
 ]
@@ -45,10 +46,6 @@ export function TopNavbar({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
     'h-10 relative flex min-w-0 items-center gap-3 px-4 py-2 text-left text-base/6 font-semibold text-zinc-950 sm:text-[13px]',
     'hover:bg-zinc-950/5 dark:text-white dark:hover:bg-white/5'
   )
-
-  const contentMenuItems: NestedMenuItem[] = [
-    { name: 'Homepage', to: '/homepage' },
-  ]
 
   return (
     <Navbar className="px-4 lg:px-8">
@@ -90,16 +87,6 @@ export function TopNavbar({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
               >
                 {item.name}
               </Link>
-              {item.name === 'Brands' && (
-                <NestedDropdown
-                  items={contentMenuItems}
-                  trigger={
-                    <div className={clsx(navbarItemClasses, 'cursor-pointer')}>
-                      Content
-                    </div>
-                  }
-                />
-              )}
             </React.Fragment>
           )
         })}
