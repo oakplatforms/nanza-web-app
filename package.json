@@ -55,7 +55,6 @@
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.19",
     "eslint": "^8.57.1",
-    "eslint-plugin-jest": "^28.11.0",
     "eslint-plugin-react": "^7.37.4",
     "globals": "^16.0.0",
     "postcss": "^8",
