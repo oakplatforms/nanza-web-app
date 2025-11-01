@@ -14,7 +14,7 @@ type SimpleDialogProps = {
 }
 
 export function SimpleDialog({ isOpen, onClose, title, submitBtnTxt, onSubmit, submitBtnColor, size, children } : SimpleDialogProps) {
-  return isOpen ? (
+  return (
     <Dialog
       open={isOpen}
       onClose={onClose}
@@ -35,5 +35,5 @@ export function SimpleDialog({ isOpen, onClose, title, submitBtnTxt, onSubmit, s
         </DialogActions>
       )}
     </Dialog>
-  ) : null
+  )
 }

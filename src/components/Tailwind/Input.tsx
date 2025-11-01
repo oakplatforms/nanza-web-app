@@ -25,10 +25,12 @@ type DateType = (typeof dateTypes)[number];
 export const Input = forwardRef(function Input(
   {
     label,
+    labelPosition = 'floating',
     className,
     ...props
   }: {
     label?: string;
+    labelPosition?: 'floating' | 'above';
     className?: string;
     type?: 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'url' | DateType;
   } & Omit<Headless.InputProps, 'as' | 'className'>,
@@ -38,7 +40,15 @@ export const Input = forwardRef(function Input(
 
   return (
     <div className="relative">
-      {label && (
+      {label && labelPosition === 'above' && (
+        <label
+          htmlFor={props.id}
+          className="block text-[13px] font-bold text-slate-800 dark:text-white mb-1.5"
+        >
+          {label}
+        </label>
+      )}
+      {label && labelPosition === 'floating' && (
         <label
           htmlFor={props.id}
           className={clsx(
@@ -56,9 +66,9 @@ export const Input = forwardRef(function Input(
         className={clsx([
           className,
           'relative block w-full',
-          'before:absolute before:inset-px before:rounded-[calc(theme(borderRadius.lg)-1px)] before:bg-white before:shadow',
+          'before:absolute before:inset-0 before:rounded-lg before:bg-white before:shadow-[rgba(67,71,85,0.27)_0px_0px_0.2em,rgba(90,125,188,0.02)_0px_0.25em_0.5em]',
           'dark:before:hidden',
-          'after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:ring-inset after:ring-transparent sm:after:focus-within:ring-2 sm:after:focus-within:ring-blue-500',
+          'after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:ring-inset after:ring-transparent sm:after:focus-within:ring-2 sm:after:focus-within:ring-sky-400',
           'has-[[data-disabled]]:opacity-50 before:has-[[data-disabled]]:bg-zinc-950/5 before:has-[[data-disabled]]:shadow-none',
           'before:has-[[data-invalid]]:shadow-red-500/10',
         ])}
@@ -84,10 +94,14 @@ export const Input = forwardRef(function Input(
               '[&::-webkit-datetime-edit-millisecond-field]:p-0',
               '[&::-webkit-datetime-edit-meridiem-field]:p-0',
             ],
-            'relative block w-full appearance-none rounded-lg px-[calc(theme(spacing[3.5])-1px)] py-[calc(theme(spacing[2.5])-1px)] sm:px-[calc(theme(spacing[3])-1px)] sm:py-[calc(theme(spacing[1.5])-1px)]',
-            'text-base/6 text-zinc-950 placeholder:text-zinc-500 sm:text-sm/6 dark:text-white',
-            'border border-zinc-950/10 data-[hover]:border-zinc-950/20 dark:border-white/10 dark:data-[hover]:border-white/20',
+            'relative block w-full appearance-none rounded-lg px-[calc(theme(spacing[3.5])-1px)] py-[calc(theme(spacing[3])-1px)] sm:px-[calc(theme(spacing[3])-1px)] sm:py-[calc(theme(spacing[2.5])-1px)]',
+            'text-base/6 text-zinc-950 placeholder:text-zinc-500 sm:text-sm/6 dark:text-white font-medium',
+            'border border-zinc-600 border-solid',
+            //Normalize password input styling to match text inputs
+            '[&[type="password"]]:font-sans [&[type="password"]]:tracking-normal [&[type="password"]]:font-medium',
             'bg-transparent dark:bg-white/5',
+            //Ensure consistent height and box model
+            'min-h-[calc(theme(spacing[2.5])*2+theme(fontSize.base[1].lineHeight))] sm:min-h-[calc(theme(spacing[2])*2+theme(fontSize.sm[1].lineHeight))]',
             'focus:outline-none',
             'data-[invalid]:border-red-500 data-[invalid]:data-[hover]:border-red-500 data-[invalid]:dark:border-red-500 data-[invalid]:data-[hover]:dark:border-red-500',
             'data-[disabled]:border-zinc-950/20 dark:data-[hover]:data-[disabled]:border-white/15 data-[disabled]:dark:border-white/15 data-[disabled]:dark:bg-white/[2.5%]',

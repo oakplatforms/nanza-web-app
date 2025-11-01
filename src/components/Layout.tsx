@@ -41,17 +41,29 @@ export function Layout({
   const [showSidebar, setShowSidebar] = useState(false)
 
   return (
-    <div className="relative isolate flex min-h-svh w-full bg-white max-lg:flex-col">
-      <div className="fixed inset-y-0 left-0 w-64 border-r border-zinc-950/20">{sidebar}</div>
+    <div className="relative isolate flex min-h-svh w-full bg-[conic-gradient(at_right,_var(--tw-gradient-stops))] from-[#f6edcf] via-[#f0dab1] to-[#daf1f9]">
+      {/*Navbar - fixed at the very top, spans full width*/}
+      {navbar && (
+        <div className="fixed top-0 left-0 right-0 z-50 h-auto bg-white dark:bg-gray-900 shadow-sm">
+          <div className="h-full">
+            {React.isValidElement(navbar)
+              ? React.cloneElement(navbar as React.ReactElement, { onOpenSidebar: () => setShowSidebar(true) })
+              : navbar}
+          </div>
+        </div>
+      )}
+      {/*Sidebar - positioned below navbar, adjusted for navbar height*/}
+      {/* <div className={`fixed ${navbar ? 'top-[56px]' : 'top-0'} bottom-0 left-0 w-64 border-r border-zinc-950/20 bg-white dark:bg-gray-900`}>
+        {sidebar}
+      </div> */}
+      {/*Mobile Sidebar*/}
       <MobileSidebar open={showSidebar} close={() => setShowSidebar(false)}>
         {sidebar}
       </MobileSidebar>
-      <header className="flex items-center px-4 lg:hidden">
-        <div className="min-w-0 flex-1">{navbar}</div>
-      </header>
-      <main className="flex flex-1 flex-col pb-2 lg:min-w-0 lg:pl-64 lg:pr-2 lg:pt-2">
-        <div className="grow p-6 lg:rounded-lg lg:bg-white lg:p-10 lg:shadow-sm">
-          <div className="mx-auto max-w-6xl">{children}</div>
+      {/*Main content - positioned below navbar, accounts for sidebar width on desktop*/}
+      <main className={`flex flex-1 flex-col pb-2 min-w-0 ${navbar ? 'pt-10' : 'pt-0'} lg:pl-0 lg:pr-0`}>
+        <div className="grow py-6 lg:py-10">
+          <div className="mx-auto">{children}</div>
         </div>
       </main>
     </div>

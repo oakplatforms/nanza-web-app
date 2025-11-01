@@ -10,6 +10,7 @@ function useFetchProductEntities(page: number) {
 
   params.append('include', 'entityTags.tag')
   params.append('include', 'product')
+  params.append('include', 'brand')
   params.append('include', 'set')
 
   const query = useQuery<PaginatedResponse<EntityDto>>({

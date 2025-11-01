@@ -12,6 +12,8 @@ import { ShippingOptions } from './ShippingOptions'
 import { Homepage } from './Homepage'
 import { Conditions } from './Conditions'
 import { Sets } from './Sets'
+import { Dashboard } from './Dashboard'
+import { TopNavbar } from '../components/TopNavbar'
 
 function AppLayout() {
   const { isSignedIn } = useSession()
@@ -19,8 +21,9 @@ function AppLayout() {
     null
   ) : isSignedIn ? (
     <Router>
-      <Layout sidebar={<SidebarNavigation></SidebarNavigation>}>
+      <Layout navbar={<TopNavbar />} sidebar={<SidebarNavigation></SidebarNavigation>}>
         <Routes>
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/tags" element={<Tags />} />
           <Route path="/brands" element={<Brands />} />
           <Route path="/categories" element={<Categories />} />

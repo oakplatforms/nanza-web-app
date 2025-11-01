@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { TagDto } from '../../types'
 import { tagService } from '../../services/api/Tag'
 import { SimpleTable } from '../../components/SimpleTable'
@@ -9,9 +9,11 @@ import { useSession } from '../../context/SessionContext'
 import { CreateOrEditTag } from './CreateOrEditTag'
 import { PaginationControls } from '../../components/PaginationControls'
 import { fetchTags } from './data/fetchTags'
+import { useSearchParams } from 'react-router-dom'
 
 export function Tags() {
   const { currentUser } = useSession()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [currentPage, setCurrentPage] = useState(0)
   const [isCreateOrEditModalOpen, setIsCreateOrEditModalOpen] = useState(false)
   const [selectedTag, setSelectedTag] = useState<TagDto | null>(null)
@@ -19,6 +21,16 @@ export function Tags() {
   const [newSupportedTagValue, setNewSupportedTagValue] = useState<string>('')
   const [deletedSupportedTagValues, setDeletedSupportedTagValues] = useState<string[]>([])
   const { tags, refetchTags } = fetchTags(currentPage)
+
+  //Check for create query parameter and open dialog
+  useEffect(() => {
+    if (searchParams.get('create') === 'true') {
+      setSelectedTag(null)
+      setIsCreateOrEditModalOpen(true)
+      searchParams.delete('create')
+      setSearchParams(searchParams, { replace: true })
+    }
+  }, [searchParams, setSearchParams])
 
   const handleNextPage = () => {
     if (tags?.total !== null && (currentPage + 1) * 10 < tags!.total) {
@@ -104,43 +116,61 @@ export function Tags() {
     }
   }
 
+  const headers = ['Name', 'Supported Tag Values', '']
+  const tableRows = tags?.data.map((tag) => ({
+    displayName: { value: tag.displayName || '', width: '250px' },
+    supportedTagValues: {
+      value: tag.supportedTagValues?.map((val, index) => (
+        <Badge key={index} color="zinc" className="mr-3 mt-1 relative whitespace-nowrap align-middle">
+          {val.displayName}
+        </Badge>
+      )),
+      width: '800px',
+    },
+  })) || []
+
   return (
     <>
-      <div className="flex">
-        <Header>Tags</Header>
-        <Button
-          className="text-white px-4 py-2 ml-auto cursor-pointer"
-          onClick={() => setIsCreateOrEditModalOpen(true)}
-          color="green"
-        >
-          Add New Tag
-        </Button>
+      <div className="fixed top-10 left-0 right-0 bottom-0 flex gap-0">
+        {/*Main content column*/}
+        <div className="flex-1 flex flex-col min-w-0 h-full">
+          <div className="bg-[#eef1e3] flex-shrink-0 flex items-center justify-between mb-0 pl-6 lg:pl-6 pr-4 lg:pr-3 py-2 lg:py-2">
+            <div className="flex items-center gap-4">
+              <Header>Tags</Header>
+            </div>
+          </div>
+          <div className="flex-1 overflow-x-auto overflow-y-auto p-6">
+            <div className="h-20 flex items-center justify-between gap-3">
+              <Button
+                className="text-white mb-5 px-4 py-2 cursor-pointer"
+                color="sky"
+                onClick={() => setIsCreateOrEditModalOpen(true)}
+              >
+                <svg width="10" height="10" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white dark:text-white">
+                  <path fillRule="evenodd" clipRule="evenodd" d="M0 48.031H31.969V80H48.031V48.031H80V31.969H48.031V0H31.969V31.969H0V48.031Z" fill="currentColor" />
+                </svg>
+                Add New
+              </Button>
+              <div className="flex items-center gap-4 mb-5">
+                {tags && tags.total !== null && tags.total > 10 && (
+                  <PaginationControls
+                    currentPage={currentPage}
+                    total={tags.total}
+                    onPrev={handlePrevPage}
+                    onNext={handleNextPage}
+                  />
+                )}
+              </div>
+            </div>
+            <SimpleTable
+              headers={headers}
+              rows={tableRows}
+              onEdit={onSelectTag}
+              onDelete={onConfirmDeleteTag}
+            />
+          </div>
+        </div>
       </div>
-      <br />
-      <SimpleTable
-        headers={['Name', 'Supported Tag Values', '']}
-        rows={tags?.data.map((tag) => ({
-          displayName: { value: tag.displayName || '', width: '250px' },
-          supportedTagValues: {
-            value: tag.supportedTagValues?.map((val, index) => (
-              <Badge key={index} color="zinc" className="ml-3 mt-1 relative whitespace-nowrap align-middle">
-                {val.displayName}
-              </Badge>
-            )),
-            width: '800px',
-          },
-        })) || []}
-        onEdit={onSelectTag}
-        onDelete={onConfirmDeleteTag}
-      />
-      {tags && tags.total !== null && tags.total > 10 && (
-        <PaginationControls
-          currentPage={currentPage}
-          total={tags.total}
-          onPrev={handlePrevPage}
-          onNext={handleNextPage}
-        />
-      )}
       <SimpleDialog
         isOpen={isCreateOrEditModalOpen}
         size='3xl'

@@ -24,8 +24,8 @@ export function Table({
     <TableContext.Provider value={{ bleed, dense, grid, striped } as React.ContextType<typeof TableContext>}>
       <div className="flow-root">
         <div {...props} className={clsx(className, '-mx-[--gutter] overflow-x-auto whitespace-nowrap')}>
-          <div className={clsx('inline-block min-w-full align-middle', !bleed && 'sm:px-[--gutter]')}>
-            <table className="min-w-full text-left text-sm/6 text-zinc-950 dark:text-white">{children}</table>
+          <div className={clsx('inline-block min-w-full align-middle rounded-lg overflow-hidden', !bleed && 'sm:px-[--gutter]')}>
+            <table className="min-w-full divide-y divide-gray-300 dark:divide-white/15 text-left text-sm text-zinc-950 dark:text-white font-figtree">{children}</table>
           </div>
         </div>
       </div>
@@ -34,11 +34,11 @@ export function Table({
 }
 
 export function TableHead({ className, ...props }: React.ComponentPropsWithoutRef<'thead'>) {
-  return <thead {...props} className={clsx(className, 'text-zinc-500 dark:text-zinc-400')} />
+  return <thead {...props} className={clsx(className, 'border-b border-zinc-800 [&_tr>*:not(:first-child)]:!border-l-zinc-950 [&_tr>*:not(:first-child)]:!border-l')} />
 }
 
-export function TableBody(props: React.ComponentPropsWithoutRef<'tbody'>) {
-  return <tbody {...props} />
+export function TableBody({ className, ...props }: React.ComponentPropsWithoutRef<'tbody'>) {
+  return <tbody {...props} className={clsx(className, 'divide-y divide-gray-200 bg-white dark:divide-white/10 dark:bg-gray-900')} />
 }
 
 const TableRowContext = createContext<{ href?: string; target?: string; title?: string }>({
@@ -62,6 +62,7 @@ export function TableRow({
         {...props}
         className={clsx(
           className,
+          'divide-x divide-gray-200 dark:divide-white/10',
           href &&
             'has-[[data-row-link][data-focus]]:outline has-[[data-row-link][data-focus]]:outline-2 has-[[data-row-link][data-focus]]:-outline-offset-2 has-[[data-row-link][data-focus]]:outline-blue-500 dark:focus-within:bg-white/[2.5%]',
           striped && 'even:bg-zinc-950/[2.5%] dark:even:bg-white/[2.5%]',
@@ -73,24 +74,28 @@ export function TableRow({
   )
 }
 
-export function TableHeader({ className, ...props }: React.ComponentPropsWithoutRef<'th'>) {
-  const { bleed, grid } = useContext(TableContext)
-
+export function TableHeader({ className, stickyLeft, stickyRight, ...props }: React.ComponentPropsWithoutRef<'th'> & { stickyLeft?: boolean; stickyRight?: boolean }) {
   return (
     <th
       {...props}
       className={clsx(
         className,
-        'border-b border-b-zinc-950/20 px-4 py-2 font-medium first:pl-[var(--gutter,theme(spacing.2))] last:pr-[var(--gutter,theme(spacing.2))] dark:border-b-white/10',
-        grid && 'border-l border-l-zinc-950/20 first:border-l-0 dark:border-l-white/5',
-        !bleed && 'sm:first:pl-1 sm:last:pr-1'
+        'bg-stone-900 px-4 py-3 text-left text-sm font-semibold text-neutral-50 dark:text-white font-figtree',
+        '!border-r-0 min-h-[2.5rem] h-[2.5rem] max-h-[2.5rem]',
+        'min-w-[200px] max-w-[calc(100vw/4)]',
+        stickyLeft && 'sticky left-0 z-10',
+        stickyRight && 'sticky right-0 z-10'
       )}
+      style={{
+        ...(stickyLeft && { backgroundColor: 'rgb(28 25 23)' }),
+        ...(stickyRight && { backgroundColor: 'rgb(28 25 23)' }),
+        width: props.style?.width || 'auto',
+      } as React.CSSProperties}
     />
   )
 }
 
-export function TableCell({ className, children, ...props }: React.ComponentPropsWithoutRef<'td'>) {
-  const { bleed, dense, grid, striped } = useContext(TableContext)
+export function TableCell({ className, children, stickyLeft, stickyRight, ...props }: React.ComponentPropsWithoutRef<'td'> & { stickyLeft?: boolean; stickyRight?: boolean }) {
   const { href, target, title } = useContext(TableRowContext)
   const [cellRef, setCellRef] = useState<HTMLElement | null>(null)
 
@@ -100,12 +105,17 @@ export function TableCell({ className, children, ...props }: React.ComponentProp
       {...props}
       className={clsx(
         className,
-        'relative px-4 first:pl-[var(--gutter,theme(spacing.2))] last:pr-[var(--gutter,theme(spacing.2))]',
-        !striped && 'border-b border-zinc-950/20 dark:border-white/5',
-        grid && 'border-l border-l-zinc-950/5 first:border-l-0 dark:border-l-white/5',
-        dense ? 'py-2.5' : 'py-4',
-        !bleed && 'sm:first:pl-1 sm:last:pr-1'
+        'pl-4 py-1 text-sm text-zinc-700 dark:text-gray-300 font-figtree',
+        'first:font-medium first:text-gray-900 first:dark:text-white',
+        'min-h-[2.5rem] h-[2.5rem] max-h-[2.5rem]',
+        'min-w-[200px] max-w-[calc(100vw/4)]',
+        stickyLeft && 'sticky left-0 z-10 bg-white dark:bg-gray-900',
+        stickyRight && 'sticky right-0 z-10 bg-white dark:bg-gray-900'
       )}
+      style={{
+        ...(props.style || {}),
+        width: props.style?.width || 'auto',
+      } as React.CSSProperties}
     >
       {href && (
         <a
@@ -117,7 +127,9 @@ export function TableCell({ className, children, ...props }: React.ComponentProp
           className="absolute inset-0 focus:outline-none"
         />
       )}
-      {children}
+      <div className="whitespace-nowrap overflow-x-auto overflow-y-hidden h-full w-full flex items-center">
+        {children}
+      </div>
     </td>
   )
 }

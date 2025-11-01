@@ -116,43 +116,61 @@ export function Homepage() {
     }
   }
 
+  const headers = ['Name', 'Description', 'Index', '']
+  const tableRows = lists?.data
+    ?.sort((a, b) => {
+      const indexA = a.index ?? 999999
+      const indexB = b.index ?? 999999
+      return indexA - indexB
+    })
+    .map((list) => ({
+      displayName: { value: list.displayName || '', width: '300px' },
+      description: { value: list.description || '-', width: '500px' },
+      index: { value: list.index?.toString() || '-', width: '100px' },
+    })) || []
+
   return (
     <>
-      <div className="flex">
-        <Header>Homepage</Header>
-        <Button
-          className="text-white px-4 py-2 ml-auto cursor-pointer"
-          onClick={() => setIsCreateOrEditModalOpen(true)}
-          color="green"
-        >
-          Create New Homepage List
-        </Button>
+      <div className="fixed top-10 left-0 right-0 bottom-0 flex gap-0">
+        {/*Main content column*/}
+        <div className="flex-1 flex flex-col min-w-0 h-full">
+          <div className="bg-[#eef1e3] flex-shrink-0 flex items-center justify-between mb-0 pl-6 lg:pl-6 pr-4 lg:pr-3 py-2 lg:py-2">
+            <div className="flex items-center gap-4">
+              <Header>Homepage</Header>
+            </div>
+          </div>
+          <div className="flex-1 overflow-x-auto overflow-y-auto p-6">
+            <div className="h-20 flex items-center justify-between gap-3">
+              <Button
+                className="text-white mb-5 px-4 py-2 cursor-pointer"
+                color="sky"
+                onClick={() => setIsCreateOrEditModalOpen(true)}
+              >
+                <svg width="10" height="10" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white dark:text-white">
+                  <path fillRule="evenodd" clipRule="evenodd" d="M0 48.031H31.969V80H48.031V48.031H80V31.969H48.031V0H31.969V31.969H0V48.031Z" fill="currentColor" />
+                </svg>
+                Add New
+              </Button>
+              <div className="flex items-center gap-4 mb-5">
+                {lists && lists.total !== null && lists.total > 10 && (
+                  <PaginationControls
+                    currentPage={currentPage}
+                    total={lists.total}
+                    onPrev={handlePrevPage}
+                    onNext={handleNextPage}
+                  />
+                )}
+              </div>
+            </div>
+            <SimpleTable
+              headers={headers}
+              rows={tableRows}
+              onEdit={onSelectList}
+              onDelete={onConfirmDeleteList}
+            />
+          </div>
+        </div>
       </div>
-      <br />
-      <SimpleTable
-        headers={['Name', 'Description', 'Index', '']}
-        rows={lists?.data
-          ?.sort((a, b) => {
-            const indexA = a.index ?? 999999
-            const indexB = b.index ?? 999999
-            return indexA - indexB
-          })
-          .map((list) => ({
-            displayName: { value: list.displayName || '', width: '300px' },
-            description: { value: list.description || '-', width: '500px' },
-            index: { value: list.index?.toString() || '-', width: '100px' },
-          })) || []}
-        onEdit={onSelectList}
-        onDelete={onConfirmDeleteList}
-      />
-      {lists && lists.total !== null && lists.total > 10 && (
-        <PaginationControls
-          currentPage={currentPage}
-          total={lists.total}
-          onPrev={handlePrevPage}
-          onNext={handleNextPage}
-        />
-      )}
       <SimpleDialog
         isOpen={isCreateOrEditModalOpen}
         size="5xl"

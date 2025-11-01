@@ -31,3 +31,33 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Override browser autofill styles to maintain consistent input shadows */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  -webkit-text-fill-color: inherit;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Remove browser default shadows from inputs (shadows come from wrapper elements) */
+input,
+input:focus,
+input:hover,
+input:active {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
+/* Remove browser default button shadows - only remove if not explicitly set via Tailwind classes */
+button:not([class*="shadow"]):not([class*="before:shadow"]):not([class*="after:shadow"]),
+button:not([class*="shadow"]):not([class*="before:shadow"]):not([class*="after:shadow"]):focus,
+button:not([class*="shadow"]):not([class*="before:shadow"]):not([class*="after:shadow"]):hover,
+button:not([class*="shadow"]):not([class*="before:shadow"]):not([class*="after:shadow"]):active {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
