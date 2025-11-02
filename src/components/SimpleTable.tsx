@@ -45,8 +45,9 @@ export function SimpleTable ({ headers, rows, onEdit, onDelete } : SimpleTablePr
           {headers?.map((header, index) => {
             const isFirst = index === 0
             const isLast = index === headers.length - 1 && !onEdit && !onDelete
+            const isPrimaryImage = header === 'Image'
             return (
-              <TableHeader key={index} stickyLeft={isFirst} stickyRight={isLast}>
+              <TableHeader key={index} stickyLeft={isFirst} stickyRight={isLast} autoWidth={isPrimaryImage}>
                 {header}
               </TableHeader>
             )
@@ -58,6 +59,7 @@ export function SimpleTable ({ headers, rows, onEdit, onDelete } : SimpleTablePr
           <TableRow key={idx}>
             {Object.values(row)?.map((rowItem, cellIdx) => {
               const isDescription = headers[cellIdx] === 'Description'
+              const isPrimaryImage = headers[cellIdx] === 'Image'
               const value = rowItem.value
               const isHTML = typeof value === 'string' && /<[^>]+>/g.test(value)
               const isFirst = cellIdx === 0
@@ -68,7 +70,8 @@ export function SimpleTable ({ headers, rows, onEdit, onDelete } : SimpleTablePr
                   key={cellIdx}
                   stickyLeft={isFirst}
                   stickyRight={isLast}
-                  style={{ width: rowItem.width, whiteSpace: 'pre-wrap', overflowWrap: 'break-word' }}
+                  autoWidth={isPrimaryImage}
+                  style={{ width: isPrimaryImage ? 'auto' : rowItem.width, whiteSpace: 'pre-wrap', overflowWrap: 'break-word' }}
                 >
                   {React.isValidElement(value) ? (
                     value

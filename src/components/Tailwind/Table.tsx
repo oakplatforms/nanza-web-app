@@ -74,7 +74,7 @@ export function TableRow({
   )
 }
 
-export function TableHeader({ className, stickyLeft, stickyRight, ...props }: React.ComponentPropsWithoutRef<'th'> & { stickyLeft?: boolean; stickyRight?: boolean }) {
+export function TableHeader({ className, stickyLeft, stickyRight, autoWidth, ...props }: React.ComponentPropsWithoutRef<'th'> & { stickyLeft?: boolean; stickyRight?: boolean; autoWidth?: boolean }) {
   return (
     <th
       {...props}
@@ -82,7 +82,7 @@ export function TableHeader({ className, stickyLeft, stickyRight, ...props }: Re
         className,
         'bg-stone-900 px-4 py-3 text-left text-sm font-semibold text-neutral-50 dark:text-white font-figtree',
         '!border-r-0 min-h-[2.5rem] h-[2.5rem] max-h-[2.5rem]',
-        'min-w-[200px] max-w-[calc(100vw/4)]',
+        !autoWidth && 'min-w-[200px] max-w-[calc(100vw/4)]',
         stickyLeft && 'sticky left-0 z-10',
         stickyRight && 'sticky right-0 z-10'
       )}
@@ -95,7 +95,7 @@ export function TableHeader({ className, stickyLeft, stickyRight, ...props }: Re
   )
 }
 
-export function TableCell({ className, children, stickyLeft, stickyRight, ...props }: React.ComponentPropsWithoutRef<'td'> & { stickyLeft?: boolean; stickyRight?: boolean }) {
+export function TableCell({ className, children, stickyLeft, stickyRight, autoWidth, ...props }: React.ComponentPropsWithoutRef<'td'> & { stickyLeft?: boolean; stickyRight?: boolean; autoWidth?: boolean }) {
   const { href, target, title } = useContext(TableRowContext)
   const [cellRef, setCellRef] = useState<HTMLElement | null>(null)
 
@@ -105,10 +105,11 @@ export function TableCell({ className, children, stickyLeft, stickyRight, ...pro
       {...props}
       className={clsx(
         className,
-        'pl-4 py-1 text-sm text-zinc-700 dark:text-gray-300 font-figtree',
+        'py-2 text-sm text-zinc-700 dark:text-gray-300 font-figtree',
         'first:font-medium first:text-gray-900 first:dark:text-white',
         'min-h-[2.5rem] h-[2.5rem] max-h-[2.5rem]',
-        'min-w-[200px] max-w-[calc(100vw/4)]',
+        autoWidth ? 'pl-4 pr-4' : 'pl-4',
+        !autoWidth && 'min-w-[200px] max-w-[calc(100vw/4)]',
         stickyLeft && 'sticky left-0 z-10 bg-white dark:bg-gray-900',
         stickyRight && 'sticky right-0 z-10 bg-white dark:bg-gray-900'
       )}
@@ -127,7 +128,7 @@ export function TableCell({ className, children, stickyLeft, stickyRight, ...pro
           className="absolute inset-0 focus:outline-none"
         />
       )}
-      <div className="whitespace-nowrap overflow-x-auto overflow-y-hidden h-full w-full flex items-center">
+      <div className={clsx('overflow-y-hidden h-full flex items-center', autoWidth ? 'w-auto' : 'whitespace-nowrap overflow-x-auto w-full')}>
         {children}
       </div>
     </td>

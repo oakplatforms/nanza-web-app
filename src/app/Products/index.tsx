@@ -215,8 +215,23 @@ export function Products() {
     }
   }
 
-  const headers = ['Name', 'Product Number', 'Description', 'Tags', '']
+  const headers = ['Image', 'Name', 'Product Number', 'Description', 'Tags', '']
   const tableRows = displayData?.data?.map((productEntity) => ({
+    primaryImage: {
+      value: productEntity.image ? (
+        <img
+          src={`${process.env.REACT_APP_S3_IMAGE_BASE_URL}${productEntity.image}`}
+          alt={productEntity.displayName || 'Product'}
+          className="object-contain"
+          style={{ height: '60px', maxHeight: '60px', width: 'auto', maxWidth: 'none' }}
+        />
+      ) : (
+        <div className="flex items-center justify-center bg-gray-100 rounded text-gray-400 text-xs" style={{ height: '60px', maxHeight: '60px', width: 'auto' }}>
+          No image
+        </div>
+      ),
+      width: 'auto',
+    },
     displayName: { value: productEntity.displayName || '', width: '20%' },
     productNumber: { value: productEntity.product?.number || '', width: '150px' },
     //brand: { value: productEntity.brand?.displayName || productEntity.brand?.name || '', width: '200px' },
