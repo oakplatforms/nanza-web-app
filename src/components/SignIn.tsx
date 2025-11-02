@@ -67,7 +67,7 @@ const SignIn = () => {
         </form>
         <p className="text-[13px] text-slate-800 font-figtree font-medium tracking-[0.05px] mt-6">
           Ready to join TCGX?{' '}
-          <button onClick={() => setIsSigningUp(true)} className="ml-1 font-figtree font-bold text-sky-500 hover:text-sky-600 inline-flex items-center">
+          <button onClick={() => setIsSigningUp(true)} className="ml-1 font-figtree font-semibold text-sky-500 hover:text-sky-600 inline-flex items-center">
             Get Started
             <svg className="ml-1.5 mb-0.5" width="9.77" height="9" viewBox="0 0 38 35" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M37 14.99L25 0.990019C24.27 0.260019 23.52 -0.0199809 22.82 1.90935e-05C22.78 1.90935e-05 22.73 1.90935e-05 22.69 1.90935e-05C20.54 -0.0699809 18.06 2.84002 19.75 4.72002L20.28 5.31002L28.1 13.99H3C-1 13.99 -1 19.99 3 19.99H27.96L19.4 29.5L18.87 30.09C17.21 31.94 19.58 34.78 21.71 34.81C21.75 34.81 21.8 34.81 21.85 34.81C21.9 34.81 21.94 34.81 21.99 34.81C22.9 34.79 23.96 34.29 25.01 33L37.01 19C38.01 18 38.01 16 37.01 15L37 14.99Z" fill="currentColor"/>
