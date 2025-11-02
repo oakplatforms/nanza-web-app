@@ -41,7 +41,7 @@ export function Layout({
   const [showSidebar, setShowSidebar] = useState(false)
 
   return (
-    <div className="relative isolate flex min-h-svh w-full bg-[conic-gradient(at_right,_var(--tw-gradient-stops))] from-[#f6edcf] via-[#f0dab1] to-[#daf1f9]">
+    <div className="relative isolate flex min-h-svh w-full bg-gradient-to-r from-gray-100 to-gray-300">
       {/*Navbar - fixed at the very top, spans full width*/}
       {navbar && (
         <div className="fixed top-0 left-0 right-0 z-50 h-auto bg-white dark:bg-gray-900 shadow-sm">
@@ -62,7 +62,7 @@ export function Layout({
       </MobileSidebar>
       {/*Main content - positioned below navbar, accounts for sidebar width on desktop*/}
       <main className={`flex flex-1 flex-col pb-2 min-w-0 ${navbar ? 'pt-10' : 'pt-0'} lg:pl-0 lg:pr-0`}>
-        <div className="grow py-6 lg:py-10">
+        <div className="grow pb-6 lg:pb-10">
           <div className="mx-auto">{children}</div>
         </div>
       </main>

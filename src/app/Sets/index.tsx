@@ -128,10 +128,10 @@ export function Sets() {
 
   return (
     <>
-      <div className="fixed top-10 left-0 right-0 bottom-0 flex gap-0">
+      <div className="top-0 left-0 right-0 bottom-0 flex gap-0">
         {/*Main content column*/}
         <div className="flex-1 flex flex-col min-w-0 h-full">
-          <div className="bg-[#eef1e3] flex-shrink-0 flex items-center justify-between mb-0 pl-6 lg:pl-6 pr-4 lg:pr-3 py-2 lg:py-2">
+          <div className="bg-[#e5e8eb] flex-shrink-0 flex items-center justify-between mb-0 pl-6 lg:pl-6 pr-4 lg:pr-3 py-2 lg:py-2">
             <div className="flex items-center gap-4">
               <Header>Sets</Header>
             </div>

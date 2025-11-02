@@ -44,7 +44,7 @@ export function TopNavbar({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
 
   const navbarItemClasses = clsx(
     'h-10 relative flex min-w-0 items-center gap-3 px-4 py-2 text-left text-base/6 font-semibold text-zinc-950 sm:text-[13px]',
-    'hover:bg-zinc-950/5 dark:text-white dark:hover:bg-white/5'
+    'hover:bg-[#f0f1f3] dark:text-white dark:hover:bg-white/5'
   )
 
   return (
@@ -83,7 +83,7 @@ export function TopNavbar({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
             <React.Fragment key={item.name}>
               <Link
                 to={item.to}
-                className={clsx(navbarItemClasses, isCurrent && 'bg-zinc-950/5 dark:bg-white/5')}
+                className={clsx(navbarItemClasses, isCurrent && 'bg-[#f0f1f3] dark:bg-white/5')}
               >
                 {item.name}
               </Link>

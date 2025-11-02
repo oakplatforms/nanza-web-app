@@ -47,7 +47,7 @@ const SignUp = ({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[conic-gradient(at_right,_var(--tw-gradient-stops))] from-[#f6edcf] via-[#f0dab1] to-[#daf1f9]">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-100 to-gray-300">
       <div className="w-full max-w-sm bg-white px-10 pt-8 pb-9 shadow-[rgba(50,50,93,0.25)_0px_50px_100px_-20px,rgba(0,0,0,0.3)_0px_30px_60px_-30px] rounded-2xl">
         <img src="/oak.svg" alt="Oak Platforms" className="h-[21.11px] mb-8" />
         <h2 className="text-2xl font-bold mb-1">{isConfirming ? 'Confirm Sign Up' : 'Sign Up'}</h2>
