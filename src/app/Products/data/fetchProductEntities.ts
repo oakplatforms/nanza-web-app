@@ -6,6 +6,7 @@ function useFetchProductEntities(page: number) {
   const params = new URLSearchParams({
     usePagination: 'true',
     page: page.toString(),
+    type: 'PRODUCT',
   })
 
   params.append('include', 'entityTags.tag')
@@ -15,7 +16,16 @@ function useFetchProductEntities(page: number) {
 
   const query = useQuery<PaginatedResponse<EntityDto>>({
     queryKey: ['productEntities', page],
-    queryFn: () => entityService.list(`?${params.toString()}`),
+    queryFn: async () => {
+      try {
+        const result = await entityService.list(`?${params.toString()}`)
+        console.log('Product entities fetched:', result)
+        return result
+      } catch (error) {
+        console.error('Error fetching product entities:', error)
+        throw error
+      }
+    },
     staleTime: 1000 * 60 * 5,
   })
 

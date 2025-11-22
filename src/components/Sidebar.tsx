@@ -109,7 +109,7 @@ export function SidebarNavigation() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <SidebarHeading>TCGx 0.1</SidebarHeading>
+        <SidebarHeading>Nanza 0.1</SidebarHeading>
       </SidebarHeader>
       <SidebarBody>
         <Link to="/homepage">

@@ -1,0 +1,297 @@
+[
+  {
+    "service": "Brand",
+    "method": "POST",
+    "url": "/api/v1/brand/${brandId}${parameters}"
+  },
+  {
+    "service": "Brand",
+    "method": "PUT",
+    "url": "/api/v1/brands${parameters}"
+  },
+  {
+    "service": "Brand",
+    "method": "DELETE",
+    "url": "/api/v1/brand"
+  },
+  {
+    "service": "Brand",
+    "method": "GET",
+    "url": "/api/v1/brand/${brandId}"
+  },
+  {
+    "service": "Brand",
+    "method": "GET",
+    "url": "/api/v1/brand/${brandId}"
+  },
+  {
+    "service": "Category",
+    "method": "POST",
+    "url": "/api/v1/category/${categoryId}${parameters}"
+  },
+  {
+    "service": "Category",
+    "method": "PUT",
+    "url": "/api/v1/categories${parameters}"
+  },
+  {
+    "service": "Category",
+    "method": "DELETE",
+    "url": "/api/v1/category"
+  },
+  {
+    "service": "Category",
+    "method": "GET",
+    "url": "/api/v1/category/${categoryId}"
+  },
+  {
+    "service": "Category",
+    "method": "GET",
+    "url": "/api/v1/category/${categoryId}"
+  },
+  {
+    "service": "Condition",
+    "method": "POST",
+    "url": "/api/v1/condition/${conditionId}${parameters}"
+  },
+  {
+    "service": "Condition",
+    "method": "PUT",
+    "url": "/api/v1/conditions${parameters}"
+  },
+  {
+    "service": "Condition",
+    "method": "DELETE",
+    "url": "/api/v1/condition"
+  },
+  {
+    "service": "Condition",
+    "method": "GET",
+    "url": "/api/v1/condition/${conditionId}"
+  },
+  {
+    "service": "Condition",
+    "method": "GET",
+    "url": "/api/v1/condition/${conditionId}"
+  },
+  {
+    "service": "Entity",
+    "method": "POST",
+    "url": "/api/v1/entity/${entityId}${parameters}"
+  },
+  {
+    "service": "Entity",
+    "method": "PUT",
+    "url": "/api/v1/entities${parameters}"
+  },
+  {
+    "service": "Entity",
+    "method": "DELETE",
+    "url": "/api/v1/entity"
+  },
+  {
+    "service": "Entity",
+    "method": "PUT",
+    "url": "/api/v1/entity/${entityId}"
+  },
+  {
+    "service": "Entity",
+    "method": "DELETE",
+    "url": "/api/v1/entity/${entityId}"
+  },
+  {
+    "service": "Entity",
+    "method": "GET",
+    "url": "/api/v1/entity/upload-image/${entityId}${queryParams}"
+  },
+  {
+    "service": "Entity",
+    "method": "GET",
+    "url": "/api/v1/entity/delete-image/${entityId}${queryParams}"
+  },
+  {
+    "service": "List",
+    "method": "POST",
+    "url": "/api/v1/list/${listId}${parameters}"
+  },
+  {
+    "service": "List",
+    "method": "PUT",
+    "url": "/api/v1/lists${parameters}"
+  },
+  {
+    "service": "List",
+    "method": "PUT",
+    "url": "/api/v1/list"
+  },
+  {
+    "service": "List",
+    "method": "DELETE",
+    "url": "/api/v1/list/${listId}"
+  },
+  {
+    "service": "List",
+    "method": "PUT",
+    "url": "/api/v1/list/${listId}"
+  },
+  {
+    "service": "List",
+    "method": "DELETE",
+    "url": "/api/v1/list/${listId}"
+  },
+  {
+    "service": "List",
+    "method": "GET",
+    "url": "/api/v1/list/upload-image/${listId}${queryParams}"
+  },
+  {
+    "service": "List",
+    "method": "GET",
+    "url": "/api/v1/list/delete-image/${listId}${queryParams}"
+  },
+  {
+    "service": "Profile",
+    "method": "GET",
+    "url": "/api/v1/account/profile/${username}${parameters}"
+  },
+  {
+    "service": "Set",
+    "method": "POST",
+    "url": "/api/v1/set/${setId}${parameters}"
+  },
+  {
+    "service": "Set",
+    "method": "PUT",
+    "url": "/api/v1/sets${parameters}"
+  },
+  {
+    "service": "Set",
+    "method": "DELETE",
+    "url": "/api/v1/set"
+  },
+  {
+    "service": "Set",
+    "method": "PUT",
+    "url": "/api/v1/set/${setId}"
+  },
+  {
+    "service": "Set",
+    "method": "DELETE",
+    "url": "/api/v1/set/${setId}"
+  },
+  {
+    "service": "Set",
+    "method": "GET",
+    "url": "/api/v1/set/upload-image/${setId}?field=${imageField}"
+  },
+  {
+    "service": "Set",
+    "method": "GET",
+    "url": "/api/v1/set/delete-image/${setId}?field=${imageField}"
+  },
+  {
+    "service": "ShippingMethod",
+    "method": "POST",
+    "url": "/api/v1/shipping-method/${categoryId}${parameters}"
+  },
+  {
+    "service": "ShippingMethod",
+    "method": "PUT",
+    "url": "/api/v1/shipping-methods${parameters}"
+  },
+  {
+    "service": "ShippingMethod",
+    "method": "DELETE",
+    "url": "/api/v1/shipping-method"
+  },
+  {
+    "service": "ShippingMethod",
+    "method": "GET",
+    "url": "/api/v1/shipping-method/${categoryId}"
+  },
+  {
+    "service": "ShippingMethod",
+    "method": "GET",
+    "url": "/api/v1/shipping-method/${categoryId}"
+  },
+  {
+    "service": "ShippingOption",
+    "method": "POST",
+    "url": "/api/v1/shipping-option/${shippingOptionId}${parameters}"
+  },
+  {
+    "service": "ShippingOption",
+    "method": "PUT",
+    "url": "/api/v1/shipping-options${parameters}"
+  },
+  {
+    "service": "ShippingOption",
+    "method": "DELETE",
+    "url": "/api/v1/shipping-option"
+  },
+  {
+    "service": "ShippingOption",
+    "method": "GET",
+    "url": "/api/v1/shipping-option/${shippingOptionId}"
+  },
+  {
+    "service": "ShippingOption",
+    "method": "GET",
+    "url": "/api/v1/shipping-option/${shippingOptionId}"
+  },
+  {
+    "service": "SupportedTagValue",
+    "method": "POST",
+    "url": "/api/v1/supported-tag-value"
+  },
+  {
+    "service": "SupportedTagValue",
+    "method": "DELETE",
+    "url": "/api/v1/supported-tag-value/${supportedTagValueId}"
+  },
+  {
+    "service": "Tag",
+    "method": "POST",
+    "url": "/api/v1/tag/${tagId}${parameters}"
+  },
+  {
+    "service": "Tag",
+    "method": "PUT",
+    "url": "/api/v1/tags${parameters}"
+  },
+  {
+    "service": "Tag",
+    "method": "DELETE",
+    "url": "/api/v1/tag"
+  },
+  {
+    "service": "Tag",
+    "method": "GET",
+    "url": "/api/v1/tag/${tagId}"
+  },
+  {
+    "service": "Tag",
+    "method": "GET",
+    "url": "/api/v1/tag/${tagId}"
+  },
+  {
+    "service": "User",
+    "method": "POST",
+    "url": "/api/v1/user/${userId}${parameters}"
+  },
+  {
+    "service": "User",
+    "method": "PUT",
+    "url": "/api/v1/user"
+  },
+  {
+    "service": "User",
+    "method": "DELETE",
+    "url": "/api/v1/user/${userId}"
+  },
+  {
+    "service": "User",
+    "method": "GET",
+    "url": "/api/v1/user/${userId}"
+  }
+]

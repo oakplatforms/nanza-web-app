@@ -2,6 +2,7 @@ import type { components } from './oak-api-schemas'
 
 export type UserDto = components['schemas']['User']
 export type AccountDto = components['schemas']['Account']
+export type ProfileDto = components['schemas']['Profile']
 export type BrandDto = components['schemas']['Brand']
 export type ThemeDto = components['schemas']['Theme']
 export type TagDto = components['schemas']['Tag']
@@ -15,6 +16,7 @@ export type ShippingMethodDto = components['schemas']['ShippingMethod']
 export type ShippingOptionDto = components['schemas']['ShippingOption']
 export type ParcelDto = components['schemas']['Parcel']
 export type SetDto = components['schemas']['Set']
+export type ListingDto = components['schemas']['Listing']
 
 export type EntityPayload = Omit<EntityDto, 'entityTags'> & {
   createdById?: string | null

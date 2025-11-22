@@ -12,7 +12,7 @@ import { SearchInput } from '../../components/SearchInput'
 import { useFetchSets } from './data/fetchSets'
 import { useSearchParams } from 'react-router-dom'
 
-export function Sets() {
+export function Sets({ readOnly = false }: { readOnly?: boolean }) {
   const { currentUser } = useSession()
   const [searchParams, setSearchParams] = useSearchParams()
   const [currentPage, setCurrentPage] = useState(0)
@@ -25,13 +25,13 @@ export function Sets() {
 
   // Check for create query parameter and open dialog
   useEffect(() => {
-    if (searchParams.get('create') === 'true') {
+    if (!readOnly && searchParams.get('create') === 'true') {
       setSelectedSet(null)
       setIsCreateOrEditModalOpen(true)
       searchParams.delete('create')
       setSearchParams(searchParams, { replace: true })
     }
-  }, [searchParams, setSearchParams])
+  }, [searchParams, setSearchParams, readOnly])
 
   const handleSearch = (query: string) => {
     setSearchText(query)
@@ -138,16 +138,18 @@ export function Sets() {
           </div>
           <div className="flex-1 overflow-x-auto overflow-y-auto p-6">
             <div className="h-20 flex items-center justify-between gap-3">
-              <Button
-                className="text-white mb-5 px-4 py-2 cursor-pointer"
-                color="sky"
-                onClick={() => setIsCreateOrEditModalOpen(true)}
-              >
-                <svg width="10" height="10" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white dark:text-white">
-                  <path fillRule="evenodd" clipRule="evenodd" d="M0 48.031H31.969V80H48.031V48.031H80V31.969H48.031V0H31.969V31.969H0V48.031Z" fill="currentColor" />
-                </svg>
-                Add New
-              </Button>
+              {!readOnly && (
+                <Button
+                  className="text-white mb-5 px-4 py-2 cursor-pointer"
+                  color="sky"
+                  onClick={() => setIsCreateOrEditModalOpen(true)}
+                >
+                  <svg width="10" height="10" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white dark:text-white">
+                    <path fillRule="evenodd" clipRule="evenodd" d="M0 48.031H31.969V80H48.031V48.031H80V31.969H48.031V0H31.969V31.969H0V48.031Z" fill="currentColor" />
+                  </svg>
+                  Add New
+                </Button>
+              )}
               <div className="flex items-center gap-4 mb-5">
                 {!searchText && sets && sets.total !== null && sets.total > 10 && (
                   <PaginationControls
@@ -168,8 +170,9 @@ export function Sets() {
             <SimpleTable
               headers={headers}
               rows={tableRows}
-              onEdit={onSelectSet}
-              onDelete={onConfirmDeleteSet}
+              onEdit={readOnly ? undefined : onSelectSet}
+              onDelete={readOnly ? undefined : onConfirmDeleteSet}
+              readOnly={readOnly}
             />
             {searchText && sets && sets.data && sets.data.length === 0 && (
               <div className="text-center py-4 text-gray-500">

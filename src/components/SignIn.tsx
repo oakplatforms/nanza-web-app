@@ -3,6 +3,7 @@ import { signIn } from 'aws-amplify/auth'
 import { useSession } from '../context/SessionContext'
 import { Button, Input } from './Tailwind'
 import SignUp from './SignUp'
+import { useNavigate } from 'react-router-dom'
 
 const SignIn = () => {
   const [email, setEmail] = useState('')
@@ -10,6 +11,7 @@ const SignIn = () => {
   const [error, setError] = useState<string | null>(null)
   const { setIsSignedIn } = useSession()
   const [isSigningUp, setIsSigningUp] = useState(false)
+  const navigate = useNavigate()
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,6 +22,7 @@ const SignIn = () => {
       setIsSignedIn(true)
       setEmail('')
       setPassword('')
+      navigate('/dashboard')
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message)
@@ -38,7 +41,7 @@ const SignIn = () => {
       <div className="w-full max-w-sm bg-white px-10 pt-8 pb-9 shadow-[rgba(50,50,93,0.25)_0px_50px_100px_-20px,rgba(0,0,0,0.3)_0px_30px_60px_-30px] rounded-2xl">
         <img src="/oak.svg" alt="Oak Platforms" className="h-[21.11px] mb-8" />
         <h2 className="text-2xl font-bold mb-1">Log in</h2>
-        <p className="text-[13px] font-figtree text-slate-800 font-medium tracking-[0.05px] mb-6">Continue to TCGX</p>
+        <p className="text-[13px] font-figtree text-slate-800 font-medium tracking-[0.05px] mb-6">Continue to Nanza</p>
         <form onSubmit={handleSignIn}>
           <Input
             id="email"
@@ -66,7 +69,7 @@ const SignIn = () => {
           </Button>
         </form>
         <p className="text-[13px] text-slate-800 font-figtree font-medium tracking-[0.05px] mt-6">
-          Ready to join TCGX?{' '}
+          Ready to join Nanza?{' '}
           <button onClick={() => setIsSigningUp(true)} className="ml-1 font-figtree font-semibold text-sky-500 hover:text-sky-600 inline-flex items-center">
             Get Started
             <svg className="ml-1.5 mb-0.5" width="9.77" height="9" viewBox="0 0 38 35" fill="none" xmlns="http://www.w3.org/2000/svg">

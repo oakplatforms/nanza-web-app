@@ -10,7 +10,7 @@ import { useSession } from '../../context/SessionContext'
 import { PaginationControls } from '../../components/PaginationControls'
 import { fetchHomepageLists } from './data/fetchHomepageLists'
 
-export function Homepage() {
+export function Homepage({ readOnly = false }: { readOnly?: boolean }) {
   const { currentUser } = useSession()
   const [currentPage, setCurrentPage] = useState(0)
   const [isCreateOrEditModalOpen, setIsCreateOrEditModalOpen] = useState(false)
@@ -141,16 +141,18 @@ export function Homepage() {
           </div>
           <div className="flex-1 overflow-x-auto overflow-y-auto p-6">
             <div className="h-20 flex items-center justify-between gap-3">
-              <Button
-                className="text-white mb-5 px-4 py-2 cursor-pointer"
-                color="sky"
-                onClick={() => setIsCreateOrEditModalOpen(true)}
-              >
-                <svg width="10" height="10" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white dark:text-white">
-                  <path fillRule="evenodd" clipRule="evenodd" d="M0 48.031H31.969V80H48.031V48.031H80V31.969H48.031V0H31.969V31.969H0V48.031Z" fill="currentColor" />
-                </svg>
-                Add New
-              </Button>
+              {!readOnly && (
+                <Button
+                  className="text-white mb-5 px-4 py-2 cursor-pointer"
+                  color="sky"
+                  onClick={() => setIsCreateOrEditModalOpen(true)}
+                >
+                  <svg width="10" height="10" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white dark:text-white">
+                    <path fillRule="evenodd" clipRule="evenodd" d="M0 48.031H31.969V80H48.031V48.031H80V31.969H48.031V0H31.969V31.969H0V48.031Z" fill="currentColor" />
+                  </svg>
+                  Add New
+                </Button>
+              )}
               <div className="flex items-center gap-4 mb-5">
                 {lists && lists.total !== null && lists.total > 10 && (
                   <PaginationControls
@@ -165,8 +167,9 @@ export function Homepage() {
             <SimpleTable
               headers={headers}
               rows={tableRows}
-              onEdit={onSelectList}
-              onDelete={onConfirmDeleteList}
+              onEdit={readOnly ? undefined : onSelectList}
+              onDelete={readOnly ? undefined : onConfirmDeleteList}
+              readOnly={readOnly}
             />
           </div>
         </div>

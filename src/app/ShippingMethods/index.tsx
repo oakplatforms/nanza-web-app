@@ -18,7 +18,7 @@ import { fetchShippingMethods } from './data/fetchShippingMethods'
 import { PaginationControls } from '../../components/PaginationControls'
 import { useSearchParams } from 'react-router-dom'
 
-export function ShippingMethods() {
+export function ShippingMethods({ readOnly = false }: { readOnly?: boolean }) {
   const { currentUser } = useSession()
   const [searchParams, setSearchParams] = useSearchParams()
   const [currentPage, setCurrentPage] = useState(0)
@@ -34,13 +34,13 @@ export function ShippingMethods() {
 
   //Check for create query parameter and open dialog
   useEffect(() => {
-    if (searchParams.get('create') === 'true') {
+    if (!readOnly && searchParams.get('create') === 'true') {
       setSelectedShippingMethod(null)
       setIsCreateOrEditModalOpen(true)
       searchParams.delete('create')
       setSearchParams(searchParams, { replace: true })
     }
-  }, [searchParams, setSearchParams])
+  }, [searchParams, setSearchParams, readOnly])
 
   const handleNextPage = () => {
     if (shippingMethods && shippingMethods.total !== null && (currentPage + 1) * 10 < shippingMethods.total) {
@@ -190,16 +190,18 @@ export function ShippingMethods() {
           </div>
           <div className="flex-1 overflow-x-auto overflow-y-auto p-6">
             <div className="h-20 flex items-center justify-between gap-3">
-              <Button
-                className="text-white mb-5 px-4 py-2 cursor-pointer"
-                color="sky"
-                onClick={() => setIsCreateOrEditModalOpen(true)}
-              >
-                <svg width="10" height="10" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white dark:text-white">
-                  <path fillRule="evenodd" clipRule="evenodd" d="M0 48.031H31.969V80H48.031V48.031H80V31.969H48.031V0H31.969V31.969H0V48.031Z" fill="currentColor" />
-                </svg>
-                Add New
-              </Button>
+              {!readOnly && (
+                <Button
+                  className="text-white mb-5 px-4 py-2 cursor-pointer"
+                  color="sky"
+                  onClick={() => setIsCreateOrEditModalOpen(true)}
+                >
+                  <svg width="10" height="10" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white dark:text-white">
+                    <path fillRule="evenodd" clipRule="evenodd" d="M0 48.031H31.969V80H48.031V48.031H80V31.969H48.031V0H31.969V31.969H0V48.031Z" fill="currentColor" />
+                  </svg>
+                  Add New
+                </Button>
+              )}
               <div className="flex items-center gap-4 mb-5">
                 {shippingMethods && shippingMethods.total !== null && shippingMethods.total > 10 && (
                   <PaginationControls
@@ -214,8 +216,9 @@ export function ShippingMethods() {
             <SimpleTable
               headers={headers}
               rows={tableRows}
-              onEdit={onSelectCategory}
-              onDelete={onConfirmDeleteCategory}
+              onEdit={readOnly ? undefined : onSelectCategory}
+              onDelete={readOnly ? undefined : onConfirmDeleteCategory}
+              readOnly={readOnly}
             />
           </div>
         </div>

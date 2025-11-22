@@ -7,6 +7,8 @@ type SimpleTableProps = {
   rows: object[]
   onEdit?: (productIdx: number) => void
   onDelete?: (productIdx: number) => void
+  onRowClick?: (productIdx: number) => void
+  readOnly?: boolean
 }
 
 function sanitizeHTMLForTable(html: string): string {
@@ -37,14 +39,18 @@ function sanitizeHTMLForTable(html: string): string {
   return sanitized
 }
 
-export function SimpleTable ({ headers, rows, onEdit, onDelete } : SimpleTableProps) {
+export function SimpleTable ({ headers, rows, onEdit, onDelete, onRowClick, readOnly = false } : SimpleTableProps) {
+  const showActions = !readOnly && (onEdit || onDelete)
+  // Filter out empty header (action column) when readOnly
+  const displayHeaders = readOnly ? headers.filter(h => h !== '') : headers
+  
   return (
     <Table>
       <TableHead>
         <TableRow>
-          {headers?.map((header, index) => {
+          {displayHeaders?.map((header, index) => {
             const isFirst = index === 0
-            const isLast = index === headers.length - 1 && !onEdit && !onDelete
+            const isLast = index === displayHeaders.length - 1 && !showActions
             const isPrimaryImage = header === 'Image'
             return (
               <TableHeader key={index} stickyLeft={isFirst} stickyRight={isLast} autoWidth={isPrimaryImage}>
@@ -56,14 +62,18 @@ export function SimpleTable ({ headers, rows, onEdit, onDelete } : SimpleTablePr
       </TableHead>
       <TableBody>
         {rows.map((row, idx) => (
-          <TableRow key={idx}>
+          <TableRow 
+            key={idx}
+            onClick={onRowClick ? () => onRowClick(idx) : undefined}
+            className={onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''}
+          >
             {Object.values(row)?.map((rowItem, cellIdx) => {
               const isDescription = headers[cellIdx] === 'Description'
               const isPrimaryImage = headers[cellIdx] === 'Image'
               const value = rowItem.value
               const isHTML = typeof value === 'string' && /<[^>]+>/g.test(value)
               const isFirst = cellIdx === 0
-              const isLast = cellIdx === Object.values(row).length - 1 && !onEdit && !onDelete
+              const isLast = cellIdx === Object.values(row).length - 1 && !showActions
 
               return (
                 <TableCell
@@ -86,9 +96,9 @@ export function SimpleTable ({ headers, rows, onEdit, onDelete } : SimpleTablePr
                 </TableCell>
               )
             })}
-            {(onEdit || onDelete) && (
+            {showActions && (
               <TableCell stickyRight>
-                <div className="flex">
+                <div className="flex" onClick={(e) => e.stopPropagation()}>
                   {onEdit && <Button className="cursor-pointer" onClick={() => onEdit(idx)} plain><PencilIcon /></Button>}
                   {onDelete && <Button className="cursor-pointer" onClick={() => onDelete(idx)} plain><TrashIcon /></Button>}
                 </div>

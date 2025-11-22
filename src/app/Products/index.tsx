@@ -8,18 +8,20 @@ import { CreateOrEditProduct } from './CreateOrEditProduct'
 import { useSession } from '../../context/SessionContext'
 import { PaginationControls } from '../../components/PaginationControls'
 import { SearchInput } from '../../components/SearchInput'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 
 import { fetchProductEntities } from './data/fetchProductEntities'
+import { slugify } from '../../helpers'
 import { fetchTags } from './data/fetchTags'
 import { fetchCategories } from './data/fetchCategories'
 import { fetchBrands } from './data/fetchBrands'
 import { fetchSets } from './data/fetchSets'
 import { entityService } from '../../services/api/Entity'
 
-export function Products() {
+export function Products({ readOnly = false }: { readOnly?: boolean }) {
   const { currentUser } = useSession()
   const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
 
   const [currentPage, setCurrentPage] = useState(0)
   const [searchText, setSearchText] = useState('')
@@ -32,7 +34,7 @@ export function Products() {
   const [isCreateOrEditProductDialogOpen, setIsCreateOrEditProductDialogOpen] = useState(false)
   const [isDeleteProductDialogOpen, setIsDeleteProductDialogOpen] = useState(false)
 
-  const { productEntities, refetchProductEntities } = fetchProductEntities(currentPage)
+  const { productEntities, refetchProductEntities, isLoadingProductEntities, errorProductEntities } = fetchProductEntities(currentPage)
   const { tags } = fetchTags()
   const { categories } = fetchCategories()
   const { brands } = fetchBrands()
@@ -40,7 +42,7 @@ export function Products() {
 
   //Check for create query parameter and open dialog
   useEffect(() => {
-    if (searchParams.get('create') === 'true') {
+    if (!readOnly && searchParams.get('create') === 'true') {
       setSelectedProductEntity(undefined)
       setSelectedTags([])
       setIsCreateOrEditProductDialogOpen(true)
@@ -48,7 +50,7 @@ export function Products() {
       searchParams.delete('create')
       setSearchParams(searchParams, { replace: true })
     }
-  }, [searchParams, setSearchParams])
+  }, [searchParams, setSearchParams, readOnly])
 
   //Search functionality
   const performSearch = async (query: string) => {
@@ -215,6 +217,17 @@ export function Products() {
     }
   }
 
+  const handleRowClick = (productIdx: number) => {
+    const entity = displayData?.data?.[productIdx]
+    if (entity && entity.id) {
+      const brandName = entity.brand?.displayName || entity.brand?.name || ''
+      if (brandName) {
+        const brandSlug = slugify(brandName)
+        navigate(`/${brandSlug}/${entity.id}`)
+      }
+    }
+  }
+
   const headers = ['Image', 'Name', 'Product Number', 'Description', 'Tags', '']
   const tableRows = displayData?.data?.map((productEntity) => ({
     primaryImage: {
@@ -252,16 +265,18 @@ export function Products() {
           </div>
           <div className="flex-1 overflow-x-auto overflow-y-auto p-6">
             <div className="h-20 flex items-center justify-between gap-3">
-              <Button
-                className="text-white mb-5 px-4 py-2 cursor-pointer"
-                color="sky"
-                onClick={() => setIsCreateOrEditProductDialogOpen(true)}
-              >
-                <svg width="10" height="10" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white dark:text-white">
-                  <path fillRule="evenodd" clipRule="evenodd" d="M0 48.031H31.969V80H48.031V48.031H80V31.969H48.031V0H31.969V31.969H0V48.031Z" fill="currentColor" />
-                </svg>
-                Add New
-              </Button>
+              {!readOnly && (
+                <Button
+                  className="text-white mb-5 px-4 py-2 cursor-pointer"
+                  color="sky"
+                  onClick={() => setIsCreateOrEditProductDialogOpen(true)}
+                >
+                  <svg width="10" height="10" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white dark:text-white">
+                    <path fillRule="evenodd" clipRule="evenodd" d="M0 48.031H31.969V80H48.031V48.031H80V31.969H48.031V0H31.969V31.969H0V48.031Z" fill="currentColor" />
+                  </svg>
+                  Add New
+                </Button>
+              )}
               <div className="flex items-center gap-4 mb-5">
                 {!searchText && productEntities && productEntities.total! > 10 && (
                   <PaginationControls
@@ -279,12 +294,50 @@ export function Products() {
                 />
               </div>
             </div>
-            <SimpleTable
-              headers={headers}
-              rows={tableRows || []}
-              onEdit={onEditProduct}
-              onDelete={onConfirmDeleteProduct}
-            />
+            {isLoadingProductEntities && !searchText && (
+              <div className="text-center py-4 text-gray-500">
+                Loading products...
+              </div>
+            )}
+            {errorProductEntities && !searchText && (
+              <div className="text-center py-4 px-4">
+                <div className="inline-block bg-red-50 border border-red-200 rounded-lg p-4 max-w-md">
+                  <p className="text-red-800 font-semibold mb-2">Unable to load products</p>
+                  {(errorProductEntities as any)?.status === 403 ? (
+                    <div>
+                      <p className="text-red-700 text-sm mb-3">
+                        Authentication is required to view products. The API requires authentication even for read-only access.
+                      </p>
+                      <a 
+                        href="/login" 
+                        className="text-sky-600 hover:text-sky-700 underline text-sm font-medium"
+                      >
+                        Log in to view products
+                      </a>
+                    </div>
+                  ) : (
+                    <p className="text-red-700 text-sm">
+                      {errorProductEntities instanceof Error ? errorProductEntities.message : 'Unknown error occurred'}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+            {!isLoadingProductEntities && !errorProductEntities && (!displayData || !displayData.data || displayData.data.length === 0) && !searchText && (
+              <div className="text-center py-4 text-gray-500">
+                No products found
+              </div>
+            )}
+            {(!isLoadingProductEntities && !errorProductEntities && displayData && displayData.data && displayData.data.length > 0) && (
+              <SimpleTable
+                headers={headers}
+                rows={tableRows || []}
+                onEdit={readOnly ? undefined : onEditProduct}
+                onDelete={readOnly ? undefined : onConfirmDeleteProduct}
+                onRowClick={handleRowClick}
+                readOnly={readOnly}
+              />
+            )}
             {searchText && isSearching && (
               <div className="text-center py-4 text-gray-500">
                 Searching...

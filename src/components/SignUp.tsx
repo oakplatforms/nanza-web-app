@@ -52,7 +52,7 @@ const SignUp = ({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) => {
         <img src="/oak.svg" alt="Oak Platforms" className="h-[21.11px] mb-8" />
         <h2 className="text-2xl font-bold mb-1">{isConfirming ? 'Confirm Sign Up' : 'Sign Up'}</h2>
         <p className="text-[13px] font-figtree text-slate-800 font-medium tracking-[0.05px] mb-6">
-          {isConfirming ? 'Enter your confirmation code' : 'Create your TCGX account'}
+          {isConfirming ? 'Enter your confirmation code' : 'Create your Nanza account'}
         </p>
 
         {!isConfirming ? (

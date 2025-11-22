@@ -37,7 +37,7 @@ export function Layout({
   navbar,
   sidebar,
   children,
-}: React.PropsWithChildren<{ navbar?: React.ReactNode; sidebar: React.ReactNode }>) {
+}: React.PropsWithChildren<{ navbar?: React.ReactNode; sidebar?: React.ReactNode }>) {
   const [showSidebar, setShowSidebar] = useState(false)
 
   return (
@@ -57,9 +57,11 @@ export function Layout({
         {sidebar}
       </div> */}
       {/*Mobile Sidebar*/}
-      <MobileSidebar open={showSidebar} close={() => setShowSidebar(false)}>
-        {sidebar}
-      </MobileSidebar>
+      {sidebar && (
+        <MobileSidebar open={showSidebar} close={() => setShowSidebar(false)}>
+          {sidebar}
+        </MobileSidebar>
+      )}
       {/*Main content - positioned below navbar, accounts for sidebar width on desktop*/}
       <main className={`flex flex-1 flex-col pb-2 min-w-0 ${navbar ? 'pt-10' : 'pt-0'} lg:pl-0 lg:pr-0`}>
         <div className="grow pb-6 lg:pb-10">
