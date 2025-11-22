@@ -1,45 +1,14 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
-import { entityService } from '../../services/api/Entity'
-import { EntityDto } from '../../types'
 import { Badge, Header } from '../../components/Tailwind'
 import { slugify } from '../../helpers'
-
-function useFetchEntity(entityId: string) {
-  const query = useQuery<EntityDto>({
-    queryKey: ['entity', entityId],
-    queryFn: async () => {
-      try {
-        const params = new URLSearchParams()
-        params.append('include', 'product')
-        params.append('include', 'brand')
-        params.append('include', 'entityTags.tag')
-        params.append('include', 'set')
-        const result = await entityService.get(entityId, `?${params.toString()}`)
-        console.log('Entity fetched:', result)
-        return result
-      } catch (error) {
-        console.error('Error fetching entity:', error)
-        throw error
-      }
-    },
-    enabled: !!entityId,
-    staleTime: 1000 * 60 * 5,
-  })
-
-  return {
-    entity: query.data,
-    isLoading: query.isLoading,
-    error: query.error,
-  }
-}
+import { useFetchEntity } from './data/fetchEntity'
 
 export function EntityDetail() {
   const { brandSlug, entityId } = useParams<{ brandSlug: string; entityId: string }>()
   const navigate = useNavigate()
-  const { entity, isLoading, error } = useFetchEntity(entityId || '')
+  const { entity, isLoadingEntity, errorEntity } = useFetchEntity(entityId || '')
 
-  if (isLoading) {
+  if (isLoadingEntity) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg">Loading entity...</div>
@@ -47,7 +16,7 @@ export function EntityDetail() {
     )
   }
 
-  if (error) {
+  if (errorEntity) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg text-red-600">Error loading entity. Please try again.</div>
@@ -63,7 +32,7 @@ export function EntityDetail() {
     )
   }
 
-  // Verify brand matches the URL slug
+  //Verify brand matches the URL slug
   const brandName = entity.brand?.displayName || entity.brand?.name || ''
   if (!brandName) {
     return (
@@ -72,9 +41,9 @@ export function EntityDetail() {
       </div>
     )
   }
-  
+
   const expectedBrandSlug = slugify(brandName)
-  
+
   if (brandSlug !== expectedBrandSlug) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -102,7 +71,7 @@ export function EntityDetail() {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-6 md:p-8">
             <div className="flex flex-col md:flex-row gap-6 md:gap-8">
-              {/* Image Section */}
+              {/*Image Section*/}
               <div className="flex-shrink-0">
                 {entity.image ? (
                   <img
@@ -118,7 +87,7 @@ export function EntityDetail() {
                 )}
               </div>
 
-              {/* Details Section */}
+              {/*Details Section*/}
               <div className="flex-1">
                 <Header level={1} className="mb-4">
                   {displayName}
@@ -132,7 +101,7 @@ export function EntityDetail() {
 
                   <div>
                     <h3 className="text-sm font-semibold text-gray-700 mb-2">Description</h3>
-                    <div 
+                    <div
                       className="text-gray-900 prose prose-sm max-w-none"
                       dangerouslySetInnerHTML={{ __html: description }}
                     />

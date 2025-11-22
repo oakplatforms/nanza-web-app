@@ -1,40 +1,11 @@
 import { useParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
-import { listingService } from '../../services/api/Listing'
-import { ListingDto } from '../../types'
-
-function useFetchListing(listingId: string) {
-  const query = useQuery<ListingDto>({
-    queryKey: ['listing', listingId],
-    queryFn: async () => {
-      try {
-        const params = new URLSearchParams({
-          include: 'account.profile,entity',
-        })
-        const result = await listingService.get(listingId, `?${params.toString()}`)
-        console.log('Listing fetched:', result)
-        return result
-      } catch (error) {
-        console.error('Error fetching listing:', error)
-        throw error
-      }
-    },
-    enabled: !!listingId,
-    staleTime: 1000 * 60 * 5,
-  })
-
-  return {
-    listing: query.data,
-    isLoading: query.isLoading,
-    error: query.error,
-  }
-}
+import { useFetchListing } from './data/fetchListing'
 
 export function Listing() {
   const { username, listingId } = useParams<{ username: string; listingId: string }>()
-  const { listing, isLoading, error } = useFetchListing(listingId || '')
+  const { listing, isLoadingListing, errorListing } = useFetchListing(listingId || '')
 
-  if (isLoading) {
+  if (isLoadingListing) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg">Loading listing...</div>
@@ -42,7 +13,7 @@ export function Listing() {
     )
   }
 
-  if (error) {
+  if (errorListing) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg text-red-600">Error loading listing. Please try again.</div>
