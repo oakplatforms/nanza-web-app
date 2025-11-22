@@ -60,9 +60,10 @@ export function TopNavbar({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
           <Bars3Icon aria-hidden="true" className="size-6" />
         </button>
         {/*Logo*/}
-        <Link to="/" className="-ml-4 p-1.5">
+        <Link to="/" className="-ml-4 p-1.5 flex items-center gap-2">
           <span className="sr-only">Oak Platforms</span>
           <img alt="Oak Platforms" src="/oak.svg" className="h-4 w-auto" />
+          <span className="text-xl font-semibold text-zinc-950 dark:text-white">nanza</span>
         </Link>
       </NavbarSection>
       {/*Navigation items - hidden on mobile, shown on desktop*/}
@@ -95,7 +96,7 @@ export function TopNavbar({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
       <NavbarSection>
         <button
           onClick={handleSignOut}
-          className="font-figtree font-semibold text-sm text-zinc-800 hover:text-sky-600 inline-flex items-center"
+          className="font-semibold text-sm text-zinc-800 hover:text-sky-600 inline-flex items-center"
         >
           Sign out
           <svg className="ml-1.5" width="9.77" height="9" viewBox="0 0 38 35" fill="none" xmlns="http://www.w3.org/2000/svg">

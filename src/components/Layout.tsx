@@ -1,5 +1,8 @@
 import * as Headless from '@headlessui/react'
 import React, { useState } from 'react'
+import { Header, Button } from './Tailwind'
+import { Link } from 'react-router-dom'
+import { useSession } from '../context/SessionContext'
 
 function CloseMenuIcon() {
   return (
@@ -39,9 +42,10 @@ export function Layout({
   children,
 }: React.PropsWithChildren<{ navbar?: React.ReactNode; sidebar?: React.ReactNode }>) {
   const [showSidebar, setShowSidebar] = useState(false)
+  const { isSignedIn } = useSession()
 
   return (
-    <div className="relative isolate flex min-h-svh w-full bg-gradient-to-r from-gray-100 to-gray-300">
+    <div className="relative isolate flex flex-col min-h-svh w-full">
       {/*Navbar - fixed at the very top, spans full width*/}
       {navbar && (
         <div className="fixed top-0 left-0 right-0 z-50 h-auto bg-white dark:bg-gray-900 shadow-sm">
@@ -53,7 +57,7 @@ export function Layout({
         </div>
       )}
       {/*Sidebar - positioned below navbar, adjusted for navbar height*/}
-      {/* <div className={`fixed ${navbar ? 'top-[56px]' : 'top-0'} bottom-0 left-0 w-64 border-r border-zinc-950/20 bg-white dark:bg-gray-900`}>
+      {/*<div className={`fixed ${navbar ? 'top-[56px]' : 'top-0'} bottom-0 left-0 w-64 border-r border-zinc-950/20 bg-white dark:bg-gray-900`}>
         {sidebar}
       </div> */}
       {/*Mobile Sidebar*/}
@@ -62,12 +66,38 @@ export function Layout({
           {sidebar}
         </MobileSidebar>
       )}
+      {/*Header section - positioned below navbar*/}
+      <div className={`bg-[#e5e8eb] flex-shrink-0 h-[60px] w-full ${navbar ? 'fixed top-[56px] left-0 right-0 z-40' : 'fixed top-0 left-0 right-0 z-40'}`}>
+        <div className="max-w-4xl mx-auto h-full flex items-center justify-between">
+          <Header><a href="/">nanza</a></Header>
+          {!isSignedIn && !navbar && (
+            <div className="flex items-center gap-4">
+              <Link to="/login">
+                <Button color="sky" className="text-white px-4 py-2 rounded-md">
+                  Log In
+                </Button>
+              </Link>
+              <Link to="/signup" className="text-sky-600 hover:text-sky-700 font-medium">
+                Sign Up
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
       {/*Main content - positioned below navbar, accounts for sidebar width on desktop*/}
-      <main className={`flex flex-1 flex-col pb-2 min-w-0 ${navbar ? 'pt-10' : 'pt-0'} lg:pl-0 lg:pr-0`}>
+      <main className={`flex flex-1 flex-col pb-2 min-w-0 ${navbar ? 'pt-[116px]' : 'pt-[60px]'} lg:pl-0 lg:pr-0`}>
         <div className="grow pb-6 lg:pb-10">
           <div className="mx-auto">{children}</div>
         </div>
       </main>
+      {/*Footer section - always at the bottom*/}
+      <footer className="flex-shrink-0 w-full pt-4 pb-10 mt-auto">
+        <div className="max-w-xl mx-auto px-6">
+          <p className="text-[10.5px] font-normal text-gray-400 text-center">
+            Card images and logos are © Legend Story Studios. All official Flesh and Blood™ assets are the intellectual property of Legend Story Studios Limited.
+          </p>
+        </div>
+      </footer>
     </div>
   )
 }

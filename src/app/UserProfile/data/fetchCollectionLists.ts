@@ -11,6 +11,8 @@ export function useFetchCollectionLists(listIds: string[]) {
           const params = new URLSearchParams()
           params.append('include', 'entityList.entity.brand')
           params.append('include', 'entityList.entity.product')
+          params.append('include', 'entityList.entity.entityTags.tag')
+          params.append('include', 'entityList.entity.set')
           const result = await listService.get(listId, `?${params.toString()}`)
           return result
         } catch (error) {

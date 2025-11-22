@@ -34,17 +34,24 @@ const colors = {
   zinc: 'bg-zinc-900/10 text-zinc-700 group-data-[hover]:bg-zinc-600/20 dark:bg-white/5 dark:text-zinc-400 dark:group-data-[hover]:bg-white/10 border border-zinc-400',
 }
 
-type BadgeProps = { color?: keyof typeof colors }
+const variants = {
+  outline: 'inline-flex justify-center items-center gap-2.5 rounded-[9px] bg-white py-[5px] px-2 text-[#010101] text-[10.5px] font-medium leading-[13px] whitespace-nowrap shadow-[inset_0_0_0_1px_#D1D1D1]',
+  secondary: 'inline-flex justify-center items-center gap-2.5 rounded-[9px] bg-[#E7E7E7] py-[5px] px-2 text-[#010101] text-[10.5px] font-medium leading-[13px] whitespace-nowrap',
+}
 
-export function Badge({ color = 'zinc', className, ...props }: BadgeProps & React.ComponentPropsWithoutRef<'span'>) {
+type BadgeProps = { color?: keyof typeof colors; variant?: keyof typeof variants }
+
+export function Badge({ color = 'zinc', variant, className, style, ...props }: BadgeProps & React.ComponentPropsWithoutRef<'span'>) {
+  const variantStyles = variant ? variants[variant] : null
+  const baseStyles = variant ? '' : 'inline-flex items-center gap-x-1.5 rounded-md px-1.5 py-0.5 text-sm/5 font-medium sm:text-xs/5 forced-colors:outline'
+  const colorStyles = variant ? '' : colors[color]
+  const fontFamilyStyle = (variant === 'outline' || variant === 'secondary') ? { fontFamily: '"Euclid Circular B", sans-serif', ...style } : style
+
   return (
     <span
       {...props}
-      className={clsx(
-        className,
-        'inline-flex items-center gap-x-1.5 rounded-md px-1.5 py-0.5 text-sm/5 font-medium sm:text-xs/5 forced-colors:outline',
-        colors[color]
-      )}
+      className={clsx(className, variantStyles || baseStyles, colorStyles)}
+      style={fontFamilyStyle}
     />
   )
 }

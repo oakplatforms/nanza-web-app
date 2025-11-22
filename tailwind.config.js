@@ -7,8 +7,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        figtree: ['Figtree', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Euclid Circular B', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
     },
   },

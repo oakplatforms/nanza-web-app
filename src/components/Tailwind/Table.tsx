@@ -25,7 +25,7 @@ export function Table({
       <div className="flow-root">
         <div {...props} className={clsx(className, '-mx-[--gutter] overflow-x-auto whitespace-nowrap')}>
           <div className={clsx('inline-block min-w-full align-middle rounded-lg overflow-hidden', !bleed && 'sm:px-[--gutter]')}>
-            <table className="min-w-full divide-y divide-gray-300 dark:divide-white/15 text-left text-sm text-zinc-950 dark:text-white font-figtree">{children}</table>
+            <table className="min-w-full divide-y divide-gray-300 dark:divide-white/15 text-left text-sm text-zinc-950 dark:text-white">{children}</table>
           </div>
         </div>
       </div>
@@ -80,7 +80,7 @@ export function TableHeader({ className, stickyLeft, stickyRight, autoWidth, ...
       {...props}
       className={clsx(
         className,
-        'bg-stone-900 px-4 py-3 text-left text-sm font-semibold text-neutral-50 dark:text-white font-figtree',
+        'bg-stone-900 px-4 py-3 text-left text-sm font-semibold text-neutral-50 dark:text-white',
         '!border-r-0 min-h-[2.5rem] h-[2.5rem] max-h-[2.5rem]',
         !autoWidth && 'min-w-[200px] max-w-[calc(100vw/4)]',
         stickyLeft && 'sticky left-0 z-10',
@@ -105,7 +105,7 @@ export function TableCell({ className, children, stickyLeft, stickyRight, autoWi
       {...props}
       className={clsx(
         className,
-        'py-2 text-sm text-zinc-700 dark:text-gray-300 font-figtree',
+        'py-2 text-sm text-zinc-700 dark:text-gray-300',
         'first:font-medium first:text-gray-900 first:dark:text-white',
         'min-h-[2.5rem] h-[2.5rem] max-h-[2.5rem]',
         autoWidth ? 'pl-4 pr-4' : 'pl-4',

@@ -4,10 +4,39 @@ import { useFetchProfile } from './data/fetchProfile'
 import { useFetchCollectionLists } from './data/fetchCollectionLists'
 import { Badge } from '../../components/Tailwind'
 import { slugify } from '../../helpers'
+import { brandTagConfig } from '../../constants'
+import { EntityTagDto, EntityDto } from '../../types'
 
 const fallbackAvatar = 'https://ui-avatars.com/api/?name=User&background=random'
 
-function EntityCard({ entity, entityList, onNavigate }: { entity: any; entityList?: any; onNavigate: (path: string) => void }) {
+//Helper function to get primary tags for an entity based on brand configuration,ordered by constants file
+function getPrimaryTags(entityTags: EntityTagDto[] | undefined, brandSlug: string): EntityTagDto[] {
+  if (!entityTags || !brandSlug) return []
+
+  const brandConfig = brandTagConfig[brandSlug]
+  if (!brandConfig) return []
+
+  const primaryTagNames = brandConfig.primary
+  const filteredTags = entityTags.filter((entityTag) => {
+    const tagDisplayName = entityTag.tag?.displayName?.toLowerCase()
+    return tagDisplayName && primaryTagNames.includes(tagDisplayName)
+  })
+
+  //Sort tags by the order in the constants file
+  return filteredTags.sort((a, b) => {
+    const aIndex = primaryTagNames.indexOf(a.tag?.displayName?.toLowerCase() || '')
+    const bIndex = primaryTagNames.indexOf(b.tag?.displayName?.toLowerCase() || '')
+    return aIndex - bIndex
+  })
+}
+
+type EntityListType = {
+  id?: string
+  quantity?: number | null
+  entity?: EntityDto
+}
+
+function EntityCard({ entity, entityList, onNavigate }: { entity: EntityDto; entityList?: EntityListType; onNavigate: (path: string) => void }) {
   const [imageError, setImageError] = useState(false)
   const imageUrl = entity.image
     ? `${process.env.REACT_APP_S3_IMAGE_BASE_URL}${entity.image}`
@@ -16,6 +45,7 @@ function EntityCard({ entity, entityList, onNavigate }: { entity: any; entityLis
   const brandName = entity.brand?.displayName || entity.brand?.name || ''
   const brandSlug = brandName ? slugify(brandName) : ''
   const quantity = entityList?.quantity
+  const primaryTags = useMemo(() => getPrimaryTags(entity.entityTags, brandSlug), [entity.entityTags, brandSlug])
 
   return (
     <div
@@ -24,15 +54,15 @@ function EntityCard({ entity, entityList, onNavigate }: { entity: any; entityLis
           onNavigate(`/${brandSlug}/${entity.id}`)
         }
       }}
-      className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+      className="bg-white overflow-hidden cursor-pointer relative"
     >
       {/*Image Section*/}
-      <div className="aspect-square bg-gray-100 flex items-center justify-center">
+      <div className="aspect-square py-8 flex items-center justify-center">
         {imageUrl && !imageError ? (
           <img
             src={imageUrl}
             alt={displayName}
-            className="w-full h-full object-cover"
+            className="w-auto h-full"
             onError={() => setImageError(true)}
           />
         ) : (
@@ -42,17 +72,35 @@ function EntityCard({ entity, entityList, onNavigate }: { entity: any; entityLis
 
       {/*Details Section*/}
       <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
-          {displayName}
-        </h3>
+        <div className="flex flex-wrap items-center gap-1 mb-1">
+          <h3 className="text-[13.5px] font-semibold text-gray-950 line-clamp-2">
+            {displayName}
+          </h3>
+          {primaryTags.length > 0 && (
+            <>
+              {primaryTags.map((entityTag, idx) => (
+                <Badge key={idx} variant="outline" className={idx === 0 ? 'ml-0.5' : 'ml-0.5'}>
+                  {entityTag.tagValue}
+                </Badge>
+              ))}
+            </>
+          )}
+        </div>
         {brandName && (
-          <p className="text-sm text-gray-600 mb-2">{brandName}</p>
+          <p className="absolute hidden -right-5 text-[9px] font-normal text-gray-400 -rotate-90 origin-center-right whitespace-nowrap">{brandName}</p>
         )}
         {entity.product?.number && (
-          <p className="text-xs text-gray-500">#{entity.product.number}</p>
+          <p className="text-[10.5px] font-medium text-gray-400">#{entity.product.number}</p>
+        )}
+        {entity.set?.displayName && (
+          <div className="mt-1 mb-2">
+            <Badge variant="secondary">
+              {entity.set.displayName}
+            </Badge>
+          </div>
         )}
         {quantity !== null && quantity !== undefined && (
-          <p className="text-sm text-gray-700 mt-2 font-medium">Qty: {quantity}</p>
+          <p className="absolute top-0 right-3 text-sm text-gray-700 mt-2 font-medium">Qty: {quantity}</p>
         )}
       </div>
     </div>
@@ -73,7 +121,7 @@ function ListCard({ list, username, onNavigate }: { list: any; username: string;
           onNavigate(`/${username}/list/${list.id}`)
         }
       }}
-      className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+      className="bg-zinc-100 overflow-hidden cursor-pointer"
     >
       {/*Image Section*/}
       <div className="aspect-video bg-gray-100 flex items-center justify-center">
@@ -120,7 +168,7 @@ function ListingCard({ listing, username, onNavigate }: { listing: any; username
   return (
     <div
       onClick={() => onNavigate(`/${username}/${listing.id}`)}
-      className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+      className="bg-zinc-100 overflow-hidden cursor-pointer"
     >
       {/*Image Section*/}
       <div className="aspect-square bg-gray-100 flex items-center justify-center">
@@ -226,7 +274,7 @@ export function UserProfile() {
             }}
           />
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-gray-950">
               {profile.username || 'User'}
             </h1>
           </div>
@@ -311,15 +359,18 @@ export function UserProfile() {
                 }
 
                 return (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {allEntityListItems.map((item) => (
-                      <EntityCard
-                        key={item.id}
-                        entity={item.entity}
-                        entityList={item}
-                        onNavigate={navigate}
-                      />
-                    ))}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[1px]" style={{ backgroundImage: 'linear-gradient(0deg, #fcfcfc 0%, #E7E7E7 50%, #fcfcfc 100%), linear-gradient(90deg, #fcfcfc 0%, #E7E7E7 50%, #fcfcfc 100%)' }}>
+                    {allEntityListItems.map((item) => {
+                      if (!item.entity) return null
+                      return (
+                        <EntityCard
+                          key={item.id}
+                          entity={item.entity}
+                          entityList={item}
+                          onNavigate={navigate}
+                        />
+                      )
+                    })}
                   </div>
                 )
               })()}
@@ -344,7 +395,7 @@ export function UserProfile() {
                 }
 
                 return (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[1px]" style={{ backgroundImage: 'linear-gradient(0deg, #fcfcfc 0%, #E7E7E7 50%, #fcfcfc 100%), linear-gradient(90deg, #fcfcfc 0%, #E7E7E7 50%, #fcfcfc 100%)' }}>
                     {favoriteAndCustomLists.map((list) => (
                       <ListCard
                         key={list.id}
@@ -363,7 +414,7 @@ export function UserProfile() {
           {activeTab === 'listings' && (
             <div className="mt-6">
               {profile.account?.listings && profile.account.listings.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[1px]" style={{ backgroundImage: 'linear-gradient(0deg, #fcfcfc 0%, #E7E7E7 50%, #fcfcfc 100%), linear-gradient(90deg, #fcfcfc 0%, #E7E7E7 50%, #fcfcfc 100%)' }}>
                   {profile.account.listings.map((listing) => (
                     <ListingCard
                       key={listing.id}

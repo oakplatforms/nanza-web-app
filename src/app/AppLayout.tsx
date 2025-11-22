@@ -5,12 +5,8 @@ import { Products } from './Products'
 import { Tags } from './Tags'
 import { useSession } from '../context/SessionContext'
 import SignIn from '../components/SignIn'
-import { Brands } from './Brands'
-import { Categories } from './Categories'
-import { ShippingMethods } from './ShippingMethods'
-import { ShippingOptions } from './ShippingOptions'
+import SignUpPage from '../components/SignUpPage'
 import { Homepage } from './Homepage'
-import { Conditions } from './Conditions'
 import { Sets } from './Sets'
 import { Dashboard } from './Dashboard'
 import { TopNavbar } from '../components/TopNavbar'
@@ -28,8 +24,9 @@ function AppLayout() {
   return (
     <Router>
       <Routes>
-        {/* Login route - accessible to all */}
+        {/* Login and Signup routes - accessible to all */}
         <Route path="/login" element={<SignIn />} />
+        <Route path="/signup" element={<SignUpPage />} />
         
         {/* Authenticated admin routes */}
         {isSignedIn ? (
@@ -44,39 +41,14 @@ function AppLayout() {
                 <Tags />
               </Layout>
             } />
-            <Route path="/brands" element={
-              <Layout navbar={<TopNavbar />} sidebar={<SidebarNavigation></SidebarNavigation>}>
-                <Brands />
-              </Layout>
-            } />
-            <Route path="/categories" element={
-              <Layout navbar={<TopNavbar />} sidebar={<SidebarNavigation></SidebarNavigation>}>
-                <Categories />
-              </Layout>
-            } />
             <Route path="/products" element={
               <Layout navbar={<TopNavbar />} sidebar={<SidebarNavigation></SidebarNavigation>}>
                 <Products />
               </Layout>
             } />
-            <Route path="/shipping-methods" element={
-              <Layout navbar={<TopNavbar />} sidebar={<SidebarNavigation></SidebarNavigation>}>
-                <ShippingMethods />
-              </Layout>
-            } />
-            <Route path="/shipping-options" element={
-              <Layout navbar={<TopNavbar />} sidebar={<SidebarNavigation></SidebarNavigation>}>
-                <ShippingOptions />
-              </Layout>
-            } />
             <Route path="/homepage" element={
               <Layout navbar={<TopNavbar />} sidebar={<SidebarNavigation></SidebarNavigation>}>
                 <Homepage />
-              </Layout>
-            } />
-            <Route path="/conditions" element={
-              <Layout navbar={<TopNavbar />} sidebar={<SidebarNavigation></SidebarNavigation>}>
-                <Conditions />
               </Layout>
             } />
             <Route path="/sets" element={
@@ -119,39 +91,14 @@ function AppLayout() {
                 <Tags readOnly={true} />
               </Layout>
             } />
-            <Route path="/brands" element={
-              <Layout>
-                <Brands readOnly={true} />
-              </Layout>
-            } />
-            <Route path="/categories" element={
-              <Layout>
-                <Categories readOnly={true} />
-              </Layout>
-            } />
             <Route path="/sets" element={
               <Layout>
                 <Sets readOnly={true} />
               </Layout>
             } />
-            <Route path="/shipping-methods" element={
-              <Layout>
-                <ShippingMethods readOnly={true} />
-              </Layout>
-            } />
-            <Route path="/shipping-options" element={
-              <Layout>
-                <ShippingOptions readOnly={true} />
-              </Layout>
-            } />
             <Route path="/homepage" element={
               <Layout>
                 <Homepage readOnly={true} />
-              </Layout>
-            } />
-            <Route path="/conditions" element={
-              <Layout>
-                <Conditions readOnly={true} />
               </Layout>
             } />
             <Route path="/:brandSlug/:entityId" element={
