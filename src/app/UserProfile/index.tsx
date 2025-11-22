@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useFetchProfile } from './data/fetchProfile'
+import { useFetchCollectionLists } from './data/fetchCollectionLists'
 import { Badge } from '../../components/Tailwind'
 import { slugify } from '../../helpers'
 
@@ -169,6 +170,14 @@ export function UserProfile() {
   const { profile, isLoadingProfile, errorProfile } = useFetchProfile(username || '')
   const [activeTab, setActiveTab] = useState<'collection' | 'lists' | 'listings'>('collection')
 
+  //Get collection list IDs
+  const collectionListIds = useMemo(() => {
+    return profile?.account?.lists?.filter((list) => list.type === 'COLLECTION').map((list) => list.id!).filter(Boolean) || []
+  }, [profile?.account?.lists])
+
+  //Fetch detailed collection lists with entityList data
+  const { lists: collectionLists, isLoading: isLoadingCollections } = useFetchCollectionLists(collectionListIds)
+
   if (isLoadingProfile) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -281,12 +290,12 @@ export function UserProfile() {
           {/*Collection Tab Content*/}
           {activeTab === 'collection' && (
             <div className="mt-6">
-              {(() => {
-                const allLists = profile.account?.lists || []
-                const collections = allLists.filter(
-                  (list) => list.type === 'COLLECTION'
-                )
-                const allEntityListItems = collections.flatMap(
+              {isLoadingCollections ? (
+                <div className="text-center py-12 text-gray-500">
+                  <p>Loading collection...</p>
+                </div>
+              ) : (() => {
+                const allEntityListItems = collectionLists.flatMap(
                   (collection) => {
                     const items = collection.entityList?.filter((el) => el.entity != null) || []
                     return items

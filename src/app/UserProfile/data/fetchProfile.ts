@@ -10,8 +10,6 @@ export function useFetchProfile(id: string) {
         const params = new URLSearchParams()
         params.append('include', 'account.listings')
         params.append('include', 'account.lists')
-        params.append('include', 'account.lists.entityList')
-        params.append('include', 'account.lists.entityList.entity')
         const result = await profileService.get(id, `?${params.toString()}`)
         console.log('Profile fetched:', result)
         return result
