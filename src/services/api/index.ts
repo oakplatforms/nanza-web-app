@@ -107,7 +107,29 @@ export async function fetchData({ url, method = 'GET', payload }: FetchProps) {
   }
 
   const baseUrl = process.env.REACT_APP_API_BASE_URL || ''
-  const response = await fetch(`${baseUrl}/api/v1${url}`, options)
+  
+  if (!baseUrl) {
+    const error = new Error('API base URL is not configured. Please set REACT_APP_API_BASE_URL environment variable.')
+    ;(error as any).status = 500
+    throw error
+  }
+
+  const fullUrl = `${baseUrl}/api/v1${url}`
+  
+  let response: Response
+  try {
+    response = await fetch(fullUrl, options)
+  } catch (fetchError) {
+    // Network error (CORS, connection refused, etc.)
+    const error = new Error(
+      fetchError instanceof Error 
+        ? `Failed to fetch: ${fetchError.message}. API URL: ${fullUrl}` 
+        : 'Failed to fetch: Network error'
+    )
+    ;(error as any).status = 0
+    ;(error as any).isNetworkError = true
+    throw error
+  }
 
   if (response.status === 429) {
     throw new RateLimitError('Rate limit exceeded. Stopping further requests.')

@@ -315,6 +315,18 @@ export function Products({ readOnly = false }: { readOnly?: boolean }) {
                         Log in to view products
                       </a>
                     </div>
+                  ) : (errorProductEntities as any)?.isNetworkError || (errorProductEntities as any)?.status === 0 ? (
+                    <div>
+                      <p className="text-red-700 text-sm mb-2">
+                        Network error: Unable to connect to the API server.
+                      </p>
+                      <p className="text-red-600 text-xs">
+                        {errorProductEntities instanceof Error ? errorProductEntities.message : 'Failed to fetch'}
+                      </p>
+                      <p className="text-gray-600 text-xs mt-2">
+                        Please check that REACT_APP_API_BASE_URL is configured in your environment variables.
+                      </p>
+                    </div>
                   ) : (
                     <p className="text-red-700 text-sm">
                       {errorProductEntities instanceof Error ? errorProductEntities.message : 'Unknown error occurred'}
