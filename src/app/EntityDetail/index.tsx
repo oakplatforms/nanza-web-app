@@ -68,8 +68,8 @@ export function EntityDetail() {
           </button>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="p-6 md:p-8">
+        <div className="bg-white overflow-hidden">
+          <div className="">
             <div className="flex flex-col md:flex-row gap-6 md:gap-8">
               {/*Image Section*/}
               <div className="flex-shrink-0">

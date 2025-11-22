@@ -14,10 +14,10 @@ export function ListCard({ list, username, onNavigate }: { list: any; username: 
           onNavigate(`/${username}/list/${list.id}`)
         }
       }}
-      className="bg-zinc-100 overflow-hidden cursor-pointer"
+      className="bg-white overflow-hidden cursor-pointer"
     >
       {/*Image Section*/}
-      <div className="aspect-video bg-gray-100 flex items-center justify-center">
+      <div className="aspect-video bg-gray-100 border-x-[16px] border-white flex items-center justify-center">
         {imageUrl && !imageError ? (
           <img
             src={imageUrl}

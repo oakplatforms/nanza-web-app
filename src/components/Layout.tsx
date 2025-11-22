@@ -73,11 +73,11 @@ export function Layout({
           {!isSignedIn && !navbar && (
             <div className="flex items-center gap-4">
               <Link to="/login">
-                <Button color="sky" className="text-white px-4 py-2 rounded-md">
+                <Button className="text-white px-4 py-2">
                   Log In
                 </Button>
               </Link>
-              <Link to="/signup" className="text-sky-600 hover:text-sky-700 font-medium">
+              <Link to="/signup" className="text-gray-950 hover:text-sky-700 font-medium">
                 Sign Up
               </Link>
             </div>
