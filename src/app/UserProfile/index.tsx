@@ -63,7 +63,7 @@ export function UserProfile() {
           <img
             src={avatarUrl}
             alt={profile.username || 'User'}
-            className="w-36 h-36 rounded-full object-cover"
+            className="w-20 md:w-36 h-20 md:h-36 rounded-full object-cover"
             onError={(e) => {
               const target = e.target as HTMLImageElement
               target.src = fallbackAvatar
