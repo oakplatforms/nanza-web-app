@@ -1,4 +1,4 @@
-import amplifyConfig from '../amplify-config.json'
+import amplifyConfig from '../amplify-config'
 import { Amplify } from 'aws-amplify'
 import { SessionProvider } from '../context/SessionContext'
 import AppLayout from './AppLayout'
