@@ -67,7 +67,7 @@ export function Layout({
         </MobileSidebar>
       )}
       {/*Header section - positioned below navbar*/}
-      <div className={`bg-[#e5e8eb] flex-shrink-0 h-[60px] w-full ${navbar ? 'fixed top-[56px] left-0 right-0 z-40' : 'fixed top-0 left-0 right-0 z-40'}`}>
+      <div className={`bg-white border-b border-gray-200 flex-shrink-0 h-[60px] w-full ${navbar ? 'fixed top-[56px] left-0 right-0 z-40' : 'fixed top-0 left-0 right-0 z-40'}`}>
         <div className="max-w-4xl mx-auto h-full flex items-center justify-between">
           <Header><a href="/">nanza</a></Header>
           {!isSignedIn && !navbar && (
@@ -93,7 +93,7 @@ export function Layout({
       {/*Footer section - always at the bottom*/}
       <footer className="flex-shrink-0 w-full pt-4 pb-10 mt-auto">
         <div className="max-w-xl mx-auto px-6">
-          <p className="text-[10.5px] font-normal text-gray-400 text-center">
+          <p className="text-[11px] font-normal text-gray-600 text-center">
             Card images and logos are © Legend Story Studios. All official Flesh and Blood™ assets are the intellectual property of Legend Story Studios Limited.
           </p>
         </div>

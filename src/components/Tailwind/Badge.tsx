@@ -35,8 +35,9 @@ const colors = {
 }
 
 const variants = {
-  outline: 'inline-flex justify-center items-center gap-2.5 rounded-[9px] bg-white py-[5px] px-2 text-[#010101] text-[10.5px] font-medium leading-[13px] whitespace-nowrap shadow-[inset_0_0_0_1px_#D1D1D1]',
-  secondary: 'inline-flex justify-center items-center gap-2.5 rounded-[9px] bg-[#E7E7E7] py-[5px] px-2 text-[#010101] text-[10.5px] font-medium leading-[13px] whitespace-nowrap',
+  outline: 'inline-flex justify-center items-center gap-2.5 rounded-[9px] bg-white py-[5px] px-2 text-[#010101] text-[11.5px] font-medium leading-[13px] whitespace-nowrap shadow-[inset_0_0_0_1px_#D1D1D1]',
+  secondary: 'inline-flex justify-center items-center gap-2.5 rounded-[9px] bg-[#E7E7E7] py-[5px] px-2 text-[#010101] text-[11.8px] font-medium leading-[13px] whitespace-nowrap',
+  quantity: 'inline-flex justify-center items-center gap-0.5 rounded-[9px] bg-[#F6F6F6] py-[6px] px-2.5 text-[#010101] text-[14px] font-bold leading-[13px] whitespace-nowrap',
 }
 
 type BadgeProps = { color?: keyof typeof colors; variant?: keyof typeof variants }
@@ -45,7 +46,7 @@ export function Badge({ color = 'zinc', variant, className, style, ...props }: B
   const variantStyles = variant ? variants[variant] : null
   const baseStyles = variant ? '' : 'inline-flex items-center gap-x-1.5 rounded-md px-1.5 py-0.5 text-sm/5 font-medium sm:text-xs/5 forced-colors:outline'
   const colorStyles = variant ? '' : colors[color]
-  const fontFamilyStyle = (variant === 'outline' || variant === 'secondary') ? { fontFamily: '"Euclid Circular B", sans-serif', ...style } : style
+  const fontFamilyStyle = (variant === 'outline' || variant === 'secondary' || variant === 'quantity') ? { fontFamily: '"Euclid Circular B", sans-serif', ...style } : style
 
   return (
     <span
