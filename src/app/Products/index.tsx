@@ -318,14 +318,28 @@ export function Products({ readOnly = false }: { readOnly?: boolean }) {
                   ) : (errorProductEntities as any)?.isNetworkError || (errorProductEntities as any)?.status === 0 ? (
                     <div>
                       <p className="text-red-700 text-sm mb-2">
-                        Network error: Unable to connect to the API server.
+                        {(errorProductEntities as any)?.isCorsError 
+                          ? 'CORS Error: API server is blocking requests'
+                          : 'Network error: Unable to connect to the API server.'}
                       </p>
-                      <p className="text-red-600 text-xs">
+                      <p className="text-red-600 text-xs mb-2">
                         {errorProductEntities instanceof Error ? errorProductEntities.message : 'Failed to fetch'}
                       </p>
-                      <p className="text-gray-600 text-xs mt-2">
-                        Please check that REACT_APP_API_BASE_URL is configured in your environment variables.
-                      </p>
+                      {(errorProductEntities as any)?.isCorsError ? (
+                        <div className="text-gray-600 text-xs mt-2 space-y-1">
+                          <p>This is a CORS (Cross-Origin Resource Sharing) issue. The API server needs to allow requests from your Vercel domain.</p>
+                          <p className="font-semibold mt-2">To fix this:</p>
+                          <ol className="list-decimal list-inside ml-2 space-y-1">
+                            <li>Configure your API Gateway to allow CORS from your Vercel domain</li>
+                            <li>Add your Vercel domain to the allowed origins in your API CORS settings</li>
+                            <li>Ensure the API returns proper CORS headers (Access-Control-Allow-Origin, etc.)</li>
+                          </ol>
+                        </div>
+                      ) : (
+                        <p className="text-gray-600 text-xs mt-2">
+                          Please check that REACT_APP_API_BASE_URL is configured correctly in your Vercel environment variables.
+                        </p>
+                      )}
                     </div>
                   ) : (
                     <p className="text-red-700 text-sm">
