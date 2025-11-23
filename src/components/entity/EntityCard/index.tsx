@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { Badge } from '../../Tailwind'
 import { slugify } from '../../../helpers'
 import { brandTagConfig } from '../../../constants'
-import { EntityTagDto, EntityDto, ListingDto } from '../../../types'
+import { EntityTagDto, EntityDto, ListingDto, BidDto } from '../../../types'
 
 export type EntityListType = {
   id?: string
@@ -35,13 +35,13 @@ export function EntityCard({
   entity,
   entityList,
   listing,
-  username,
+  bid,
   onNavigate
 }: {
   entity: EntityDto
   entityList?: EntityListType
   listing?: ListingDto
-  username?: string
+  bid?: BidDto
   onNavigate: (path: string) => void
 }) {
   const [imageError, setImageError] = useState(false)
@@ -62,21 +62,23 @@ export function EntityCard({
   const brandName = entity.brand?.displayName || entity.brand?.name || ''
   const brandSlug = brandName ? slugify(brandName) : ''
 
-  //Quantity: use listing.quantity if listing is provided, otherwise entityList.quantity
-  const quantity = listing ? listing.quantity : entityList?.quantity
+  //Quantity: use listing.quantity if listing is provided, then bid.quantity, otherwise entityList.quantity
+  const quantity = listing ? listing.quantity : (bid ? bid.quantity : entityList?.quantity)
 
   const primaryTags = useMemo(() => getPrimaryTags(entity.entityTags, brandSlug), [entity.entityTags, brandSlug])
 
   //Listing-specific fields
-  const price = listing?.price ? parseFloat(listing.price.toString()).toFixed(2) : null
-  const condition = listing?.condition
-  const multiTransactionsEnabled = listing?.multiTransactionsEnabled
-  const isActive = listing?.status === 'ACTIVE'
+  const price = listing?.price ? parseFloat(listing.price.toString()).toFixed(2) : (bid?.price ? parseFloat(bid.price.toString()).toFixed(2) : null)
+  const condition = listing?.condition || (bid?.conditions && bid.conditions.length > 0 ? bid.conditions[0] : null)
+  const multiTransactionsEnabled = listing?.multiTransactionsEnabled || bid?.multiTransactionsEnabled
+  const isActive = listing?.status === 'ACTIVE' || bid?.status === 'ACTIVE'
 
-  //Navigation: use listing navigation if listing is provided, otherwise entity navigation
+  //Navigation: use listing/bid detail page if provided, otherwise entity navigation
   const handleClick = () => {
-    if (listing && username && listing.id) {
-      onNavigate(`/${username}/${listing.id}`)
+    if (listing && listing.id) {
+      onNavigate(`/${listing.id}`)
+    } else if (bid && bid.id) {
+      onNavigate(`/${bid.id}`)
     } else if (entity.id && brandSlug) {
       onNavigate(`/${brandSlug}/${entity.id}`)
     }
@@ -149,7 +151,7 @@ export function EntityCard({
             </Badge>
           </div>
         )}
-        {listing
+        {(listing || bid)
           ? !isActive ? (
             <div className="absolute top-1.5 right-3 mt-2">
               <Badge variant="quantity">

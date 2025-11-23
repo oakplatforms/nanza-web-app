@@ -5,14 +5,18 @@ import { useFetchCollectionLists } from './data/fetchCollectionLists'
 import { EntityCard } from '../../components/entity/EntityCard'
 import { ListCard } from '../../components/list/ListCard'
 import { ListingCard } from '../../components/listing/ListingCard'
+import { BidCard } from '../../components/bid/BidCard'
 
 const fallbackAvatar = 'https://ui-avatars.com/api/?name=User&background=random'
 
 export function UserProfile() {
-  const { username } = useParams<{ username: string }>()
+  const { username, id } = useParams<{ username?: string; id?: string }>()
   const navigate = useNavigate()
-  const { profile, isLoadingProfile, errorProfile } = useFetchProfile(username || '')
-  const [activeTab, setActiveTab] = useState<'collection' | 'lists' | 'listings'>('collection')
+  const profileId = username || id || ''
+  const { profile, isLoadingProfile, errorProfile } = useFetchProfile(profileId)
+  //Use profile username if available, otherwise fall back to route param
+  const displayUsername = profile?.username || username || id || ''
+  const [activeTab, setActiveTab] = useState<'collection' | 'lists' | 'listings' | 'bids'>('collection')
 
   //Get collection list IDs
   const collectionListIds = useMemo(() => {
@@ -119,6 +123,16 @@ export function UserProfile() {
               >
                 Listings
               </button>
+              <button
+                onClick={() => setActiveTab('bids')}
+                className={`py-4 px-1 border-b-2 font-medium text-[15px] ${
+                  activeTab === 'bids'
+                    ? 'border-[#8384F6] text-[#6056ED]'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Bids
+              </button>
             </nav>
           </div>
 
@@ -187,7 +201,7 @@ export function UserProfile() {
                       <ListCard
                         key={list.id}
                         list={list}
-                        username={username || ''}
+                        username={displayUsername}
                         onNavigate={navigate}
                       />
                     ))}
@@ -213,7 +227,7 @@ export function UserProfile() {
                       <ListingCard
                         key={listing.id}
                         listing={listing}
-                        username={username || ''}
+                        username={displayUsername}
                         onNavigate={navigate}
                       />
                     ))}
@@ -221,6 +235,35 @@ export function UserProfile() {
               ) : (
                 <div className="text-center py-12 text-gray-500">
                   <p>No listings yet.</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/*Bids Tab Content*/}
+          {activeTab === 'bids' && (
+            <div className="mt-6">
+              {profile.account?.bids && profile.account.bids.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[1px]" style={{ backgroundImage: 'linear-gradient(0deg, #fcfcfc 0%, #E7E7E7 50%, #fcfcfc 100%), linear-gradient(90deg, #fcfcfc 0%, #E7E7E7 50%, #fcfcfc 100%)' }}>
+                  {[...profile.account.bids]
+                    .sort((a, b) => {
+                      //Sort: ACTIVE bids first, then INACTIVE/DELETED
+                      const aIsActive = a.status === 'ACTIVE' ? 0 : 1
+                      const bIsActive = b.status === 'ACTIVE' ? 0 : 1
+                      return aIsActive - bIsActive
+                    })
+                    .map((bid) => (
+                      <BidCard
+                        key={bid.id}
+                        bid={bid}
+                        username={displayUsername}
+                        onNavigate={navigate}
+                      />
+                    ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  <p>No bids yet.</p>
                 </div>
               )}
             </div>

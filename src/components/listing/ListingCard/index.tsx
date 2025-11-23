@@ -11,7 +11,6 @@ export function ListingCard({ listing, username, onNavigate }: { listing: Listin
     <EntityCard
       entity={listing.entity}
       listing={listing}
-      username={username}
       onNavigate={onNavigate}
     />
   )

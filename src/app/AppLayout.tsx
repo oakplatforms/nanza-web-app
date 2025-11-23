@@ -13,6 +13,10 @@ import { TopNavbar } from '../components/TopNavbar'
 import { UserProfile } from './UserProfile'
 import { Listing } from './Listing'
 import { EntityDetail } from './EntityDetail'
+import { ListingDetail } from './ListingDetail'
+import { BidDetail } from './BidDetail'
+import { ListingOrBidDetail } from './ListingOrBidDetail'
+import { UniversalDetail } from './UniversalDetail'
 
 function AppLayout() {
   const { isSignedIn } = useSession()
@@ -66,9 +70,9 @@ function AppLayout() {
                 <Listing />
               </Layout>
             } />
-            <Route path="/:username" element={
+            <Route path="/:id" element={
               <Layout>
-                <UserProfile />
+                <UniversalDetail />
               </Layout>
             } />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
@@ -111,9 +115,9 @@ function AppLayout() {
                 <Listing />
               </Layout>
             } />
-            <Route path="/:username" element={
+            <Route path="/:id" element={
               <Layout>
-                <UserProfile />
+                <UniversalDetail />
               </Layout>
             } />
             <Route path="*" element={<Navigate to="/" replace />} />

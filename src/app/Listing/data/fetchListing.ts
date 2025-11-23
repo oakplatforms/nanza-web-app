@@ -9,7 +9,11 @@ export function useFetchListing(listingId: string) {
       try {
         const params = new URLSearchParams()
         params.append('include', 'account.profile')
-        params.append('include', 'entity')
+        params.append('include', 'entity.brand')
+        params.append('include', 'entity.product')
+        params.append('include', 'entity.entityTags.tag')
+        params.append('include', 'entity.set')
+        params.append('include', 'condition')
         const result = await listingService.get(listingId, `?${params.toString()}`)
         console.log('Listing fetched:', result)
         return result
