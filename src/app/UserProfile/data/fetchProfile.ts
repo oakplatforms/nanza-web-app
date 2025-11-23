@@ -8,7 +8,11 @@ export function useFetchProfile(id: string) {
     queryFn: async () => {
       try {
         const params = new URLSearchParams()
-        params.append('include', 'account.listings')
+        params.append('include', 'account.listings.entity.brand')
+        params.append('include', 'account.listings.entity.product')
+        params.append('include', 'account.listings.entity.entityTags.tag')
+        params.append('include', 'account.listings.entity.set')
+        params.append('include', 'account.listings.condition')
         params.append('include', 'account.lists')
         const result = await profileService.get(id, `?${params.toString()}`)
         console.log('Profile fetched:', result)

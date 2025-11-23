@@ -17,6 +17,7 @@ export type ShippingOptionDto = components['schemas']['ShippingOption']
 export type ParcelDto = components['schemas']['Parcel']
 export type SetDto = components['schemas']['Set']
 export type ListingDto = components['schemas']['Listing']
+export type BidDto = components['schemas']['Bid']
 
 export type EntityPayload = Omit<EntityDto, 'entityTags'> & {
   createdById?: string | null

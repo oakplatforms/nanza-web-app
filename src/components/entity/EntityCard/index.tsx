@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { Badge } from '../../Tailwind'
 import { slugify } from '../../../helpers'
 import { brandTagConfig } from '../../../constants'
-import { EntityTagDto, EntityDto } from '../../../types'
+import { EntityTagDto, EntityDto, ListingDto } from '../../../types'
 
 export type EntityListType = {
   id?: string
@@ -31,24 +31,54 @@ function getPrimaryTags(entityTags: EntityTagDto[] | undefined, brandSlug: strin
   })
 }
 
-export function EntityCard({ entity, entityList, onNavigate }: { entity: EntityDto; entityList?: EntityListType; onNavigate: (path: string) => void }) {
+export function EntityCard({
+  entity,
+  entityList,
+  listing,
+  username,
+  onNavigate
+}: {
+  entity: EntityDto
+  entityList?: EntityListType
+  listing?: ListingDto
+  username?: string
+  onNavigate: (path: string) => void
+}) {
   const [imageError, setImageError] = useState(false)
-  const imageUrl = entity.image
-    ? `${process.env.REACT_APP_S3_IMAGE_BASE_URL}${entity.image}`
+
+  //Image priority: listing.image first, then entity.image
+  const imageSource = listing?.image || entity.image
+  const imageUrl = imageSource
+    ? `${process.env.REACT_APP_S3_IMAGE_BASE_URL}${imageSource}`
     : null
+
   const displayName = entity.displayName || 'Unknown'
   const brandName = entity.brand?.displayName || entity.brand?.name || ''
   const brandSlug = brandName ? slugify(brandName) : ''
-  const quantity = entityList?.quantity
+
+  //Quantity: use listing.quantity if listing is provided, otherwise entityList.quantity
+  const quantity = listing ? listing.quantity : entityList?.quantity
+
   const primaryTags = useMemo(() => getPrimaryTags(entity.entityTags, brandSlug), [entity.entityTags, brandSlug])
+
+  //Listing-specific fields
+  const price = listing?.price ? parseFloat(listing.price.toString()).toFixed(2) : null
+  const condition = listing?.condition
+  const multiTransactionsEnabled = listing?.multiTransactionsEnabled
+  const isActive = listing?.status === 'ACTIVE'
+
+  //Navigation: use listing navigation if listing is provided, otherwise entity navigation
+  const handleClick = () => {
+    if (listing && username && listing.id) {
+      onNavigate(`/${username}/${listing.id}`)
+    } else if (entity.id && brandSlug) {
+      onNavigate(`/${brandSlug}/${entity.id}`)
+    }
+  }
 
   return (
     <div
-      onClick={() => {
-        if (entity.id && brandSlug) {
-          onNavigate(`/${brandSlug}/${entity.id}`)
-        }
-      }}
+      onClick={handleClick}
       className="bg-white overflow-hidden cursor-pointer relative"
     >
       {/*Image Section*/}
@@ -84,8 +114,18 @@ export function EntityCard({ entity, entityList, onNavigate }: { entity: EntityD
         {brandName && (
           <p className="absolute hidden -right-5 text-[9px] font-normal text-gray-400 -rotate-90 origin-center-right whitespace-nowrap">{brandName}</p>
         )}
+        {price && (
+          <p className="text-[15px] font-semibold text-gray-950">${price}</p>
+        )}
         {entity.product?.number && (
           <p className="text-[12px] font-medium text-gray-400">#{entity.product.number}</p>
+        )}
+        {condition?.displayName && (
+          <div className="mt-1.5 mb-2">
+            <Badge variant="secondary">
+              {condition.displayName}
+            </Badge>
+          </div>
         )}
         {entity.set?.displayName && (
           <div className="mt-1.5 mb-2">
@@ -94,13 +134,34 @@ export function EntityCard({ entity, entityList, onNavigate }: { entity: EntityD
             </Badge>
           </div>
         )}
-        {quantity !== null && quantity !== undefined && quantity > 1 && (
-          <div className="absolute top-1.5 right-3 mt-2">
-            <Badge variant="quantity">
-              <span className="text-[12px] font-medium text-gray-400">x</span>{quantity}
+        {multiTransactionsEnabled && (
+          <div className="mt-1.5 mb-2">
+            <Badge variant="outline" className="text-sky-600 border-sky-600">
+              Multi-transaction
             </Badge>
           </div>
         )}
+        {listing
+          ? !isActive ? (
+            <div className="absolute top-1.5 right-3 mt-2">
+              <Badge variant="quantity">
+                <span className="text-[12px] font-medium text-gray-400">Sold Out</span>
+              </Badge>
+            </div>
+          ) : quantity !== null && quantity !== undefined && (
+            <div className="absolute top-1.5 right-3 mt-2">
+              <Badge variant="quantity">
+                <span className="text-[12px] font-medium text-gray-400">x</span>{quantity}
+              </Badge>
+            </div>
+          )
+          : quantity !== null && quantity !== undefined && quantity > 1 && (
+            <div className="absolute top-1.5 right-3 mt-2">
+              <Badge variant="quantity">
+                <span className="text-[12px] font-medium text-gray-400">x</span>{quantity}
+              </Badge>
+            </div>
+          )}
       </div>
     </div>
   )

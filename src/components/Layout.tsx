@@ -68,8 +68,8 @@ export function Layout({
       )}
       {/*Header section - positioned below navbar*/}
       <div className={`bg-white border-b border-gray-200 flex-shrink-0 h-[60px] w-full ${navbar ? 'fixed top-[56px] left-0 right-0 z-40' : 'fixed top-0 left-0 right-0 z-40'}`}>
-        <div className="max-w-4xl mx-auto px-6 h-full flex items-center justify-between">
-          <Header><a href="/">nanza</a></Header>
+        <div className="max-w-4xl mx-auto px-4 h-full flex items-center justify-between">
+          <Header className="text-[24px]"><a href="/">nanza</a></Header>
           {!isSignedIn && !navbar && (
             <div className="flex items-center gap-4">
               <Link to="/login">

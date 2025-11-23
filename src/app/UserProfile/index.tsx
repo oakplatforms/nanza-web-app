@@ -85,16 +85,15 @@ export function UserProfile() {
           </div>
         </div>
 
-
         {/*Tabs Section*/}
-        <div className="w-fullmt-12">
+        <div className="w-full mt-12">
           <div className="border-b border-gray-200">
             <nav className="-mb-px flex justify-center space-x-8">
               <button
                 onClick={() => setActiveTab('collection')}
                 className={`py-4 px-1 border-b-2 font-medium text-[15px] ${
                   activeTab === 'collection'
-                    ? 'border-sky-500 text-sky-600'
+                    ? 'border-[#8384F6] text-[#6056ED]'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -104,7 +103,7 @@ export function UserProfile() {
                 onClick={() => setActiveTab('lists')}
                 className={`py-4 px-1 border-b-2 font-medium text-[15px] ${
                   activeTab === 'lists'
-                    ? 'border-sky-500 text-sky-600'
+                    ? 'border-[#8384F6] text-[#6056ED]'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -114,7 +113,7 @@ export function UserProfile() {
                 onClick={() => setActiveTab('listings')}
                 className={`py-4 px-1 border-b-2 font-medium text-[15px] ${
                   activeTab === 'listings'
-                    ? 'border-sky-500 text-sky-600'
+                    ? 'border-[#8384F6] text-[#6056ED]'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -203,14 +202,21 @@ export function UserProfile() {
             <div className="mt-6">
               {profile.account?.listings && profile.account.listings.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[1px]" style={{ backgroundImage: 'linear-gradient(0deg, #fcfcfc 0%, #E7E7E7 50%, #fcfcfc 100%), linear-gradient(90deg, #fcfcfc 0%, #E7E7E7 50%, #fcfcfc 100%)' }}>
-                  {profile.account.listings.map((listing) => (
-                    <ListingCard
-                      key={listing.id}
-                      listing={listing}
-                      username={username || ''}
-                      onNavigate={navigate}
-                    />
-                  ))}
+                  {[...profile.account.listings]
+                    .sort((a, b) => {
+                      //Sort: ACTIVE listings first, then INACTIVE/DELETED
+                      const aIsActive = a.status === 'ACTIVE' ? 0 : 1
+                      const bIsActive = b.status === 'ACTIVE' ? 0 : 1
+                      return aIsActive - bIsActive
+                    })
+                    .map((listing) => (
+                      <ListingCard
+                        key={listing.id}
+                        listing={listing}
+                        username={username || ''}
+                        onNavigate={navigate}
+                      />
+                    ))}
                 </div>
               ) : (
                 <div className="text-center py-12 text-gray-500">

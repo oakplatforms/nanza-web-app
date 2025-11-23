@@ -2,11 +2,16 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Badge, Header } from '../../components/Tailwind'
 import { slugify } from '../../helpers'
 import { useFetchEntity } from './data/fetchEntity'
+import { useFetchEntityBids } from './data/fetchEntityBids'
+import { useFetchEntityListings } from './data/fetchEntityListings'
+import { BidsListingsTable } from '../../components/entity/BidsListingsTable'
 
 export function EntityDetail() {
   const { brandSlug, entityId } = useParams<{ brandSlug: string; entityId: string }>()
   const navigate = useNavigate()
   const { entity, isLoadingEntity, errorEntity } = useFetchEntity(entityId || '')
+  const { bids, isLoadingBids } = useFetchEntityBids(entityId || '')
+  const { listings, isLoadingListings } = useFetchEntityListings(entityId || '')
 
   if (isLoadingEntity) {
     return (
@@ -95,12 +100,12 @@ export function EntityDetail() {
 
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-700 mb-1">Product Number</h3>
-                    <p className="text-lg text-gray-900">{productNumber}</p>
+                    <h3 className="sr-only text-sm font-semibold text-gray-700 mb-1">Product Number</h3>
+                    <p className="text-[14px] font-medium text-gray-400">#{productNumber}</p>
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-700 mb-2">Description</h3>
+                    <h3 className="sr-only text-sm font-semibold text-gray-700 mb-2">Description</h3>
                     <div
                       className="text-gray-900 prose prose-sm max-w-none"
                       dangerouslySetInnerHTML={{ __html: description }}
@@ -109,7 +114,7 @@ export function EntityDetail() {
 
                   {entity.entityTags && entity.entityTags.length > 0 && (
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-700 mb-2">Tags</h3>
+                      <h3 className="sr-only text-sm font-semibold text-gray-700 mb-2">Tags</h3>
                       <div className="flex flex-wrap gap-2">
                         {entity.entityTags.map((entityTag, idx) => (
                           <Badge
@@ -128,6 +133,14 @@ export function EntityDetail() {
             </div>
           </div>
         </div>
+
+        {/*Bids and Listings Table*/}
+        <BidsListingsTable
+          bids={bids}
+          listings={listings}
+          isLoadingBids={isLoadingBids}
+          isLoadingListings={isLoadingListings}
+        />
       </div>
     </div>
   )
