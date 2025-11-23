@@ -45,12 +45,18 @@ export function EntityCard({
   onNavigate: (path: string) => void
 }) {
   const [imageError, setImageError] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
-  //Image priority: listing.image first, then entity.image
-  const imageSource = listing?.image || entity.image
-  const imageUrl = imageSource
-    ? `${process.env.REACT_APP_S3_IMAGE_BASE_URL}${imageSource}`
+  //Default to entity image, show listing image on hover
+  const entityImageUrl = entity.image
+    ? `${process.env.REACT_APP_S3_IMAGE_BASE_URL}${entity.image}`
     : null
+  const listingImageUrl = listing?.image
+    ? `${process.env.REACT_APP_S3_IMAGE_BASE_URL}${listing.image}`
+    : null
+
+  //Show listing image on hover if available, otherwise entity image
+  const imageUrl = isHovered && listingImageUrl ? listingImageUrl : entityImageUrl
 
   const displayName = entity.displayName || 'Unknown'
   const brandName = entity.brand?.displayName || entity.brand?.name || ''
@@ -80,6 +86,8 @@ export function EntityCard({
     <div
       onClick={handleClick}
       className="bg-white overflow-hidden cursor-pointer relative"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {/*Image Section*/}
       <div className="aspect-square pt-14 pb-8 flex items-center justify-center">
@@ -87,7 +95,7 @@ export function EntityCard({
           <img
             src={imageUrl}
             alt={displayName}
-            className="w-auto h-full"
+            className="w-auto h-full transition-opacity duration-300"
             onError={() => setImageError(true)}
           />
         ) : (
